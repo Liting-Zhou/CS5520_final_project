@@ -50,8 +50,11 @@ Currency Companion is designed for all adults who need to convert currencies and
 
 #### Questions asked after the testing:
 
-Q1:  
-Q2:  
+Q1: Were the list of exchange rates easy to customize, e.g. change base currency, search the currency, add and delete?  
+Q2: Was it easy to find and use the currency conversion feature?  
+Q3: Was the Nearby Exchange Finder easy to locate and activate?  
+Q4: Was it easy to perform the calculation of your total assets in different currencies?  
+Q5: Are there any features you feel are missing or unnecessary for your needs?  
 ...
 
 </div>
