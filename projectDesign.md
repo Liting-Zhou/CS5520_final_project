@@ -45,22 +45,51 @@ Currency Manager is designed for all adults who need to convert currencies and f
 
 #### Test scenarios:
 
-**Scenario I:** As an anonymous user, one can customize a list of live exchange rates, convert currencies, and manage currencies, but can only save the data after login. In this scenario, the user goes through these three main functions of the application.  
-**Scenario II:** As a login user ... 三个主要功能和匿名用户一致，除了他可以 save customized data。所以这里可以测一下 profile 这块，就是 sketch 的后面四张图。一个建议哈～
+**Using Live Exchange Rates and Currency Conversion:** In this scenario, the user will explore the features live exchange rates and currency conversions. The user will set up a list of preferred currencies, changing the base currency, and adding or removing currencies from the list. Also, the user will use the currency converter to switch between different currencies.
+**Managing Financial Assets and Finding Nearby Exchange Services:** In this scenario, the user will dive into the app's asset management and location services. The user will enter details about their assets, such as investments in various currencies, and then calculates the total value of their assets in a specific currency. Also, the user will use the app's nearby exchange finder to locate currency exchange organizations in their area.
 
 #### Questions to ask after the testing:
 
 Q1: Were the list of exchange rates easy to customize, e.g. change base currency, search the currency, add and delete?  
-Q2: Was it easy to find and use the currency conversion feature?  
+Q2: Was it easy to find and use the currency conversion feature?
 Q3: Was the _Nearby Exchange Finder_ easy to locate and activate?  
 Q4: Was it easy to perform the calculation of your total assets in different currencies?  
-Q5: Are there any features you feel are missing or unnecessary for your needs?  
-...
+Q5: Did you find the integrated camera services for capturing receipts of transactions useful?
+Q6: Were the notification settings easy to customize to your preferences?
+Q7: Upon logging in, was it easy to save and manage your customized data?
+Q8: How does Currency Manager compare to other currency conversion apps you have used?
+Q9: Were there any features you found particularly useful?
+Q10: Are there any features you feel are missing or unnecessary for your needs?
+Q11: What could be added or improved to keep you engaged with the app over time?
+
 
 #### The sketches used for testing:
 
 <img src="./UI_sketches/sketches_v2_1.jpg" alt="" />
 <img src="./UI_sketches/sketches_v2_2.jpg" alt="" />
 <img src="./UI_sketches/sketches_v2_3.jpg" alt="" />
+
+#### User 1:
+
+- Comments and Feedbakcs from the user:
+
+- Photos of of paper prototyping:
+<img src="./user_testing_photos/user1.jpg" alt="" />
+
+#### User 2:
+
+- Comments and Feedbakcs from the user:
+
+- Photos of of paper prototyping:
+
+#### User 3:
+
+- Comments and Feedbakcs from the user:
+
+- Photos of of paper prototyping:
+
+#### The updated sketches on the feedbacks:
+
+#### Lessons learned and key takeaways:
 
 </div>
