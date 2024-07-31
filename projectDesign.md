@@ -45,10 +45,8 @@ Currency Manager is designed for all adults who need to convert currencies and f
 
 #### Test scenarios:
 
-**Using Live Exchange Rates and Currency Conversion:** In this scenario, the user will explore the features live exchange rates and currency conversions. The user will set up a list of preferred currencies, changing the base currency, and adding or removing currencies from the list. Also, the user will use the currency converter to switch between different currencies.
-**Managing Financial Assets and Finding Nearby Exchange Services:** In this scenario, the user will dive into the app's asset management and location services. The user will enter details about their assets, such as investments in various currencies, and then calculates the total value of their assets in a specific currency. Also, the user will use the app's nearby exchange finder to locate currency exchange organizations in their area.
-
-#### Questions to ask after the testing:
+- **Using Live Exchange Rates and Currency Conversion:** In this scenario, the user will explore the features live exchange rates and currency conversions. The user will set up a list of preferred currencies, changing the base currency, and adding or removing currencies from the list. Also, the user will use the currency converter to switch between different currencies.
+- **Managing Financial Assets and Finding Nearby Exchange Services:** In this scenario, the user will dive into the app's asset management and location services. The user will enter details about their assets, such as investments in various currencies, and then calculates the total value of their assets in a specific currency. Also, the user will use the app's nearby exchange finder to locate currency exchange organizations in their area.
 
 #### Questions to ask after the testing:
 
