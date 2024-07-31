@@ -195,4 +195,9 @@ Based on the feedback from project proposal, we refine the UI sketches. Please s
 
 #### Lessons learned and key takeaways:
 
+- Users found the Nearby Exchange Finder challenging to locate. This highlighted the importance of placing key features in easily accessible areas. Ensuring that key features are easy to find and use is crucial. Users appreciate clear layouts and simple navigation paths.
+- Notification settings were not intuitive for some users. Providing clear instructions, using verbal expressions, and asking guiding questions can make customization more user-friendly.
+- Testing with real users provided invaluable insights into how the app's features are perceived and used.
+- Based on feedback, iterative updates to the UI sketches allowed for refining and enhancing the design.
+
 </div>
