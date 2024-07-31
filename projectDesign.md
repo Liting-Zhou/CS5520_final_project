@@ -50,17 +50,20 @@ Currency Manager is designed for all adults who need to convert currencies and f
 
 #### Questions to ask after the testing:
 
-Q1: Were the list of exchange rates easy to customize, e.g. change base currency, search the currency, add and delete?  
-Q2: Was it easy to find and use the currency conversion feature?
-Q3: Was the _Nearby Exchange Finder_ easy to locate and activate?  
-Q4: Was it easy to perform the calculation of your total assets in different currencies?  
-Q5: Did you find the integrated camera services for capturing receipts of transactions useful?
-Q6: Were the notification settings easy to customize to your preferences?
-Q7: Upon logging in, was it easy to save and manage your customized data?
-Q8: How does Currency Manager compare to other currency conversion apps you have used?
-Q9: Were there any features you found particularly useful?
-Q10: Are there any features you feel are missing or unnecessary for your needs?
-Q11: What could be added or improved to keep you engaged with the app over time?
+#### Questions to ask after the testing:
+
+1. Were the list of exchange rates easy to customize, e.g., change base currency, search the currency, add, and delete?
+2. Was it easy to find and use the currency conversion feature?
+3. Was the _Nearby Exchange Finder_ easy to locate and activate?
+4. Was it easy to perform the calculation of your total assets in different currencies?
+5. Did you find the integrated camera services for capturing receipts of transactions useful?
+6. Were the notification settings easy to customize to your preferences?
+7. Upon logging in, was it easy to save and manage your customized data?
+8. How does Currency Companion compare to other currency conversion apps you have used?
+9. Were there any features you found particularly useful?
+10. Are there any features you feel are missing or unnecessary for your needs?
+11. What could be added or improved to keep you engaged with the app over time?
+
 
 
 #### The sketches used for testing:
