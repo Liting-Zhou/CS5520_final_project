@@ -35,26 +35,32 @@ h4 {
 
 ### Qianyi Fu, Liting Zhou
 
-#### App Introduction:
+#### App introduction:
 
-The name of our application is **Currency Companion**, which is designed to do effortless currency conversion, stay updated with the latest currency exchange rates, keep track of your financial assets, find the nearby currency exchange organizations, save currency exchange history and set notifications on exchange rate changes.
+The name of our application is **Currency Manager**, which is designed to do effortless currency conversion, stay updated with the latest currency exchange rates, keep track of your currencies, find the nearby currency exchange organizations, save currency exchange history and set notifications on exchange rate changes.
 
-#### Target Users:
+#### Target users:
 
-Currency Companion is designed for all adults who need to convert currencies and find nearby exchange organizations. It's especially ideal for those interested in forex trading and those who regularly engage in personal asset management.
+Currency Manager is designed for all adults who need to convert currencies and find nearby exchange organizations. It's especially ideal for those interested in forex trading and those who regularly engage in currency management.
 
-#### Test Scenarios:
+#### Test scenarios:
 
-**Scenario I:** As an anonymous user, one can customize a list of live exchange rates, convert currencies, and manage financial assets, but can only save the data after login. In this scenario, the user goes through these three main functions of the application.  
+**Scenario I:** As an anonymous user, one can customize a list of live exchange rates, convert currencies, and manage currencies, but can only save the data after login. In this scenario, the user goes through these three main functions of the application.  
 **Scenario II:** As a login user ... 三个主要功能和匿名用户一致，除了他可以 save customized data。所以这里可以测一下 profile 这块，就是 sketch 的后面四张图。一个建议哈～
 
-#### Questions asked after the testing:
+#### Questions to ask after the testing:
 
 Q1: Were the list of exchange rates easy to customize, e.g. change base currency, search the currency, add and delete?  
 Q2: Was it easy to find and use the currency conversion feature?  
-Q3: Was the Nearby Exchange Finder easy to locate and activate?  
+Q3: Was the _Nearby Exchange Finder_ easy to locate and activate?  
 Q4: Was it easy to perform the calculation of your total assets in different currencies?  
 Q5: Are there any features you feel are missing or unnecessary for your needs?  
 ...
+
+#### The sketches used for testing:
+
+<img src="./UI_sketches/sketches_v2_1.jpg" alt="" />
+<img src="./UI_sketches/sketches_v2_2.jpg" alt="" />
+<img src="./UI_sketches/sketches_v2_3.jpg" alt="" />
 
 </div>
