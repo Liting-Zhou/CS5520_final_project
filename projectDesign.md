@@ -109,7 +109,7 @@ Based on the feedback from project proposal, we refine the UI sketches. Please s
 
 - Photo of of paper prototyping:
 
-  <img src="./user_testing_photos/user1.jpg" alt="" />
+  <img src="./user_testing_photos/user1.jpg" alt="" style="width:60%"/>
 
 #### User 2:
 
@@ -149,6 +149,8 @@ Based on the feedback from project proposal, we refine the UI sketches. Please s
     _On the Assets screen, it's better to place the Add button next to "Your currencies...". Better change the button title to "Exchange Transaction History" in Profile page to make it clearer. The Notification page could be clearer by adding a title "Notify me when..." to the page._
 
 - Photo of of paper prototyping:
+
+  <img src="./user_testing_photos/user2.jpg" alt="" style="width:60%"/>
 
 #### User 3:
 
@@ -192,6 +194,9 @@ Based on the feedback from project proposal, we refine the UI sketches. Please s
   <img src="./user_testing_photos/user3.jpg" alt="" style="width:60%"/>
 
 #### The updated sketches on the feedbacks:
+  <img src="./UI_sketches/sketches_v3_1.jpg" alt="" />
+  <img src="./UI_sketches/sketches_v3_2.jpg" alt="" />
+  <img src="./UI_sketches/sketches_v3_3.jpg" alt="" />
 
 #### Lessons learned and key takeaways:
 
