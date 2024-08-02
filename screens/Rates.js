@@ -21,7 +21,12 @@ export default function Rates() {
       // console.log("Rates.js 21, rates", rates);
     };
     fetchRates();
-  }, []);
+  }, [base]);
+
+  // pass the baseHandler function to DropDownMenu
+  const baseHandler = (base) => {
+    setBase(base);
+  };
 
   return (
     <View style={styles.container}>
@@ -32,7 +37,7 @@ export default function Rates() {
         ]}
       >
         <Text>Base currency: </Text>
-        <DropDownMenu />
+        <DropDownMenu baseHandler={baseHandler} />
       </View>
       <View style={styles.listContainer}>
         <FlatList
