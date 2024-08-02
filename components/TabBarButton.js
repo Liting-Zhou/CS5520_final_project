@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
-import { colors } from "../helpers/constants";
+import { colors } from "../helpers/Constants";
 
 export default function TabBarButton({ children, onPress }) {
   return (

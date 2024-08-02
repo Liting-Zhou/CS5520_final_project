@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
-import { currencies } from "../helpers/constants";
+import { currencies } from "../helpers/Constants";
 
 export default function DropDownMenu() {
   const [open, setOpen] = useState(false);

@@ -1,14 +1,28 @@
 import { StyleSheet, Text, View, FlatList } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import RateItem from "../components/RateItem";
+import { getSelectedCurrencies } from "../helpers/CachedLatestRates";
 
 export default function Rates() {
-  const rates = [
-    { currency: "USD", rate: 1.0 },
-    { currency: "EUR", rate: 0.85 },
-    { currency: "JPY", rate: 110.0 },
-  ];
+  const [base, setBase] = useState("CAD");
+  const [selectedCurrencies, setSelectedCurrencies] = useState([
+    "USD",
+    "EUR",
+    "JPY",
+  ]);
+  const [rates, setRates] = useState([]);
+
+  useEffect(() => {
+    const fetchRates = async () => {
+      const data = { base, selectedCurrencies };
+      const rates = await getSelectedCurrencies({ data });
+      setRates(rates);
+      // console.log("Rates.js 21, rates", rates);
+    };
+    fetchRates();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.baseContainer}>

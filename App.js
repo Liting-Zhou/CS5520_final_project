@@ -9,7 +9,7 @@ import LocationFinder from "./screens/LocationFinder";
 import Profile from "./screens/Profile";
 
 import TabBarButton from "./components/TabBarButton";
-import { colors, textSizes } from "./helpers/constants";
+import { colors, textSizes } from "./helpers/Constants";
 
 const Tab = createBottomTabNavigator();
 export default function App() {

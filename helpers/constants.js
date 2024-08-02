@@ -9,6 +9,8 @@ export const textSizes = {
   large: 20,
 };
 
+// this is copied from Postman, which gets from the external API (not free!)
+// this won't change often, hardcoding makes less API calls and app works faster
 export const currencies = [
   { value: "ANG", label: "ANG - Netherlands Antillean Guilder" },
   { value: "SVC", label: "SVC - Salvadoran Colón" },
