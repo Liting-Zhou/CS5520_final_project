@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, Text, View, FlatList, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import RateItem from "../components/RateItem";
@@ -25,7 +25,12 @@ export default function Rates() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.baseContainer}>
+      <View
+        style={[
+          styles.baseContainer,
+          Platform.OS === "ios" ? { zIndex: 1000 } : {},
+        ]}
+      >
         <Text>Base currency: </Text>
         <DropDownMenu />
       </View>

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
-import { currencies } from "../helpers/Constants";
+import { currencies, colors } from "../helpers/Constants";
 
 export default function DropDownMenu() {
   const [open, setOpen] = useState(false);
@@ -19,10 +19,15 @@ export default function DropDownMenu() {
       searchable={true}
       searchPlaceholder="Search..."
       style={styles.dropdown}
+      dropDownContainerStyle={styles.dropDownContainer}
     />
   );
 }
 
 const styles = StyleSheet.create({
   dropdown: { width: "70%" },
+  dropDownContainer: {
+    width: "70%",
+    backgroundColor: colors.white,
+  },
 });

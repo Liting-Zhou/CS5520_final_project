@@ -1,5 +1,3 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL =
@@ -9,7 +7,7 @@ const CACHE_KEY = "cachedRates";
 const CACHE_TIMESTAMP_KEY = "cachedRatesTimestamp";
 const CACHE_DURATION = 24 * 60 * 60 * 1000;
 
-// Cache the latest rates to save API calls,
+// Cache all the latest rates to save API calls,
 // fetch again only when it is cached over 24 hours
 const getLatestRates = async () => {
   try {
@@ -49,18 +47,19 @@ const getLatestRates = async () => {
   }
 };
 
+// return selected currencies with rates based on the base currency
 export const getSelectedCurrencies = async ({ data }) => {
   const allCurrencies = await getLatestRates();
   //   console.log("CachedLatestRates.js 54, allCurrencies", allCurrencies);
   const { base, selectedCurrencies } = data;
-  console.log("CachedLatestRates.js 56, data", data);
+  console.log("CachedLatestRates.js 55, data", data);
   const baseRate = allCurrencies[base];
-  console.log("CachedLatestRates.js 58, baseRate", baseRate);
+  console.log("CachedLatestRates.js 57, baseRate", baseRate);
   // find selected currencies from all currencies
   const selectedRates = selectedCurrencies.map((currency) => ({
     currency,
     rate: (allCurrencies[currency] / baseRate).toFixed(4),
   }));
-  console.log("CachedLatestRates.js 64, selectedRates", selectedRates);
+  console.log("CachedLatestRates.js 63, selectedRates", selectedRates);
   return selectedRates;
 };
