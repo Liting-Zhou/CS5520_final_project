@@ -2,12 +2,12 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import DeleteButton from "./DeleteButton";
 
-export default function RateItem({ item }) {
+export default function RateItem({ item, onPress }) {
   return (
     <View style={styles.container}>
       <Text style={styles.currency}>{item.currency}</Text>
       <Text style={styles.rate}>{item.rate}</Text>
-      <DeleteButton />
+      <DeleteButton onPress={onPress} />
     </View>
   );
 }

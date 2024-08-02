@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import React from "react";
 
-export default function DeleteButton() {
+export default function DeleteButton({ onPress }) {
   return (
-    <Pressable>
+    <Pressable onPress={onPress}>
       <Text>X</Text>
     </Pressable>
   );

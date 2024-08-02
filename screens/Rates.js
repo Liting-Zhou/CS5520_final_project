@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, FlatList, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import RateItem from "../components/RateItem";
-import { getSelectedCurrencies } from "../helpers/CachedLatestRates";
+import { getSelectedCurrencies } from "../helpers/RatesHelper";
 
 export default function Rates() {
   const [base, setBase] = useState("CAD");
@@ -28,6 +28,12 @@ export default function Rates() {
     setBase(base);
   };
 
+  // when the user presses the delete button, remove the currency from the list
+  const handleDelete = (currency) => {
+    const newRates = rates.filter((rate) => rate.currency !== currency);
+    setRates(newRates);
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -42,7 +48,9 @@ export default function Rates() {
       <View style={styles.listContainer}>
         <FlatList
           data={rates}
-          renderItem={({ item }) => <RateItem item={item} />}
+          renderItem={({ item }) => (
+            <RateItem item={item} onPress={() => handleDelete(item.currency)} />
+          )}
           contentContainerStyle={styles.flatListContent}
         />
       </View>
