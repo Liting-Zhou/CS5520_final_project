@@ -1,12 +1,16 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { currencies, colors } from "../helpers/Constants";
 
-export default function DropDownMenu({ baseHandler }) {
+export default function DropDownMenu({ base, baseHandler }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("CAD");
   const [items, setItems] = useState(currencies);
+
+  useEffect(() => {
+    setValue(base);
+  }, [base]);
 
   return (
     <DropDownPicker

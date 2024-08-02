@@ -9,10 +9,14 @@ import LocationFinder from "./screens/LocationFinder";
 import Profile from "./screens/Profile";
 
 import TabBarButton from "./components/TabBarButton";
+import AddButton from "./components/AddButton";
 import { colors, textSizes } from "./helpers/Constants";
 
 const Tab = createBottomTabNavigator();
 export default function App() {
+  const handleAdd = () => {
+    console.log("Add button pressed");
+  };
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -24,7 +28,11 @@ export default function App() {
         <Tab.Screen
           name="Rates"
           component={Rates}
-          options={{ tabBarLabel: "Rates", headerTitle: "Recent Rates" }}
+          options={{
+            tabBarLabel: "Rates",
+            headerTitle: "Recent Rates",
+            headerRight: () => <AddButton onPress={handleAdd} />,
+          }}
         />
         <Tab.Screen name="Assets" component={Assets} />
         <Tab.Screen

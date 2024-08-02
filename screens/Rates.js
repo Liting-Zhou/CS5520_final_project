@@ -3,14 +3,14 @@ import React, { useEffect, useState } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import RateItem from "../components/RateItem";
 import { getSelectedCurrencies } from "../helpers/RatesHelper";
+import RegularButton from "../components/RegularButton";
 
 export default function Rates() {
-  const [base, setBase] = useState("CAD");
-  const [selectedCurrencies, setSelectedCurrencies] = useState([
-    "USD",
-    "EUR",
-    "JPY",
-  ]);
+  const defaultCurrencies = ["USD", "EUR", "JPY"];
+  const defaultBase = "CAD";
+  const [base, setBase] = useState(defaultBase);
+  const [selectedCurrencies, setSelectedCurrencies] =
+    useState(defaultCurrencies);
   const [rates, setRates] = useState([]);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function Rates() {
       // console.log("Rates.js 21, rates", rates);
     };
     fetchRates();
-  }, [base]);
+  }, [base, selectedCurrencies]);
 
   // pass the baseHandler function to DropDownMenu
   const baseHandler = (base) => {
@@ -34,6 +34,16 @@ export default function Rates() {
     setRates(newRates);
   };
 
+  // reset the rates to the default rates
+  const handleReset = () => {
+    setBase(defaultBase);
+    setSelectedCurrencies(defaultCurrencies);
+  };
+
+  const handleSave = () => {
+    console.log("Saving rates");
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -43,7 +53,7 @@ export default function Rates() {
         ]}
       >
         <Text>Base currency: </Text>
-        <DropDownMenu baseHandler={baseHandler} />
+        <DropDownMenu baseHandler={baseHandler} base={base} />
       </View>
       <View style={styles.listContainer}>
         <FlatList
@@ -53,6 +63,14 @@ export default function Rates() {
           )}
           contentContainerStyle={styles.flatListContent}
         />
+      </View>
+      <View style={styles.buttonContainer}>
+        <RegularButton onPress={handleReset}>
+          <Text>Reset</Text>
+        </RegularButton>
+        <RegularButton onPress={handleSave}>
+          <Text>Save</Text>
+        </RegularButton>
       </View>
     </View>
   );
@@ -81,5 +99,12 @@ const styles = StyleSheet.create({
     // width: "100%",
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  buttonContainer: {
+    flex: 1,
+    flexDirection: "row",
+    width: "80%",
+    justifyContent: "space-around",
   },
 });
