@@ -21,7 +21,11 @@ export default function App() {
           tabBarStyle: {},
         }}
       >
-        <Tab.Screen name="Rates" component={Rates} />
+        <Tab.Screen
+          name="Rates"
+          component={Rates}
+          options={{ tabBarLabel: "Rates", headerTitle: "Recent Rates" }}
+        />
         <Tab.Screen name="Assets" component={Assets} />
         <Tab.Screen
           name="Conversion"
