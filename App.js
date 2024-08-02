@@ -8,6 +8,9 @@ import Assets from "./screens/Assets";
 import LocationFinder from "./screens/LocationFinder";
 import Profile from "./screens/Profile";
 
+import TabBarButton from "./components/TabBarButton";
+import colors from "./helpers/colors";
+
 const Tab = createBottomTabNavigator();
 export default function App() {
   return (
@@ -20,7 +23,17 @@ export default function App() {
       >
         <Tab.Screen name="Rates" component={Rates} />
         <Tab.Screen name="Assets" component={Assets} />
-        <Tab.Screen name="Conversion" component={Conversion} />
+        <Tab.Screen
+          name="Conversion"
+          component={Conversion}
+          options={({ navigation }) => ({
+            tabBarButton: () => (
+              <TabBarButton onPress={() => navigation.navigate("Conversion")}>
+                <Text style={styles.buttonText}>Convert</Text>
+              </TabBarButton>
+            ),
+          })}
+        />
         <Tab.Screen name="Finder" component={LocationFinder} />
         <Tab.Screen name="Profile" component={Profile} />
       </Tab.Navigator>
@@ -31,8 +44,12 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
+  },
+  buttonText: {
+    color: colors.white,
+    fontSize: 12,
   },
 });
