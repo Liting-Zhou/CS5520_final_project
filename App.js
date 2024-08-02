@@ -9,7 +9,7 @@ import LocationFinder from "./screens/LocationFinder";
 import Profile from "./screens/Profile";
 
 import TabBarButton from "./components/TabBarButton";
-import colors from "./helpers/colors";
+import { colors, textSizes } from "./helpers/constants";
 
 const Tab = createBottomTabNavigator();
 export default function App() {
@@ -50,6 +50,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.white,
-    fontSize: 12,
+    fontSize: textSizes.small,
   },
 });
