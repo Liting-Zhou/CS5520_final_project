@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
+import React, { useState } from "react";
 
 import Rates from "./screens/Rates";
 import Conversion from "./screens/Conversion";
@@ -14,8 +15,9 @@ import { colors, textSizes } from "./helpers/Constants";
 
 const Tab = createBottomTabNavigator();
 export default function App() {
+  const [addMode, setAddMode] = useState(false);
   const handleAdd = () => {
-    console.log("Add button pressed");
+    setAddMode(true);
   };
   return (
     <NavigationContainer>
@@ -31,9 +33,8 @@ export default function App() {
           options={{
             tabBarLabel: "Rates",
             headerTitle: "Recent Rates",
-            headerRight: () => <AddButton onPress={handleAdd} />,
           }}
-        />
+        ></Tab.Screen>
         <Tab.Screen name="Assets" component={Assets} />
         <Tab.Screen
           name="Conversion"

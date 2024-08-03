@@ -1,17 +1,21 @@
 import { StyleSheet, Text, View, FlatList, Platform } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 import DropDownMenu from "../components/DropDownMenu";
 import RateItem from "../components/RateItem";
 import { getSelectedCurrencies } from "../helpers/RatesHelper";
 import RegularButton from "../components/RegularButton";
+import AddButton from "../components/AddButton";
 
 export default function Rates() {
+  const navigation = useNavigation();
   const defaultCurrencies = ["USD", "EUR", "JPY"];
   const defaultBase = "CAD";
   const [base, setBase] = useState(defaultBase);
   const [selectedCurrencies, setSelectedCurrencies] =
     useState(defaultCurrencies);
   const [rates, setRates] = useState([]);
+  const [addMode, setAddMode] = useState(false);
 
   useEffect(() => {
     const fetchRates = async () => {
@@ -23,7 +27,18 @@ export default function Rates() {
     fetchRates();
   }, [base, selectedCurrencies]);
 
-  // pass the baseHandler function to DropDownMenu
+  // headerRight button
+  // if pressed, setAddMode to true
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <AddButton onPress={handleAdd} />,
+    });
+  }, [navigation]);
+
+  const handleAdd = () => {
+    setAddMode(true);
+  };
+
   const baseHandler = (base) => {
     setBase(base);
   };
@@ -38,10 +53,19 @@ export default function Rates() {
   const handleReset = () => {
     setBase(defaultBase);
     setSelectedCurrencies(defaultCurrencies);
+    // hide the add dropdown
+    setAddMode(false);
   };
 
+  // todo: save the rates to the database
   const handleSave = () => {
     console.log("Saving rates");
+  };
+
+  // add the currency to the list after select and close the add mode
+  const addCurrencyAfterSelect = (currency) => {
+    setSelectedCurrencies([...selectedCurrencies, currency]);
+    setAddMode(false);
   };
 
   return (
@@ -53,7 +77,7 @@ export default function Rates() {
         ]}
       >
         <Text>Base currency: </Text>
-        <DropDownMenu baseHandler={baseHandler} base={base} />
+        <DropDownMenu onSelect={baseHandler} base={base} />
       </View>
       <View style={styles.listContainer}>
         <FlatList
@@ -64,6 +88,11 @@ export default function Rates() {
           contentContainerStyle={styles.flatListContent}
         />
       </View>
+      {addMode && (
+        <View style={styles.addContainer}>
+          <DropDownMenu onSelect={addCurrencyAfterSelect} />
+        </View>
+      )}
       <View style={styles.buttonContainer}>
         <RegularButton onPress={handleReset}>Reset</RegularButton>
         <RegularButton onPress={handleSave}>Save</RegularButton>
@@ -95,6 +124,10 @@ const styles = StyleSheet.create({
     // width: "100%",
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  addContainer: {
+    flex: 1,
   },
 
   buttonContainer: {
