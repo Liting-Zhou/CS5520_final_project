@@ -95,11 +95,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
   email: {
-    fontSize: 18,
+    fontSize: 14,
     color: 'gray',
   },
   modalContainer: {
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   saveButton: {
-    backgroundColor: 'darkmagenta',
+    backgroundColor: 'gray',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
