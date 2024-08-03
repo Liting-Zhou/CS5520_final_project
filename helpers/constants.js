@@ -1,6 +1,8 @@
 export const colors = {
   white: "#fff",
   tabBarbutton: "skyblue",
+  buttonBackground: "skyblue",
+  buttonTextColor: "#fff",
 };
 
 export const textSizes = {

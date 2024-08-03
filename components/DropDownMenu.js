@@ -5,9 +5,10 @@ import { currencies, colors } from "../helpers/Constants";
 
 export default function DropDownMenu({ base, baseHandler }) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("CAD");
+  const [value, setValue] = useState(base);
   const [items, setItems] = useState(currencies);
 
+  //when reset button is pressed, reset the base currency to the default
   useEffect(() => {
     setValue(base);
   }, [base]);

@@ -65,12 +65,8 @@ export default function Rates() {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <RegularButton onPress={handleReset}>
-          <Text>Reset</Text>
-        </RegularButton>
-        <RegularButton onPress={handleSave}>
-          <Text>Save</Text>
-        </RegularButton>
+        <RegularButton onPress={handleReset}>Reset</RegularButton>
+        <RegularButton onPress={handleSave}>Save</RegularButton>
       </View>
     </View>
   );
