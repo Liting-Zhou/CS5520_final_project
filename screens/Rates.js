@@ -17,6 +17,7 @@ export default function Rates() {
   const [rates, setRates] = useState([]);
   const [addMode, setAddMode] = useState(false);
 
+  // update whenever the base currency or the selected currencies change
   useEffect(() => {
     const fetchRates = async () => {
       const data = { base, selectedCurrencies };
@@ -35,10 +36,12 @@ export default function Rates() {
     });
   }, [navigation]);
 
+  // when the user presses the headerRight add button, show the add dropdown
   const handleAdd = () => {
     setAddMode(true);
   };
 
+  // when the user selects a base currency, update the base
   const baseHandler = (base) => {
     setBase(base);
   };
@@ -53,7 +56,7 @@ export default function Rates() {
   const handleReset = () => {
     setBase(defaultBase);
     setSelectedCurrencies(defaultCurrencies);
-    // hide the add dropdown
+    // and hide the add dropdown
     setAddMode(false);
   };
 
@@ -62,7 +65,7 @@ export default function Rates() {
     console.log("Saving rates");
   };
 
-  // add the currency to the list after select and close the add mode
+  // add the currency to the list after select and hide the add dropdown
   const addCurrencyAfterSelect = (currency) => {
     setSelectedCurrencies([...selectedCurrencies, currency]);
     setAddMode(false);
@@ -117,11 +120,8 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 4,
     width: "80%",
-    // alignItems: "center",
-    // justifyContent: "center",
   },
   flatListContent: {
-    // width: "100%",
     alignItems: "center",
     justifyContent: "center",
   },

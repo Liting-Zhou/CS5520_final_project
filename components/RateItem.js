@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import DeleteButton from "./DeleteButton";
 
+// the item has a currency and a rate, and a delete button
 export default function RateItem({ item, onPress }) {
   return (
     <View style={styles.container}>

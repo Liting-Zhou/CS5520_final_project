@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { colors } from "../helpers/Constants";
 
+// a special button for the tab bar
 export default function TabBarButton({ children, onPress }) {
   return (
     <Pressable style={styles.button} onPress={onPress}>

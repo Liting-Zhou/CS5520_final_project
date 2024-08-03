@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import React from "react";
 import { colors } from "../helpers/Constants";
 
+// a button for reset, save, submit, etc.
 export default function RegularButton({ children, onPress }) {
   return (
     <Pressable onPress={onPress} style={styles.button}>

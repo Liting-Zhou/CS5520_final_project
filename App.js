@@ -10,15 +10,10 @@ import LocationFinder from "./screens/LocationFinder";
 import Profile from "./screens/Profile";
 
 import TabBarButton from "./components/TabBarButton";
-import AddButton from "./components/AddButton";
 import { colors, textSizes } from "./helpers/Constants";
 
 const Tab = createBottomTabNavigator();
 export default function App() {
-  const [addMode, setAddMode] = useState(false);
-  const handleAdd = () => {
-    setAddMode(true);
-  };
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -34,7 +29,7 @@ export default function App() {
             tabBarLabel: "Rates",
             headerTitle: "Recent Rates",
           }}
-        ></Tab.Screen>
+        />
         <Tab.Screen name="Assets" component={Assets} />
         <Tab.Screen
           name="Conversion"
