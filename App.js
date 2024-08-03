@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
+import React, { useState } from "react";
 
 import Rates from "./screens/Rates";
 import Conversion from "./screens/Conversion";
@@ -9,7 +10,7 @@ import LocationFinder from "./screens/LocationFinder";
 import Profile from "./screens/Profile";
 
 import TabBarButton from "./components/TabBarButton";
-import { colors, textSizes } from "./helpers/constants";
+import { colors, textSizes } from "./helpers/Constants";
 
 const Tab = createBottomTabNavigator();
 export default function App() {
@@ -21,7 +22,14 @@ export default function App() {
           tabBarStyle: {},
         }}
       >
-        <Tab.Screen name="Rates" component={Rates} />
+        <Tab.Screen
+          name="Rates"
+          component={Rates}
+          options={{
+            tabBarLabel: "Rates",
+            headerTitle: "Recent Rates",
+          }}
+        />
         <Tab.Screen name="Assets" component={Assets} />
         <Tab.Screen
           name="Conversion"

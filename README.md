@@ -2,6 +2,9 @@
 
 ### 1. Data model (at least 3 collections)
 
+Collections: users  
+Subcollections: myRates, myAssets
+
 ```
 users:
     user1:
