@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View, Button } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import RegularButton from "../components/RegularButton";
+import TextInputBox from "../components/TextInputBox";
 
 export default function AddTransaction() {
   const [description, setDescription] = useState('');
@@ -18,25 +19,25 @@ export default function AddTransaction() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Description</Text>
-      <TextInput
-        style={styles.input}
+      <TextInputBox
+        label="Description"
         value={description}
         onChangeText={setDescription}
+        placeholder="Enter description"
       />
-        <Text style={styles.label}>Date</Text>
-        <TextInput
-          style={styles.input}
-          value={date}
-          onChangeText={setDate}
-        />
-      <Text style={styles.label}>Location</Text>
-      <TextInput
-        style={styles.input}
+        <TextInputBox
+        label="Date"
+        value={date}
+        onChangeText={setDate}
+        placeholder="Enter date"
+      />
+      <TextInputBox
+        label="Location"
         value={location}
         onChangeText={setLocation}
+        placeholder="Enter location"
       />
-      <RegularButton  onPress={handleAddTransaction}>Add Transaction</RegularButton>
+      <RegularButton onPress={handleAddTransaction}>Add Transaction</RegularButton>
     </View>
   );
 }
@@ -46,17 +47,5 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 15,
-    paddingHorizontal: 10,
   },
 });
