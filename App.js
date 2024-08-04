@@ -29,7 +29,7 @@ function ProfileStackNavigator() {
         name="ProfileDetail" 
         component={ProfileDetail} 
         options={{ 
-          title: 'Profile Details', 
+          title: 'Edit Profile', 
           headerBackTitle: 'Back' 
         }} 
       />
@@ -70,7 +70,7 @@ export default function App() {
         <Tab.Screen 
           name="Profile" 
           component={ProfileStackNavigator} 
-          options={{ headerShown: false }}  // Hide the header for the Profile tab
+          options={{ headerShown: false }} 
         />
       </Tab.Navigator>
     </NavigationContainer>
