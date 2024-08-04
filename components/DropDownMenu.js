@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { currencies, colors } from "../helpers/Constants";
 
-export default function DropDownMenu({ base, onSelect }) {
+export default function DropDownMenu({ base, onSelect, style }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(base);
   const [items, setItems] = useState(currencies);
@@ -23,8 +23,8 @@ export default function DropDownMenu({ base, onSelect }) {
       setItems={setItems}
       searchable={true}
       searchPlaceholder="Search..."
-      style={styles.dropdown}
-      dropDownContainerStyle={styles.dropDownContainer}
+      style={[styles.dropdown, style]}
+      dropDownContainerStyle={[styles.dropDownContainer, style]}
       onChangeValue={(newValue) => onSelect(newValue)}
     />
   );
