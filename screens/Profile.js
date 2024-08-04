@@ -31,7 +31,7 @@ export default function Profile() {
       </ProfilePressable>
       <ProfilePressable onPress={() => navigation.navigate('TransactionHistory')}>
         <View style={styles.transactionContainer}>
-        <MaterialIcons name="currency-exchange" size={20} color="black" />
+        <MaterialIcons name="currency-exchange" size={20} color={colors.buttonBackground} />
           <Text style={styles.historyText}>Exchange Transaction History</Text>
         </View>
       </ProfilePressable>
