@@ -7,12 +7,15 @@ import RegularButton from '../components/RegularButton';
 export default function ProfileDetail() {
   const navigation = useNavigation();
   const route = useRoute();
+  // get the name, email, photo, and updateProfile function from the route params
   const { name, email, photo, updateProfile } = route.params;
 
   const [newName, setNewName] = useState(name);
   const [newEmail, setNewEmail] = useState(email);
   const [newPhoto, setNewPhoto] = useState(photo);
 
+
+  // this function is called when the user presses the photo to change it
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -26,6 +29,7 @@ export default function ProfileDetail() {
     }
   };
 
+  // this function is called when the user presses the save button
   const handleSave = () => {
     updateProfile(newName, newEmail, newPhoto);
     navigation.goBack();

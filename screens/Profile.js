@@ -10,6 +10,7 @@ export default function Profile() {
   const [email, setEmail] = useState('username@example.com');
   const navigation = useNavigation();
 
+  // this function is called when the user updates the profile
   const updateProfile = (newName, newEmail, newPhoto) => {
     setName(newName);
     setEmail(newEmail);

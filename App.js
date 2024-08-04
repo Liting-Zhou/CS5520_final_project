@@ -17,6 +17,7 @@ import { colors, textSizes } from "./helpers/Constants";
 const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
 
+// ProfileStackNavigator is a stack navigator for the Profile screen
 function ProfileStackNavigator() {
   return (
     <ProfileStack.Navigator initialRouteName="ProfileScreen">
@@ -25,6 +26,7 @@ function ProfileStackNavigator() {
         component={Profile} 
         options={{ title: 'Profile' }}
       />
+      {/* ProfileDetail is a screen allow users to edit the Profile */}
       <ProfileStack.Screen 
         name="ProfileDetail" 
         component={ProfileDetail} 

@@ -4,7 +4,13 @@ import { FontAwesome } from '@expo/vector-icons';
 
 const ProfilePressable = ({ onPress, children }) => {
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable 
+      onPress={onPress} 
+      style={({ pressed }) => [
+        styles.container,
+        pressed ? styles.pressed : null
+      ]}
+    >
       <View style={styles.content}>
         {children}
       </View>
@@ -27,6 +33,9 @@ const styles = StyleSheet.create({
     elevation: 3,
     width: '90%',
     marginVertical: 10,
+  },
+  pressed: {
+    backgroundColor: '#e0e0e0',
   },
   content: {
     flex: 1,
