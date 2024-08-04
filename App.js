@@ -1,18 +1,44 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
-import React, { useState } from "react";
+import { createStackNavigator } from '@react-navigation/stack';
+import React from "react";
 
 import Rates from "./screens/Rates";
 import Conversion from "./screens/Conversion";
 import Assets from "./screens/Assets";
 import LocationFinder from "./screens/LocationFinder";
 import Profile from "./screens/Profile";
+import ProfileDetail from './screens/ProfileDetail';
 
 import TabBarButton from "./components/TabBarButton";
 import { colors, textSizes } from "./helpers/Constants";
 
 const Tab = createBottomTabNavigator();
+const ProfileStack = createStackNavigator();
+
+// ProfileStackNavigator is a stack navigator for the Profile screen
+function ProfileStackNavigator() {
+  return (
+    <ProfileStack.Navigator initialRouteName="ProfileScreen">
+      <ProfileStack.Screen 
+        name="ProfileScreen" 
+        component={Profile} 
+        options={{ title: 'Profile' }}
+      />
+      {/* ProfileDetail is a screen allow users to edit the Profile */}
+      <ProfileStack.Screen 
+        name="ProfileDetail" 
+        component={ProfileDetail} 
+        options={{ 
+          title: 'Edit Profile', 
+          headerBackTitle: 'Back' 
+        }} 
+      />
+    </ProfileStack.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -43,7 +69,11 @@ export default function App() {
           })}
         />
         <Tab.Screen name="Finder" component={LocationFinder} />
-        <Tab.Screen name="Profile" component={Profile} />
+        <Tab.Screen 
+          name="Profile" 
+          component={ProfileStackNavigator} 
+          options={{ headerShown: false }} 
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
