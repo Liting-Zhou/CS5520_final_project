@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ProfilePressable from '../components/ProfilePressable';
 import defaultUserPhoto from '../assets/default_user_photo.jpg';
+import { colors, textSizes } from "../helpers/Constants";
 
 export default function Profile() {
   const [photo, setPhoto] = useState(null);
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   photo: {
     width: 70,
@@ -47,12 +48,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 20,
+    fontSize: textSizes.large,
     fontWeight: 'bold',
     marginBottom: 5,
   },
   email: {
-    fontSize: 14,
-    color: 'gray',
+    fontSize: textSizes.medium,
+    color: colors.gray,
   },
 });

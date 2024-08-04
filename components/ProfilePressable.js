@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import { FontAwesome } from '@expo/vector-icons';
+import { colors, textSizes } from "../helpers/Constants";
 
 const ProfilePressable = ({ onPress, children }) => {
   return (
@@ -14,7 +15,7 @@ const ProfilePressable = ({ onPress, children }) => {
       <View style={styles.content}>
         {children}
       </View>
-      <FontAwesome name="chevron-right" size={12} color="gray" style={styles.chevron} />
+      <FontAwesome name="chevron-right" size={textSizes.small} color={colors.gray} style={styles.chevron} />
     </Pressable>
   );
 };
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: colors.profilePressableBackground,
     padding: 20,
     borderRadius: 10,
     shadowColor: '#000',
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   pressed: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: colors.profilePressableFeedback,
   },
   content: {
     flex: 1,
