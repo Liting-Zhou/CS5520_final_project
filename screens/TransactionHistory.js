@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import AddButton from "../components/AddButton";
 import { useNavigation } from '@react-navigation/native';
 
@@ -10,7 +10,7 @@ export default function TransactionHistory() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <AddButton onPress={() => console.log("Add button pressed")} />
+        <AddButton onPress={() => navigation.navigate('AddTransaction')} />
       ),
     });
   }, [navigation]);

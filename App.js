@@ -11,6 +11,7 @@ import LocationFinder from "./screens/LocationFinder";
 import Profile from "./screens/Profile";
 import ProfileDetail from './screens/ProfileDetail';
 import TransactionHistory from "./screens/TransactionHistory";
+import AddTransaction from "./screens/AddTransaction";
 
 import TabBarButton from "./components/TabBarButton";
 import { colors, textSizes } from "./helpers/Constants";
@@ -43,7 +44,14 @@ function ProfileStackNavigator() {
           title: 'Transaction History', 
           headerBackTitle: 'Back' 
         }} 
-        
+      />
+        <ProfileStack.Screen 
+        name="AddTransaction" 
+        component={AddTransaction} 
+        options={{ 
+          title: 'Add Transaction', 
+          headerBackTitle: 'Back' 
+        }} 
       />
     </ProfileStack.Navigator>
   );
