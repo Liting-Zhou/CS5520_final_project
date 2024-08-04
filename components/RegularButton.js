@@ -1,11 +1,16 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, Pressable } from "react-native";
 import React from "react";
 import { colors } from "../helpers/Constants";
 
-// a button for reset, save, submit, etc.
 export default function RegularButton({ children, onPress }) {
   return (
-    <Pressable onPress={onPress} style={styles.button}>
+    <Pressable 
+      onPress={onPress} 
+      style={({ pressed }) => [
+        styles.button,
+        pressed ? styles.pressed : null
+      ]}
+    >
       <Text style={styles.buttonText}>{children}</Text>
     </Pressable>
   );
@@ -18,6 +23,10 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     height: 40,
+    justifyContent: 'center',
+  },
+  pressed: {
+    backgroundColor: colors.buttonPressedBackground, 
   },
   buttonText: {
     color: colors.buttonTextColor,
