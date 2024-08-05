@@ -48,8 +48,7 @@ export default function TransactionHistory() {
         fromAmount,
         toAmount
       };
-
-      if (id) {
+      if (id && transactions.some(transaction => transaction.id === id)) {
         // Edit existing transaction
         setTransactions((prevTransactions) =>
           prevTransactions.map((transaction) =>
@@ -60,7 +59,7 @@ export default function TransactionHistory() {
         // Add new transaction
         setTransactions((prevTransactions) => [
           ...prevTransactions,
-          { ...newTransaction, id: Math.random().toString() }
+          newTransaction
         ]);
       }
     }
