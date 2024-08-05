@@ -6,10 +6,10 @@ import RegularButton from "../components/RegularButton";
 import { convert } from "../helpers/RatesHelper";
 
 export default function Conversion() {
-  const [convertedAmount, setConvertedAmount] = useState(0);
+  const [convertedAmount, setConvertedAmount] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
 
   // select the currency to convert from
   const onSelectFrom = (rate) => {
@@ -31,6 +31,7 @@ export default function Conversion() {
 
   // when the user presses the submit button, call the convert function to get the result
   const handleSubmit = async () => {
+    //todo, add controls for empty fields and invalid input
     const result = await convert({ data: { from, to, amount } });
     setConvertedAmount(result);
   };
@@ -62,11 +63,13 @@ export default function Conversion() {
       <View style={styles.itemContainer}>
         <RegularButton onPress={handleSubmit}>Submit</RegularButton>
       </View>
-      <View style={styles.itemContainer}>
-        <Text>
-          Result: {convertedAmount} {to}
-        </Text>
-      </View>
+      {convertedAmount && (
+        <View style={styles.itemContainer}>
+          <Text>
+            Result: {convertedAmount} {to}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
