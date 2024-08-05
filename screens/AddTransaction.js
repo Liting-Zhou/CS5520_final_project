@@ -28,9 +28,11 @@ export default function AddTransaction() {
       Alert.alert("Error", "All fields are required");
       return;
     }
+
+    const formattedDate = date.toISOString();
     
-    console.log("Transaction added:", { description, location, date });
-    navigation.goBack();
+    console.log("Transaction added:", { description, location, date: formattedDate });
+    navigation.navigate('TransactionHistory', { description, location, date: formattedDate });
   };
 
   return (
@@ -74,6 +76,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   inputContainer: {
-    marginBottom: 15,
+    marginBottom: 15, 
   },
 });
