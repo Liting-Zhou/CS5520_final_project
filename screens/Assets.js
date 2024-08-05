@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View, Platform, FlatList } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
+import { calculateTotal } from "../helpers/RatesHelper";
 
 export default function Assets() {
   const defaultBase = "CAD";
@@ -12,6 +13,16 @@ export default function Assets() {
   ];
   const [base, setBase] = useState(defaultBase);
   const [assets, setAssets] = useState(defaultAssets);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const fetchTotal = async () => {
+      const data = { base, assets };
+      const total = await calculateTotal({ data });
+      setTotal(total);
+    };
+    fetchTotal();
+  }, [assets]);
 
   const baseHandler = (base) => {
     setBase(base);
@@ -21,15 +32,15 @@ export default function Assets() {
     setAssets(defaultAssets);
     // and hide the add dropdown
     // setAddMode(false);
-    console.log("Assets.js 20, reset");
+    // console.log("Assets.js 35, reset");
   };
   const handleSave = () => {
-    console.log("Assets.js 23, save");
+    console.log("Assets.js 38, save");
   };
   const handleDelete = (currency) => {
     const newAssets = assets.filter((asset) => asset.currency !== currency);
     setAssets(newAssets);
-    console.log("Assets.js 28, delete", currency);
+    // console.log("Assets.js 43, delete", currency);
   };
 
   return (
@@ -55,7 +66,11 @@ export default function Assets() {
           )}
           contentContainerStyle={styles.flatListContent}
         />
+        <Text>
+          Total: {total} {base}
+        </Text>
       </View>
+
       <View style={styles.buttonContainer}>
         <RegularButton onPress={handleReset}>Reset</RegularButton>
         <RegularButton onPress={handleSave}>Save</RegularButton>
@@ -81,10 +96,7 @@ const styles = StyleSheet.create({
     flex: 4,
     width: "80%",
   },
-  // flatListContent: {
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  // },
+  flatListContent: {},
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
