@@ -2,18 +2,28 @@ import { StyleSheet, Text, View, Platform, FlatList } from "react-native";
 import React, { useState } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import RegularButton from "../components/RegularButton";
+import AssetItem from "../components/AssetItem";
 
 export default function Assets() {
-  const [base, setBase] = useState("CAD");
+  const defaultBase = "CAD";
+  const defaultAssets = [
+    { currency: "USD", amount: "100" },
+    { currency: "CNY", amount: "200" },
+  ];
+  const [base, setBase] = useState(defaultBase);
+  const [assets, setAssets] = useState(defaultAssets);
 
   const baseHandler = (base) => {
     setBase(base);
   };
   const handleReset = () => {
-    console.log("Assets.js 13, reset");
+    console.log("Assets.js 14, reset");
   };
   const handleSave = () => {
-    console.log("Assets.js 16, save");
+    console.log("Assets.js 17, save");
+  };
+  const handleDelete = (currency) => {
+    console.log("Assets.js 20, delete", currency);
   };
 
   return (
@@ -30,9 +40,12 @@ export default function Assets() {
       <View style={styles.listContainer}>
         <Text>Your currencies: </Text>
         <FlatList
-          data={rates}
+          data={assets}
           renderItem={({ item }) => (
-            <RateItem item={item} onPress={() => handleDelete(item.currency)} />
+            <AssetItem
+              item={item}
+              onPress={() => handleDelete(item.currency)}
+            />
           )}
           contentContainerStyle={styles.flatListContent}
         />
@@ -62,10 +75,10 @@ const styles = StyleSheet.create({
     flex: 4,
     width: "80%",
   },
-  flatListContent: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  // flatListContent: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",

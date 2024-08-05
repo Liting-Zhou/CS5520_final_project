@@ -25,6 +25,9 @@ export default function DropDownMenu({ base, onSelect, style }) {
       searchPlaceholder="Search..."
       style={[styles.dropdown, style]}
       dropDownContainerStyle={[styles.dropDownContainer, style]}
+      labelProps={{
+        numberOfLines: 1,
+      }}
       onChangeValue={(newValue) => onSelect(newValue)}
     />
   );
