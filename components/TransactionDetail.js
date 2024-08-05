@@ -11,17 +11,22 @@ export default function TransactionDetail({ transaction }) {
   };
 
   return (
-    <Pressable onPress={handlePress}>
-      <View style={styles.container}>
-        <View style={styles.leftColumn}>
-          <Text style={styles.description}>{transaction.description}</Text>
-          <Text style={styles.date}>{new Date(transaction.date).toLocaleDateString()}</Text>
-          <Text style={styles.location}>{transaction.location}</Text>
-        </View>
-        <View style={styles.rightColumn}>
-          <Text style={styles.currency}>From:  {transaction.fromAmount} {transaction.fromCurrency}</Text>
-          <Text style={styles.currency}>To: {transaction.toAmount} {transaction.toCurrency}</Text>
-        </View>
+    <Pressable
+      onPress={handlePress}
+      style={({ pressed }) => [
+        styles.container,
+        { backgroundColor: pressed ? colors.lightGray : colors.white }
+      ]}
+      android_ripple={{ color: colors.lightGray }}
+    >
+      <View style={styles.leftColumn}>
+        <Text style={styles.description}>{transaction.description}</Text>
+        <Text style={styles.date}>{new Date(transaction.date).toLocaleDateString()}</Text>
+        <Text style={styles.location}>{transaction.location}</Text>
+      </View>
+      <View style={styles.rightColumn}>
+        <Text style={styles.currency}>From: {transaction.fromAmount} {transaction.fromCurrency}</Text>
+        <Text style={styles.currency}>To: {transaction.toAmount} {transaction.toCurrency}</Text>
       </View>
     </Pressable>
   );
