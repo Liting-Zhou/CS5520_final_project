@@ -8,8 +8,8 @@ import { calculateTotal } from "../helpers/RatesHelper";
 export default function Assets() {
   const defaultBase = "CAD";
   const defaultAssets = [
-    { currency: "USD", amount: "100" },
-    { currency: "CNY", amount: "200" },
+    { currency: "USD", amount: "100", id: 1 },
+    { currency: "CNY", amount: "200", id: 2 },
   ];
   const [base, setBase] = useState(defaultBase);
   const [assets, setAssets] = useState(defaultAssets);
@@ -22,7 +22,7 @@ export default function Assets() {
       setTotal(total);
     };
     fetchTotal();
-  }, [assets]);
+  }, [assets, setAssets, base]);
 
   const baseHandler = (base) => {
     setBase(base);
@@ -43,6 +43,16 @@ export default function Assets() {
     // console.log("Assets.js 43, delete", currency);
   };
 
+  //when the user changes the currency of an asset, update the currency
+  const handleChangeCurrency = ({ id, newCurrency }) => {
+    setAssets((prevAssets) =>
+      prevAssets.map((asset) =>
+        asset.id === id ? { ...asset, currency: newCurrency } : asset
+      )
+    );
+    // console.log("Assets.js 53, change currency", newCurrency);
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -58,10 +68,13 @@ export default function Assets() {
         <Text>Your currencies: </Text>
         <FlatList
           data={assets}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <AssetItem
+              id={item.id}
               item={item}
-              onPress={() => handleDelete(item.currency)}
+              onDelete={() => handleDelete(item.currency)}
+              onChangeCurrency={handleChangeCurrency}
             />
           )}
           contentContainerStyle={styles.flatListContent}

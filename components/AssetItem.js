@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Platform } from "react-native";
 import React from "react";
 
 import DropDownMenu from "./DropDownMenu";
@@ -6,20 +6,20 @@ import Input from "./Input";
 import DeleteButton from "./DeleteButton";
 
 // the item has a currency and an amount, and a delete button
-export default function AssetItem({ item, onPress }) {
+export default function AssetItem({ id, item, onDelete, onChangeCurrency }) {
   const { currency, amount } = item;
-
-  const handleChangeValue = (value) => {
-    console.log("AssetItem.js 13, value", value);
+  const onSelect = (newCurrency) => {
+    onChangeCurrency({ id, newCurrency });
   };
+
   return (
     <View style={styles.container}>
-      <DeleteButton onPress={onPress} style={styles.deleteButton} />
+      <DeleteButton onPress={onDelete} style={styles.deleteButton} />
       <Input defaultValue={amount} style={styles.input} />
       <DropDownMenu
         base={currency}
-        style={styles.dropdown}
-        onSelect={handleChangeValue}
+        style={[styles.dropdown]}
+        onSelect={onSelect}
       />
     </View>
   );
