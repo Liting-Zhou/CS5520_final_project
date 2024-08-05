@@ -9,7 +9,16 @@ export default function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
   const navigation = useNavigation();
   const route = useRoute();
-  const { description, location, date, fromCurrency, toCurrency, fromAmount, toAmount } = route.params || {};
+  const {
+    id,
+    description,
+    location,
+    date,
+    fromCurrency,
+    toCurrency,
+    fromAmount,
+    toAmount
+  } = route.params || {};
 
   // this button will be displayed on the right side of the header to add a new transaction
   React.useLayoutEffect(() => {
@@ -23,17 +32,31 @@ export default function TransactionHistory() {
   // add a new transaction to the list of transactions
   useEffect(() => {
     if (description && location && date && fromCurrency && toCurrency && fromAmount && toAmount) {
-      const newTransaction = { 
-        id: transactions.length.toString(), 
+      const newTransaction = {
+        id,
         description,
-        location, 
-        date, 
-        fromCurrency, 
-        toCurrency, 
-        fromAmount, 
-        toAmount 
+        location,
+        date,
+        fromCurrency,
+        toCurrency,
+        fromAmount,
+        toAmount
       };
-      setTransactions([...transactions, newTransaction]);
+
+      if (id) {
+        // Edit existing transaction
+        setTransactions((prevTransactions) =>
+          prevTransactions.map((transaction) =>
+            transaction.id === id ? newTransaction : transaction
+          )
+        );
+      } else {
+        // Add new transaction
+        setTransactions((prevTransactions) => [
+          ...prevTransactions,
+          { ...newTransaction, id: Math.random().toString() }
+        ]);
+      }
     }
   }, [route.params]);
 

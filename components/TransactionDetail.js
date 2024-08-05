@@ -1,20 +1,29 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { colors, textSizes } from '../helpers/Constants';
 
 export default function TransactionDetail({ transaction }) {
+  const navigation = useNavigation();
+
+  const handlePress = () => {
+    navigation.navigate('AddTransaction', { transaction });
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.leftColumn}>
-        <Text style={styles.description}>{transaction.description}</Text>
-        <Text style={styles.date}>{new Date(transaction.date).toLocaleDateString()}</Text>
-        <Text style={styles.location}>{transaction.location}</Text>
+    <Pressable onPress={handlePress}>
+      <View style={styles.container}>
+        <View style={styles.leftColumn}>
+          <Text style={styles.description}>{transaction.description}</Text>
+          <Text style={styles.date}>{new Date(transaction.date).toLocaleDateString()}</Text>
+          <Text style={styles.location}>{transaction.location}</Text>
+        </View>
+        <View style={styles.rightColumn}>
+          <Text style={styles.currency}>From:  {transaction.fromAmount} {transaction.fromCurrency}</Text>
+          <Text style={styles.currency}>To: {transaction.toAmount} {transaction.toCurrency}</Text>
+        </View>
       </View>
-      <View style={styles.rightColumn}>
-        <Text style={styles.currency}>From: {transaction.fromCurrency} {transaction.fromAmount}</Text>
-        <Text style={styles.currency}>To: {transaction.toCurrency} {transaction.toAmount}</Text>
-      </View>
-    </View>
+    </Pressable>
   );
 }
 
