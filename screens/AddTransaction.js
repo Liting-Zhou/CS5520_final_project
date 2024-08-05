@@ -65,7 +65,7 @@ export default function AddTransaction() {
     };
 
     console.log("Transaction saved:", newTransaction);
-    navigation.navigate('TransactionHistory', newTransaction);
+    navigation.navigate('TransactionHistory', { transaction: newTransaction });
   };
 
   const handleDeleteTransaction = () => {

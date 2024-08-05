@@ -9,17 +9,7 @@ export default function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
   const navigation = useNavigation();
   const route = useRoute();
-  const {
-    id,
-    description,
-    location,
-    date,
-    fromCurrency,
-    toCurrency,
-    fromAmount,
-    toAmount,
-    delete: shouldDelete
-  } = route.params || {};
+  const { transaction, delete: shouldDelete } = route.params || {};
 
   // this button will be displayed on the right side of the header to add a new transaction
   React.useLayoutEffect(() => {
@@ -30,36 +20,27 @@ export default function TransactionHistory() {
     });
   }, [navigation]);
 
-  // add or edit a transaction, or delete a transaction
+  // add, edit or delete a transaction
   useEffect(() => {
-    if (shouldDelete && id) {
+    console.log(transaction);
+    if (shouldDelete && transaction?.id) {
       // Delete the transaction
       setTransactions((prevTransactions) =>
-        prevTransactions.filter((transaction) => transaction.id !== id)
+        prevTransactions.filter((t) => t.id !== transaction.id)
       );
-    } else if (description && location && date && fromCurrency && toCurrency && fromAmount && toAmount) {
-      const newTransaction = {
-        id,
-        description,
-        location,
-        date,
-        fromCurrency,
-        toCurrency,
-        fromAmount,
-        toAmount
-      };
-      if (id && transactions.some(transaction => transaction.id === id)) {
+    } else if (transaction) {
+      if (transactions.some((t) => t.id === transaction.id)) {
         // Edit existing transaction
         setTransactions((prevTransactions) =>
-          prevTransactions.map((transaction) =>
-            transaction.id === id ? newTransaction : transaction
+          prevTransactions.map((t) =>
+            t.id === transaction.id ? transaction : t
           )
         );
       } else {
         // Add new transaction
         setTransactions((prevTransactions) => [
           ...prevTransactions,
-          newTransaction
+          transaction
         ]);
       }
     }
