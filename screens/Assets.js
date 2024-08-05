@@ -17,13 +17,15 @@ export default function Assets() {
     setBase(base);
   };
   const handleReset = () => {
-    console.log("Assets.js 14, reset");
+    console.log("Assets.js 20, reset");
   };
   const handleSave = () => {
-    console.log("Assets.js 17, save");
+    console.log("Assets.js 23, save");
   };
   const handleDelete = (currency) => {
-    console.log("Assets.js 20, delete", currency);
+    const newAssets = assets.filter((asset) => asset.currency !== currency);
+    setAssets(newAssets);
+    console.log("Assets.js 28, delete", currency);
   };
 
   return (

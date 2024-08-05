@@ -6,11 +6,8 @@ import Input from "./Input";
 import DeleteButton from "./DeleteButton";
 
 // the item has a currency and an amount, and a delete button
-export default function AssetItem({ item }) {
+export default function AssetItem({ item, onPress }) {
   const { currency, amount } = item;
-  const onPress = () => {
-    console.log("AssetItem.js 11, delete");
-  };
 
   return (
     <View style={styles.container}>
