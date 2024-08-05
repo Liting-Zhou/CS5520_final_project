@@ -1,11 +1,14 @@
 import { StyleSheet, Text, View, Platform, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 import DropDownMenu from "../components/DropDownMenu";
 import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
+import AddButton from "../components/AddButton";
 import { calculateTotal } from "../helpers/RatesHelper";
 
 export default function Assets() {
+  const navigation = useNavigation();
   const defaultBase = "CAD";
   const defaultAssets = [
     { currency: "USD", amount: "100", id: 1 },
@@ -14,6 +17,7 @@ export default function Assets() {
   const [base, setBase] = useState(defaultBase);
   const [assets, setAssets] = useState(defaultAssets);
   const [total, setTotal] = useState(0);
+  const [newAsset, setNewAsset] = useState(null);
 
   useEffect(() => {
     const fetchTotal = async () => {
@@ -24,9 +28,34 @@ export default function Assets() {
     fetchTotal();
   }, [assets, setAssets, base]);
 
+  // headerRight button
+  // if pressed, add an empty asset
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <AddButton onPress={handleAdd} />,
+    });
+  }, [navigation]);
+
+  useEffect(() => {
+    if (newAsset) {
+      setAssets((prevAssets) => [...prevAssets, newAsset]);
+      setNewAsset(null); // reset newAsset after adding
+    }
+  }, [newAsset]);
+
+  // when the user presses the headerRight add button, add an empty asset
+  const handleAdd = () => {
+    console.log("Assets.js 48, before add", assets);
+    const newId = Math.random() * 10000;
+    const addedAsset = { currency: "CAD", amount: "0", id: newId };
+    setNewAsset(addedAsset);
+  };
+
+  // when base currency changes, update the base
   const baseHandler = (base) => {
     setBase(base);
   };
+
   const handleReset = () => {
     setBase(defaultBase);
     setAssets(defaultAssets);
@@ -34,13 +63,15 @@ export default function Assets() {
     // setAddMode(false);
     // console.log("Assets.js 35, reset");
   };
+
   const handleSave = () => {
-    console.log("Assets.js 38, save");
+    console.log("Assets.js 49, save");
   };
+
   const handleDelete = (currency) => {
     const newAssets = assets.filter((asset) => asset.currency !== currency);
     setAssets(newAssets);
-    // console.log("Assets.js 43, delete", currency);
+    // console.log("Assets.js 55, delete", currency);
   };
 
   //when the user changes the currency of an asset, update the currency
@@ -50,7 +81,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, currency: newCurrency } : asset
       )
     );
-    // console.log("Assets.js 53, change currency", newCurrency);
+    // console.log("Assets.js 65, change currency", newCurrency);
   };
 
   //when the user changes the amount of an asset, update the amount
@@ -60,7 +91,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, amount: newAmount } : asset
       )
     );
-    // console.log("Assets.js 63, new amount", newAmount);
+    // console.log("Assets.js 75, new amount", newAmount);
   };
 
   return (

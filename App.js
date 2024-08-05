@@ -75,7 +75,13 @@ export default function App() {
               headerTitle: "Recent Rates",
             }}
           />
-          <Tab.Screen name="Assets" component={Assets} />
+          <Tab.Screen
+            name="Assets"
+            component={Assets}
+            options={{
+              headerTitle: "Asset Management",
+            }}
+          />
           <Tab.Screen
             name="Conversion"
             component={Conversion}
