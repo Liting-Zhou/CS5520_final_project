@@ -45,7 +45,7 @@ export default function Conversion() {
         ]}
       >
         <Text style={styles.label}>From: </Text>
-        <DropDownMenu onSelect={onSelectFrom} />
+        <DropDownMenu onSelect={onSelectFrom} style={{ width: "100%" }} />
       </View>
       <View
         style={[
@@ -53,8 +53,8 @@ export default function Conversion() {
           Platform.OS === "ios" ? { zIndex: 1000 } : {},
         ]}
       >
-        <Text style={styles.label}>To: </Text>
-        <DropDownMenu onSelect={onSelectTo} />
+        <Text style={{ marginRight: 25 }}>To: </Text>
+        <DropDownMenu onSelect={onSelectTo} style={{ width: "100%" }} />
       </View>
       <View style={styles.itemContainer}>
         <Text style={styles.label}>Amount: </Text>
@@ -84,8 +84,9 @@ const styles = StyleSheet.create({
     width: "80%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-end",
+    justifyContent: "center",
     paddingVertical: 10,
+    paddingHorizontal: 30,
     marginVertical: 5,
   },
   itemContainer: {
