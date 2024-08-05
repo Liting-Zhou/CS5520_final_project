@@ -50,6 +50,7 @@ export default function Rates() {
   const handleDelete = (currency) => {
     const newRates = rates.filter((rate) => rate.currency !== currency);
     setRates(newRates);
+    setSelectedCurrencies(selectedCurrencies.filter((c) => c !== currency));
   };
 
   // reset the rates to the default rates
