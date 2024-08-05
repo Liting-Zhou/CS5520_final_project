@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { StyleSheet, View, Text, Alert } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import RegularButton from "../components/RegularButton";
 import TextInputBox from "../components/TextInputBox";
 import DateTimePickerComponent from "../components/DateTimePickerComponent";
 import { textSizes } from "../helpers/Constants";
+import Entypo from 'react-native-vector-icons/Entypo';
 
 export default function AddTransaction() {
   const [description, setDescription] = useState('');
@@ -12,6 +13,16 @@ export default function AddTransaction() {
   const [date, setDate] = useState(null);
   const navigation = useNavigation();
 
+  // this button is used to add photo for new transaction, will implement later
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Entypo name="camera" size={24} color="black" style={{ marginRight: 15 }} />
+      ),
+    });
+  }, [navigation]);
+
+  // check if all fields are filled, if not, show an alert
   const handleAddTransaction = () => {
     if (!description || !location || !date) {
       Alert.alert("Error", "All fields are required");
