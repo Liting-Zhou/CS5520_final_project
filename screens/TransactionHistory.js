@@ -1,10 +1,12 @@
-import React, { useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Text, FlatList } from "react-native";
 import AddButton from "../components/AddButton";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { textSizes } from "../helpers/Constants";
+import TransactionDetail from "../components/TransactionDetail";
 
 export default function TransactionHistory() {
+  const [transactions, setTransactions] = useState([]);
   const navigation = useNavigation();
   const route = useRoute();
   const { description, location, date, fromCurrency, toCurrency, fromAmount, toAmount } = route.params || {};
@@ -18,16 +20,31 @@ export default function TransactionHistory() {
     });
   }, [navigation]);
 
+  // add a new transaction to the list of transactions
+  useEffect(() => {
+    if (description && location && date && fromCurrency && toCurrency && fromAmount && toAmount) {
+      const newTransaction = { 
+        id: transactions.length.toString(), 
+        description,
+        location, 
+        date, 
+        fromCurrency, 
+        toCurrency, 
+        fromAmount, 
+        toAmount 
+      };
+      setTransactions([...transactions, newTransaction]);
+    }
+  }, [route.params]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Your exchange transaction history:</Text>
-      {description && <Text style={styles.item}>Description: {description}</Text>}
-      {location && <Text style={styles.item}>Location: {location}</Text>}
-      {date && <Text style={styles.item}>Date: {new Date(date).toLocaleDateString()}</Text>}
-      {fromCurrency && <Text style={styles.item}>From Currency: {fromCurrency}</Text>}
-      {fromAmount && <Text style={styles.item}>From Amount: {fromAmount}</Text>}
-      {toCurrency && <Text style={styles.item}>To Currency: {toCurrency}</Text>}
-      {toAmount && <Text style={styles.item}>To Amount: {toAmount}</Text>}
+      <FlatList
+        data={transactions}
+        renderItem={({ item }) => <TransactionDetail transaction={item} />}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }
@@ -35,16 +52,11 @@ export default function TransactionHistory() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
   },
   text: {
     fontSize: textSizes.medium,
     marginBottom: 20,
-  },
-  item: {
-    fontSize: textSizes.small,
-    marginTop: 10,
+    textAlign: 'center',
   },
 });
