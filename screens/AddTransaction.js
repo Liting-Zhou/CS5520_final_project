@@ -5,7 +5,7 @@ import RegularButton from "../components/RegularButton";
 import TextInputBox from "../components/TextInputBox";
 import DateTimePickerComponent from "../components/DateTimePickerComponent";
 import DropDownMenu from "../components/DropDownMenu"; // import the DropDownMenu component
-import { textSizes } from "../helpers/Constants";
+import { colors, textSizes } from "../helpers/Constants";
 import Entypo from 'react-native-vector-icons/Entypo';
 
 export default function AddTransaction() {
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   label: {
     fontSize: textSizes.medium,
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   amountInput: {
     borderBottomWidth: 1,
-    borderColor: 'gray',
+    borderColor: colors.gray,
     paddingVertical: 15,
     fontSize: textSizes.medium,
   },
