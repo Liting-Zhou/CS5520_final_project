@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import { StyleSheet, View, Text, TextInput, Alert, Pressable } from "react-native";
+import { StyleSheet, View, Alert, Pressable, Text, TextInput } from "react-native";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import RegularButton from "../components/RegularButton";
 import TextInputBox from "../components/TextInputBox";
@@ -7,7 +7,7 @@ import DateTimePickerComponent from "../components/DateTimePickerComponent";
 import DropDownMenu from "../components/DropDownMenu";
 import { colors, textSizes } from "../helpers/Constants";
 import Entypo from 'react-native-vector-icons/Entypo';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import TrashBinButton from "../components/TrashBinButton";
 
 export default function AddTransaction() {
   const navigation = useNavigation();
@@ -29,9 +29,7 @@ export default function AddTransaction() {
       headerTitle: transaction ? 'Edit Transaction' : 'Add Transaction',
       headerRight: () => (
         transaction && (
-          <Pressable onPress={handleDeleteTransaction}>
-            <AntDesign name="delete" size={24} color="black" style={{ marginRight: 15 }} />
-          </Pressable>
+          <TrashBinButton onPress={handleDeleteTransaction} />
         )
       ),
     });
@@ -64,7 +62,6 @@ export default function AddTransaction() {
       toAmount
     };
 
-    console.log("Transaction saved:", newTransaction);
     navigation.navigate('TransactionHistory', { transaction: newTransaction });
   };
 
@@ -81,7 +78,7 @@ export default function AddTransaction() {
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            navigation.navigate('TransactionHistory', { id: transaction.id, delete: true });
+            navigation.navigate('TransactionHistory', { transaction, shouldDelete: true });
           }
         }
       ]

@@ -9,7 +9,7 @@ export default function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
   const navigation = useNavigation();
   const route = useRoute();
-  const { transaction, delete: shouldDelete } = route.params || {};
+  const { transaction, shouldDelete } = route.params || {};
 
   // this button will be displayed on the right side of the header to add a new transaction
   React.useLayoutEffect(() => {
