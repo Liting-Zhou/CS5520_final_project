@@ -48,11 +48,11 @@ export default function TransactionHistory() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Your exchange transaction history:</Text>
       <FlatList
         data={transactions}
         renderItem={({ item }) => <TransactionDetail transaction={item} />}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
       />
     </View>
   );
@@ -67,5 +67,8 @@ const styles = StyleSheet.create({
     fontSize: textSizes.medium,
     marginBottom: 20,
     textAlign: 'center',
+  },
+  list: {
+    paddingBottom: 20,
   },
 });
