@@ -63,3 +63,14 @@ export const getSelectedCurrencies = async ({ data }) => {
   console.log("CachedLatestRates.js 63, selectedRates", selectedRates);
   return selectedRates;
 };
+
+// return calculated amount based on the rates and the amount
+export const convert = async ({ data }) => {
+  const allCurrencies = await getLatestRates();
+  const { from, to, amount } = data;
+  console.log("CachedLatestRates.js 72, data", data);
+  const result = ((amount * allCurrencies[to]) / allCurrencies[from]).toFixed(
+    4
+  );
+  return result;
+};
