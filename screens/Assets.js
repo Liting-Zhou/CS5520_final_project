@@ -53,6 +53,16 @@ export default function Assets() {
     // console.log("Assets.js 53, change currency", newCurrency);
   };
 
+  //when the user changes the amount of an asset, update the amount
+  const handleChangeAmount = ({ id, newAmount }) => {
+    setAssets((prevAssets) =>
+      prevAssets.map((asset) =>
+        asset.id === id ? { ...asset, amount: newAmount } : asset
+      )
+    );
+    // console.log("Assets.js 63, new amount", newAmount);
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -75,13 +85,16 @@ export default function Assets() {
               item={item}
               onDelete={() => handleDelete(item.currency)}
               onChangeCurrency={handleChangeCurrency}
+              onChangeAmount={handleChangeAmount}
             />
           )}
           contentContainerStyle={styles.flatListContent}
         />
-        <Text>
-          Total: {total} {base}
-        </Text>
+        <View style={styles.textContainer}>
+          <Text>
+            Total: {total} {base}
+          </Text>
+        </View>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -108,8 +121,14 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 4,
     width: "80%",
+    paddingBottom: 20,
   },
   flatListContent: {},
+  textContainer: {
+    // flex: 1,
+    // justifyContent: "center",
+    alignItems: "center",
+  },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",

@@ -6,20 +6,34 @@ import Input from "./Input";
 import DeleteButton from "./DeleteButton";
 
 // the item has a currency and an amount, and a delete button
-export default function AssetItem({ id, item, onDelete, onChangeCurrency }) {
+export default function AssetItem({
+  id,
+  item,
+  onDelete,
+  onChangeCurrency,
+  onChangeAmount,
+}) {
   const { currency, amount } = item;
-  const onSelect = (newCurrency) => {
+  const handleChangeCurrency = (newCurrency) => {
     onChangeCurrency({ id, newCurrency });
+  };
+
+  const handleChangeAmount = (newAmount) => {
+    onChangeAmount({ id, newAmount });
   };
 
   return (
     <View style={styles.container}>
       <DeleteButton onPress={onDelete} style={styles.deleteButton} />
-      <Input defaultValue={amount} style={styles.input} />
+      <Input
+        defaultValue={amount}
+        style={styles.input}
+        onChangeText={handleChangeAmount}
+      />
       <DropDownMenu
         base={currency}
         style={[styles.dropdown]}
-        onSelect={onSelect}
+        onSelect={handleChangeCurrency}
       />
     </View>
   );
