@@ -17,6 +17,10 @@ export default function Assets() {
     setBase(base);
   };
   const handleReset = () => {
+    setBase(defaultBase);
+    setAssets(defaultAssets);
+    // and hide the add dropdown
+    // setAddMode(false);
     console.log("Assets.js 20, reset");
   };
   const handleSave = () => {
