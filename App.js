@@ -1,7 +1,7 @@
-import { StyleSheet, Text } from "react-native";
+import { SafeAreaView, StyleSheet, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 
 import Rates from "./screens/Rates";
@@ -9,7 +9,7 @@ import Conversion from "./screens/Conversion";
 import Assets from "./screens/Assets";
 import LocationFinder from "./screens/LocationFinder";
 import Profile from "./screens/Profile";
-import ProfileDetail from './screens/ProfileDetail';
+import ProfileDetail from "./screens/ProfileDetail";
 
 import TabBarButton from "./components/TabBarButton";
 import { colors, textSizes } from "./helpers/Constants";
@@ -21,19 +21,19 @@ const ProfileStack = createStackNavigator();
 function ProfileStackNavigator() {
   return (
     <ProfileStack.Navigator initialRouteName="ProfileScreen">
-      <ProfileStack.Screen 
-        name="ProfileScreen" 
-        component={Profile} 
-        options={{ title: 'Profile' }}
+      <ProfileStack.Screen
+        name="ProfileScreen"
+        component={Profile}
+        options={{ title: "Profile" }}
       />
       {/* ProfileDetail is a screen allow users to edit the Profile */}
-      <ProfileStack.Screen 
-        name="ProfileDetail" 
-        component={ProfileDetail} 
-        options={{ 
-          title: 'Edit Profile', 
-          headerBackTitle: 'Back' 
-        }} 
+      <ProfileStack.Screen
+        name="ProfileDetail"
+        component={ProfileDetail}
+        options={{
+          title: "Edit Profile",
+          headerBackTitle: "Back",
+        }}
       />
     </ProfileStack.Navigator>
   );
@@ -41,50 +41,50 @@ function ProfileStackNavigator() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName="Rates"
-        screenOptions={{
-          tabBarStyle: {},
-        }}
-      >
-        <Tab.Screen
-          name="Rates"
-          component={Rates}
-          options={{
-            tabBarLabel: "Rates",
-            headerTitle: "Recent Rates",
+    <SafeAreaView style={styles.container}>
+      <NavigationContainer>
+        <Tab.Navigator
+          initialRouteName="Rates"
+          screenOptions={{
+            tabBarStyle: {},
           }}
-        />
-        <Tab.Screen name="Assets" component={Assets} />
-        <Tab.Screen
-          name="Conversion"
-          component={Conversion}
-          options={({ navigation }) => ({
-            tabBarButton: () => (
-              <TabBarButton onPress={() => navigation.navigate("Conversion")}>
-                <Text style={styles.buttonText}>Convert</Text>
-              </TabBarButton>
-            ),
-          })}
-        />
-        <Tab.Screen name="Finder" component={LocationFinder} />
-        <Tab.Screen 
-          name="Profile" 
-          component={ProfileStackNavigator} 
-          options={{ headerShown: false }} 
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+        >
+          <Tab.Screen
+            name="Rates"
+            component={Rates}
+            options={{
+              tabBarLabel: "Rates",
+              headerTitle: "Recent Rates",
+            }}
+          />
+          <Tab.Screen name="Assets" component={Assets} />
+          <Tab.Screen
+            name="Conversion"
+            component={Conversion}
+            options={({ navigation }) => ({
+              headerTitle: "Convert Currency",
+              tabBarButton: () => (
+                <TabBarButton onPress={() => navigation.navigate("Conversion")}>
+                  <Text style={styles.buttonText}>Convert</Text>
+                </TabBarButton>
+              ),
+            })}
+          />
+          <Tab.Screen name="Finder" component={LocationFinder} />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileStackNavigator}
+            options={{ headerShown: false }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
   },
   buttonText: {
     color: colors.white,

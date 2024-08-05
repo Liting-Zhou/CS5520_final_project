@@ -11,18 +11,25 @@ export default function Conversion() {
   const [to, setTo] = useState("");
   const [amount, setAmount] = useState(0);
 
+  // select the currency to convert from
   const onSelectFrom = (rate) => {
     setFrom(rate);
     console.log("Conversion.js 18, from", rate);
   };
+
+  // select the currency to convert to
   const onSelectTo = (rate) => {
     setTo(rate);
     console.log("Conversion.js 22, to", rate);
   };
+
+  // input the amount to convert
   const handleAmount = (amount) => {
     setAmount(amount);
     console.log("Conversion.js 26, amount", amount);
   };
+
+  // when the user presses the submit button, call the convert function to get the result
   const handleSubmit = async () => {
     const result = await convert({ data: { from, to, amount } });
     setConvertedAmount(result);
@@ -32,7 +39,7 @@ export default function Conversion() {
     <View style={styles.container}>
       <View
         style={[
-          styles.itemContainer,
+          styles.dropdownContainer,
           Platform.OS === "ios" ? { zIndex: 2000 } : {},
         ]}
       >
@@ -41,7 +48,7 @@ export default function Conversion() {
       </View>
       <View
         style={[
-          styles.itemContainer,
+          styles.dropdownContainer,
           Platform.OS === "ios" ? { zIndex: 1000 } : {},
         ]}
       >
@@ -70,14 +77,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  dropdownContainer: {
+    width: "80%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingVertical: 10,
+    marginVertical: 5,
+  },
   itemContainer: {
-    flex: 1,
     width: "80%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "skyblue",
     paddingVertical: 10,
+    marginVertical: 5,
   },
   label: {
     marginRight: 10,
