@@ -1,9 +1,10 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
+import { colors, textSizes } from "../helpers/Constants";
 
 export default function TextInputBox({ label, value, onChangeText, placeholder, editable = true }) {
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={styles.input}
@@ -17,16 +18,13 @@ export default function TextInputBox({ label, value, onChangeText, placeholder, 
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 15,
-  },
   label: {
-    fontSize: 16,
+    fontSize: textSizes.medium,
     marginBottom: 5,
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: colors.gray,
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,

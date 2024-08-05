@@ -4,6 +4,7 @@ export const colors = {
   buttonBackground: "skyblue",
   buttonTextColor: "#fff",
   gray: "#808080",
+  modalOverlay: "rgba(0, 0, 0, 0.5)",
   transparentGray: "rgba(128, 128, 128, 0.5)",
   profilePressableBackground: "#f9f9f9",
   profilePressableFeedback: "#e0e0e0",
