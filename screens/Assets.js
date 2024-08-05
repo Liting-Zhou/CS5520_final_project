@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Platform, FlatList } from "react-native";
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import DropDownMenu from "../components/DropDownMenu";
 import RegularButton from "../components/RegularButton";
@@ -18,6 +18,7 @@ export default function Assets() {
   const [assets, setAssets] = useState(defaultAssets);
   const [total, setTotal] = useState(0);
   const [newAsset, setNewAsset] = useState(null);
+  const flatListRef = useRef(null);
 
   useEffect(() => {
     const fetchTotal = async () => {
@@ -27,6 +28,13 @@ export default function Assets() {
     };
     fetchTotal();
   }, [assets, setAssets, base]);
+
+  // scroll the list to the bottom when assets change
+  useEffect(() => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  }, [assets]);
 
   // headerRight button
   // if pressed, add an empty asset
@@ -108,6 +116,7 @@ export default function Assets() {
       <View style={styles.listContainer}>
         <Text>Your currencies: </Text>
         <FlatList
+          ref={flatListRef}
           data={assets}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
