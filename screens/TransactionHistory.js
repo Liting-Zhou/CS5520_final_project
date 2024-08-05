@@ -17,7 +17,8 @@ export default function TransactionHistory() {
     fromCurrency,
     toCurrency,
     fromAmount,
-    toAmount
+    toAmount,
+    delete: shouldDelete
   } = route.params || {};
 
   // this button will be displayed on the right side of the header to add a new transaction
@@ -29,9 +30,14 @@ export default function TransactionHistory() {
     });
   }, [navigation]);
 
-  // add a new transaction to the list of transactions
+  // add or edit a transaction, or delete a transaction
   useEffect(() => {
-    if (description && location && date && fromCurrency && toCurrency && fromAmount && toAmount) {
+    if (shouldDelete && id) {
+      // Delete the transaction
+      setTransactions((prevTransactions) =>
+        prevTransactions.filter((transaction) => transaction.id !== id)
+      );
+    } else if (description && location && date && fromCurrency && toCurrency && fromAmount && toAmount) {
       const newTransaction = {
         id,
         description,

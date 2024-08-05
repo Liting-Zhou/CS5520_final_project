@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import { StyleSheet, View, Text, TextInput, Alert } from "react-native";
+import { StyleSheet, View, Text, TextInput, Alert, Pressable } from "react-native";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import RegularButton from "../components/RegularButton";
 import TextInputBox from "../components/TextInputBox";
@@ -7,6 +7,7 @@ import DateTimePickerComponent from "../components/DateTimePickerComponent";
 import DropDownMenu from "../components/DropDownMenu";
 import { colors, textSizes } from "../helpers/Constants";
 import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export default function AddTransaction() {
   const navigation = useNavigation();
@@ -21,14 +22,22 @@ export default function AddTransaction() {
   const [fromAmount, setFromAmount] = useState(transaction?.fromAmount || '');
   const [toAmount, setToAmount] = useState(transaction?.toAmount || '');
 
+  // use useLayoutEffect to set the header title dynamically based on whether we are adding or editing a transaction
+  // also add a delete icon to the right side of the header when editing
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitle: transaction ? 'Edit Transaction' : 'Add Transaction',
       headerRight: () => (
-        <Entypo name="camera" size={24} color="black" style={{ marginRight: 15 }} />
+        transaction && (
+          <Pressable onPress={handleDeleteTransaction}>
+            <AntDesign name="delete" size={24} color="black" style={{ marginRight: 15 }} />
+          </Pressable>
+        )
       ),
     });
-  }, [navigation]);
+  }, [navigation, transaction]);
 
+  // check if all fields are filled out and if the from and to currencies are different
   const handleSaveTransaction = () => {
     if (!description || !location || !date || !fromCurrency || !toCurrency || !fromAmount || !toAmount) {
       Alert.alert("Error", "All fields are required");
@@ -42,6 +51,8 @@ export default function AddTransaction() {
 
     const formattedDate = date.toISOString();
 
+    // create a new transaction object
+    // give id a random value if it's a new transaction, otherwise use the existing id
     const newTransaction = {
       id: transaction?.id || Math.random().toString(),
       description,
@@ -57,15 +68,42 @@ export default function AddTransaction() {
     navigation.navigate('TransactionHistory', newTransaction);
   };
 
+  const handleDeleteTransaction = () => {
+    Alert.alert(
+      "Confirm Delete",
+      "Are you sure you want to delete this transaction?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            navigation.navigate('TransactionHistory', { id: transaction.id, delete: true });
+          }
+        }
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-        <TextInputBox 
-          label="Description"
-          value={description}
-          onChangeText={setDescription}
-          placeholder="Enter description"
-        />
+        <View style={styles.descriptionContainer}>
+          <View style={styles.descriptionInputWrapper}>
+            <TextInputBox 
+              label="Description"
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Enter description"
+            />
+          </View>
+          <Pressable onPress={() => console.log('Camera icon pressed')} style={styles.cameraIcon}>
+            <Entypo name="camera" size={24} color="black" />
+          </Pressable>
+        </View>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Date</Text>
@@ -124,6 +162,19 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: colors.white,
+  },
+  descriptionContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  descriptionInputWrapper: {
+    flex: 1,
+  },
+  cameraIcon: {
+    marginTop: 20,
+    marginLeft: 10,
+    marginRight: 10,
   },
   label: {
     fontSize: textSizes.medium,
