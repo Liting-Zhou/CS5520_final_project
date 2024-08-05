@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Alert } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import RegularButton from "../components/RegularButton";
 import TextInputBox from "../components/TextInputBox";
@@ -13,6 +13,11 @@ export default function AddTransaction() {
   const navigation = useNavigation();
 
   const handleAddTransaction = () => {
+    if (!description || !location || !date) {
+      Alert.alert("Error", "All fields are required");
+      return;
+    }
+    
     console.log("Transaction added:", { description, location, date });
     navigation.goBack();
   };
@@ -58,6 +63,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   inputContainer: {
-    marginBottom: 15, // 添加适当的间距
+    marginBottom: 15,
   },
 });
