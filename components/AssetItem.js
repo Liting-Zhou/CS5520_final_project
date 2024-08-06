@@ -10,7 +10,7 @@ import {
 import React, { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import DropDownMenu from "./DropDownMenu";
 import Input from "./Input";
 import DeleteButton from "./DeleteButton";
@@ -28,13 +28,14 @@ export default function AssetItem({
   const { currency, amount } = item;
   const [isModalVisible, setModalVisible] = useState(false);
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(item.currency);
+  const [value, setValue] = useState(currency);
   const [items, setItems] = useState(currencies);
 
   const toggleModal = () => {
-    console.log("toggleModal");
+    // console.log("toggleModal");
     setModalVisible(!isModalVisible);
   };
+
   const handleChangeCurrency = (newCurrency) => {
     onChangeCurrency({ id, newCurrency });
   };
@@ -63,10 +64,12 @@ export default function AssetItem({
         visible={isModalVisible}
         onBackdropPress={toggleModal}
         animationType="slide"
-        // style={styles.modalStyle}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
+            <Pressable onPress={toggleModal} style={styles.deleteButtonInModal}>
+              <FontAwesome6 name="times-circle" size={24} color="black" />
+            </Pressable>
             <DropDownPicker
               open={open}
               value={value}
@@ -74,6 +77,8 @@ export default function AssetItem({
               setOpen={setOpen}
               setValue={setValue}
               setItems={setItems}
+              searchable={true}
+              searchPlaceholder="Search..."
               onChangeValue={(newValue) => {
                 handleChangeCurrency(newValue);
                 toggleModal();
@@ -82,11 +87,6 @@ export default function AssetItem({
           </View>
         </View>
       </Modal>
-      {/* <DropDownMenu
-        base={currency}
-        style={[styles.dropdown]}
-        onSelect={handleChangeCurrency}
-      /> */}
     </View>
   );
 }
@@ -98,47 +98,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     paddingVertical: 10,
-    // backgroundColor: colors.buttonBackground,
   },
+
   currencyButton: {
     flexDirection: "row",
-    // justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: colors.buttonBackground,
     paddingHorizontal: 10,
     borderRadius: 8,
     height: 40,
-    // width: "25%",
   },
-  input: { width: "25%", marginRight: 15, borderRadius: 8 },
-  // dropdown: { width: "60%", minHeight: 40 },
-  deleteButton: { width: "10%", marginLeft: 15 },
+  input: { width: "30%", marginRight: 15, borderRadius: 8 },
 
-  button: {
-    padding: 10,
-    backgroundColor: "#007BFF",
-    borderRadius: 5,
-    marginTop: 10,
+  deleteButton: { marginLeft: 15 },
+
+  deleteButtonInModal: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    zIndex: 10000,
+    backgroundColor: colors.white,
   },
-  buttonText: {
-    color: "#FFF",
-    textAlign: "center",
-  },
+
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    backgroundColor: colors.modalOverlay,
   },
-  // modalStyle: {
-  //   width: "80%",
-  //   height: "50%",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
+
   modalContent: {
-    // justifyContent: "center",
-    // alignItems: "center",
     width: "80%",
     backgroundColor: "white",
     padding: 20,
