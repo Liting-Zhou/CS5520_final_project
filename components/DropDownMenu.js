@@ -23,6 +23,7 @@ export default function DropDownMenu({ base, onSelect, style }) {
       setItems={setItems}
       searchable={true}
       searchPlaceholder="Search..."
+      dropDownDirection="BOTTOM"
       style={[styles.dropdown, style]}
       dropDownContainerStyle={[styles.dropDownContainer, style]}
       labelProps={{
