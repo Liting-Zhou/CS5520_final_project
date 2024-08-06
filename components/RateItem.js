@@ -8,7 +8,7 @@ export default function RateItem({ item, onPress }) {
     <View style={styles.container}>
       <Text style={styles.currency}>{item.currency}</Text>
       <Text style={styles.rate}>{item.rate}</Text>
-      <TrashBinButton onPress={onPress} />
+      <TrashBinButton onPress={onPress} iconStyle={styles.deleteIcon} />
     </View>
   );
 }
@@ -19,5 +19,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "50%",
+    margin: 2,
   },
+  deleteIcon: { marginRight: 0 },
 });

@@ -2,9 +2,9 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Input from "./Input";
-import DeleteButton from "./DeleteButton";
 import { colors } from "../helpers/Constants";
 import CustomModal from "./CustomModal";
+import TrashBinButton from "./TrashBinButton";
 
 // the item has a currency and an amount, and a delete button
 export default function AssetItem({
@@ -48,7 +48,12 @@ export default function AssetItem({
         valuePassed={currency}
         handleValueChange={handleChangeCurrency}
       ></CustomModal>
-      <DeleteButton onPress={onDelete} style={styles.deleteButton} />
+      {/* <DeleteButton onPress={onDelete} style={styles.deleteButton} /> */}
+      <TrashBinButton
+        onPress={onDelete}
+        customStyle={styles.deleteButton}
+        iconStyle={styles.deleteIcon}
+      />
     </View>
   );
 }
@@ -72,6 +77,6 @@ const styles = StyleSheet.create({
   },
 
   input: { width: "30%", marginRight: 15, borderRadius: 8 },
-
   deleteButton: { marginLeft: 15 },
+  deleteIcon: { marginRight: 0 },
 });
