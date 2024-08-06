@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import DeleteButton from "./DeleteButton";
+import TrashBinButton from "./TrashBinButton";
 
 // the item has a currency and a rate, and a delete button
 export default function RateItem({ item, onPress }) {
@@ -8,7 +8,7 @@ export default function RateItem({ item, onPress }) {
     <View style={styles.container}>
       <Text style={styles.currency}>{item.currency}</Text>
       <Text style={styles.rate}>{item.rate}</Text>
-      <DeleteButton onPress={onPress} />
+      <TrashBinButton onPress={onPress} />
     </View>
   );
 }
