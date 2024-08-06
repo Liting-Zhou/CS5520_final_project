@@ -5,19 +5,8 @@ import DropDownMenu from "../components/DropDownMenu";
 import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
+import CellRendererComponent from "../components/CellRendererComponent";
 import { calculateTotal } from "../helpers/RatesHelper";
-
-// To wrap the item in a custom cell renderer,
-// in order to control the zIndex of the items
-// to make sure the dropdown is on top
-const CustomCellRenderer = ({ id, style, children, ...props }) => {
-  console.log("Assets.js 15, CustomCellRenderer", id);
-  return (
-    <View style={[style, { zIndex: (100 - id) * 1000 }]} {...props}>
-      {children}
-    </View>
-  );
-};
 
 export default function Assets() {
   const navigation = useNavigation();
@@ -75,7 +64,7 @@ export default function Assets() {
 
   // when the user presses the headerRight add button, add an empty asset
   const handleAdd = () => {
-    console.log("Assets.js 65, before add", assets);
+    // console.log("Assets.js 67, before add", assets);
     const newGeneratedId = generateNewId();
     const addedAsset = { currency: "CAD", amount: "0", id: newGeneratedId };
     setNewAsset(addedAsset);
@@ -107,7 +96,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, currency: newCurrency } : asset
       )
     );
-    // console.log("Assets.js 110, change currency", newCurrency);
+    // console.log("Assets.js 99, change currency", newCurrency);
   };
 
   //when the user changes the amount of an asset, update the amount
@@ -117,7 +106,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, amount: newAmount } : asset
       )
     );
-    // console.log("Assets.js 120, new amount", newAmount);
+    // console.log("Assets.js 109, new amount", newAmount);
   };
 
   return (
@@ -148,11 +137,7 @@ export default function Assets() {
             />
           )}
           contentContainerStyle={styles.flatListContent}
-          CellRendererComponent={({ item, children, ...props }) => {
-            return (
-              <CustomCellRenderer id={item.id} children={children} {...props} />
-            );
-          }}
+          CellRendererComponent={CellRendererComponent}
         />
         <View style={styles.textContainer}>
           <Text>
