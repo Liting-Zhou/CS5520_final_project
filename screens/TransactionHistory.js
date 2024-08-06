@@ -48,6 +48,7 @@ export default function TransactionHistory() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.text}>Your exchange transaction history:</Text>
       <FlatList
         data={transactions}
         renderItem={({ item }) => <TransactionDetail transaction={item} />}
