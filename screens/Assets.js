@@ -7,10 +7,13 @@ import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
 import { calculateTotal } from "../helpers/RatesHelper";
 
+// To wrap the item in a custom cell renderer,
+// in order to control the zIndex of the items
+// to make sure the dropdown is on top
 const CustomCellRenderer = ({ id, style, children, ...props }) => {
   console.log("Assets.js 15, CustomCellRenderer", id);
   return (
-    <View style={[style, { zIndex: (10 - id) * 1000 }]} {...props}>
+    <View style={[style, { zIndex: (100 - id) * 1000 }]} {...props}>
       {children}
     </View>
   );
@@ -29,6 +32,7 @@ export default function Assets() {
   const [newAsset, setNewAsset] = useState(null);
   const flatListRef = useRef(null);
 
+  // calculate the total when assets or base change
   useEffect(() => {
     const fetchTotal = async () => {
       const data = { base, assets };
@@ -53,6 +57,7 @@ export default function Assets() {
     });
   }, [navigation]);
 
+  // when a new asset is added, add it to the list
   useEffect(() => {
     if (newAsset) {
       setAssets((prevAssets) => [...prevAssets, newAsset]);
@@ -60,6 +65,8 @@ export default function Assets() {
     }
   }, [newAsset]);
 
+  // for now, generate a new id by incrementing the last id
+  // this is used for setting the zIndex of the items
   let newId = 2;
   const generateNewId = () => {
     newId += 1;
@@ -82,9 +89,6 @@ export default function Assets() {
   const handleReset = () => {
     setBase(defaultBase);
     setAssets(defaultAssets);
-    // and hide the add dropdown
-    // setAddMode(false);
-    // console.log("Assets.js 35, reset");
   };
 
   const handleSave = () => {
@@ -94,7 +98,6 @@ export default function Assets() {
   const handleDelete = (currency) => {
     const newAssets = assets.filter((asset) => asset.currency !== currency);
     setAssets(newAssets);
-    // console.log("Assets.js 55, delete", currency);
   };
 
   //when the user changes the currency of an asset, update the currency
@@ -104,7 +107,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, currency: newCurrency } : asset
       )
     );
-    // console.log("Assets.js 65, change currency", newCurrency);
+    // console.log("Assets.js 110, change currency", newCurrency);
   };
 
   //when the user changes the amount of an asset, update the amount
@@ -114,7 +117,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, amount: newAmount } : asset
       )
     );
-    // console.log("Assets.js 75, new amount", newAmount);
+    // console.log("Assets.js 120, new amount", newAmount);
   };
 
   return (
@@ -183,14 +186,9 @@ const styles = StyleSheet.create({
     flex: 4,
     width: "80%",
     paddingBottom: 20,
-    // position: "relative",
   },
-  flatListContent: {
-    // position: "relative",
-  },
+  flatListContent: {},
   textContainer: {
-    // flex: 1,
-    // justifyContent: "center",
     alignItems: "center",
   },
   buttonContainer: {
