@@ -4,12 +4,9 @@ import { colors } from "../helpers/Constants";
 
 export default function RegularButton({ children, onPress }) {
   return (
-    <Pressable 
-      onPress={onPress} 
-      style={({ pressed }) => [
-        styles.button,
-        pressed ? styles.pressed : null
-      ]}
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.button, pressed ? styles.pressed : null]}
     >
       <Text style={styles.buttonText}>{children}</Text>
     </Pressable>
@@ -23,10 +20,10 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     height: 40,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   pressed: {
-    backgroundColor: colors.buttonPressedBackground, 
+    backgroundColor: colors.buttonPressedBackground,
   },
   buttonText: {
     color: colors.buttonTextColor,
