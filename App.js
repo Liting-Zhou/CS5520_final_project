@@ -62,7 +62,7 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <NavigationContainer>
         <Tab.Navigator
-          initialRouteName="Assets" //change back to Rates
+          initialRouteName="Rates"
           screenOptions={{
             tabBarStyle: {},
           }}

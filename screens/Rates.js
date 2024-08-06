@@ -6,6 +6,7 @@ import RateItem from "../components/RateItem";
 import { getSelectedCurrencies } from "../helpers/RatesHelper";
 import RegularButton from "../components/RegularButton";
 import AddButton from "../components/AddButton";
+import CustomModal from "../components/CustomModal";
 
 export default function Rates() {
   const navigation = useNavigation();
@@ -15,7 +16,7 @@ export default function Rates() {
   const [selectedCurrencies, setSelectedCurrencies] =
     useState(defaultCurrencies);
   const [rates, setRates] = useState([]);
-  const [addMode, setAddMode] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   // update whenever the base currency or the selected currencies change
   useEffect(() => {
@@ -23,22 +24,25 @@ export default function Rates() {
       const data = { base, selectedCurrencies };
       const rates = await getSelectedCurrencies({ data });
       setRates(rates);
-      // console.log("Rates.js 21, rates", rates);
+      // console.log("Rates.js 27, rates", rates);
     };
     fetchRates();
   }, [base, selectedCurrencies]);
 
-  // headerRight button
-  // if pressed, setAddMode to true
+  // headerRight button to add a currency
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => <AddButton onPress={handleAdd} />,
     });
   }, [navigation]);
 
-  // when the user presses the headerRight add button, show the add dropdown
+  // when press the headerRight add button, show the Modal to add a currency
   const handleAdd = () => {
-    setAddMode(true);
+    setModalVisible(true);
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
   };
 
   // when the user selects a base currency, update the base
@@ -57,8 +61,6 @@ export default function Rates() {
   const handleReset = () => {
     setBase(defaultBase);
     setSelectedCurrencies(defaultCurrencies);
-    // and hide the add dropdown
-    setAddMode(false);
   };
 
   // todo: save the rates to the database
@@ -66,10 +68,9 @@ export default function Rates() {
     console.log("Saving rates");
   };
 
-  // add the currency to the list after select and hide the add dropdown
+  // add the currency to the list after select
   const addCurrencyAfterSelect = (currency) => {
     setSelectedCurrencies([...selectedCurrencies, currency]);
-    setAddMode(false);
   };
 
   return (
@@ -92,11 +93,11 @@ export default function Rates() {
           contentContainerStyle={styles.flatListContent}
         />
       </View>
-      {addMode && (
-        <View style={styles.addContainer}>
-          <DropDownMenu onSelect={addCurrencyAfterSelect} />
-        </View>
-      )}
+      <CustomModal
+        isModalVisible={isModalVisible}
+        onBackdropPress={toggleModal}
+        handleValueChange={addCurrencyAfterSelect}
+      ></CustomModal>
       <View style={styles.buttonContainer}>
         <RegularButton onPress={handleReset}>Reset</RegularButton>
         <RegularButton onPress={handleSave}>Save</RegularButton>
@@ -125,10 +126,6 @@ const styles = StyleSheet.create({
   flatListContent: {
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  addContainer: {
-    flex: 1,
   },
 
   buttonContainer: {
