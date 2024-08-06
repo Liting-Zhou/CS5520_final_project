@@ -7,6 +7,15 @@ import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
 import { calculateTotal } from "../helpers/RatesHelper";
 
+const CustomCellRenderer = ({ id, style, children, ...props }) => {
+  console.log("Assets.js 15, CustomCellRenderer", id);
+  return (
+    <View style={[style, { zIndex: (10 - id) * 1000 }]} {...props}>
+      {children}
+    </View>
+  );
+};
+
 export default function Assets() {
   const navigation = useNavigation();
   const defaultBase = "CAD";
@@ -27,7 +36,7 @@ export default function Assets() {
       setTotal(total);
     };
     fetchTotal();
-  }, [assets, setAssets, base]);
+  }, [assets, base]);
 
   // scroll the list to the bottom when assets change
   useEffect(() => {
@@ -51,11 +60,17 @@ export default function Assets() {
     }
   }, [newAsset]);
 
+  let newId = 2;
+  const generateNewId = () => {
+    newId += 1;
+    return newId;
+  };
+
   // when the user presses the headerRight add button, add an empty asset
   const handleAdd = () => {
-    console.log("Assets.js 48, before add", assets);
-    const newId = Math.random() * 10000;
-    const addedAsset = { currency: "CAD", amount: "0", id: newId };
+    console.log("Assets.js 65, before add", assets);
+    const newGeneratedId = generateNewId();
+    const addedAsset = { currency: "CAD", amount: "0", id: newGeneratedId };
     setNewAsset(addedAsset);
   };
 
@@ -115,6 +130,7 @@ export default function Assets() {
       </View>
       <View style={styles.listContainer}>
         <Text>Your currencies: </Text>
+
         <FlatList
           ref={flatListRef}
           data={assets}
@@ -129,6 +145,11 @@ export default function Assets() {
             />
           )}
           contentContainerStyle={styles.flatListContent}
+          CellRendererComponent={({ item, children, ...props }) => {
+            return (
+              <CustomCellRenderer id={item.id} children={children} {...props} />
+            );
+          }}
         />
         <View style={styles.textContainer}>
           <Text>
@@ -162,8 +183,11 @@ const styles = StyleSheet.create({
     flex: 4,
     width: "80%",
     paddingBottom: 20,
+    // position: "relative",
   },
-  flatListContent: {},
+  flatListContent: {
+    // position: "relative",
+  },
   textContainer: {
     // flex: 1,
     // justifyContent: "center",
@@ -174,5 +198,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "80%",
     justifyContent: "space-around",
+  },
+  customCell: {
+    backgroundColor: "blue",
   },
 });

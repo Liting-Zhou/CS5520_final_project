@@ -23,7 +23,7 @@ export default function AssetItem({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { zIndex: (10 - id) * 1000 }]}>
       <DeleteButton onPress={onDelete} style={styles.deleteButton} />
       <Input
         defaultValue={amount}
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     paddingVertical: 10,
+    // position: "absolute",
   },
   input: { width: "25%", marginRight: 15, borderRadius: 8 },
   dropdown: { width: "60%", minHeight: 40 },
