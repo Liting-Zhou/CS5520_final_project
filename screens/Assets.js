@@ -54,18 +54,10 @@ export default function Assets() {
     }
   }, [newAsset]);
 
-  // for now, generate a new id by incrementing the last id
-  // this is used for setting the zIndex of the items
-  let newId = 2;
-  const generateNewId = () => {
-    newId += 1;
-    return newId;
-  };
-
   // when the user presses the headerRight add button, add an empty asset
   const handleAdd = () => {
     // console.log("Assets.js 67, before add", assets);
-    const newGeneratedId = generateNewId();
+    const newGeneratedId = Math.random() * 1000;
     const addedAsset = { currency: "CAD", amount: "0", id: newGeneratedId };
     setNewAsset(addedAsset);
   };
@@ -84,8 +76,8 @@ export default function Assets() {
     console.log("Assets.js 49, save");
   };
 
-  const handleDelete = (currency) => {
-    const newAssets = assets.filter((asset) => asset.currency !== currency);
+  const handleDelete = (id) => {
+    const newAssets = assets.filter((asset) => asset.id !== id);
     setAssets(newAssets);
   };
 
@@ -131,7 +123,7 @@ export default function Assets() {
             <AssetItem
               id={item.id}
               item={item}
-              onDelete={() => handleDelete(item.currency)}
+              onDelete={() => handleDelete(item.id)}
               onChangeCurrency={handleChangeCurrency}
               onChangeAmount={handleChangeAmount}
             />

@@ -16,6 +16,7 @@ import Input from "./Input";
 import DeleteButton from "./DeleteButton";
 import RegularButton from "./RegularButton";
 import { currencies, colors } from "../helpers/Constants";
+import CustomModal from "./CustomModal";
 
 // the item has a currency and an amount, and a delete button
 export default function AssetItem({
@@ -27,12 +28,8 @@ export default function AssetItem({
 }) {
   const { currency, amount } = item;
   const [isModalVisible, setModalVisible] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(currency);
-  const [items, setItems] = useState(currencies);
 
   const toggleModal = () => {
-    // console.log("toggleModal");
     setModalVisible(!isModalVisible);
   };
 
@@ -53,40 +50,17 @@ export default function AssetItem({
       />
       <Pressable onPress={toggleModal}>
         <View style={styles.currencyButton}>
-          <Text>{value}</Text>
+          <Text>{currency}</Text>
           <MaterialIcons name="mode-edit" size={24} color="black" />
         </View>
       </Pressable>
       <DeleteButton onPress={onDelete} style={styles.deleteButton} />
-
-      <Modal
-        transparent={true}
-        visible={isModalVisible}
+      <CustomModal
+        isModalVisible={isModalVisible}
         onBackdropPress={toggleModal}
-        animationType="slide"
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Pressable onPress={toggleModal} style={styles.deleteButtonInModal}>
-              <FontAwesome6 name="times-circle" size={24} color="black" />
-            </Pressable>
-            <DropDownPicker
-              open={open}
-              value={value}
-              items={items}
-              setOpen={setOpen}
-              setValue={setValue}
-              setItems={setItems}
-              searchable={true}
-              searchPlaceholder="Search..."
-              onChangeValue={(newValue) => {
-                handleChangeCurrency(newValue);
-                toggleModal();
-              }}
-            />
-          </View>
-        </View>
-      </Modal>
+        value={currency}
+        handleValueChange={handleChangeCurrency}
+      ></CustomModal>
     </View>
   );
 }
@@ -111,26 +85,4 @@ const styles = StyleSheet.create({
   input: { width: "30%", marginRight: 15, borderRadius: 8 },
 
   deleteButton: { marginLeft: 15 },
-
-  deleteButtonInModal: {
-    position: "absolute",
-    top: 5,
-    right: 5,
-    zIndex: 10000,
-    backgroundColor: colors.white,
-  },
-
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.modalOverlay,
-  },
-
-  modalContent: {
-    width: "80%",
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-  },
 });
