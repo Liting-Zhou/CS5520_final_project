@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { currencies, colors } from "../helpers/Constants";
@@ -23,8 +23,12 @@ export default function DropDownMenu({ base, onSelect, style }) {
       setItems={setItems}
       searchable={true}
       searchPlaceholder="Search..."
+      dropDownDirection="BOTTOM"
       style={[styles.dropdown, style]}
       dropDownContainerStyle={[styles.dropDownContainer, style]}
+      labelProps={{
+        numberOfLines: 1,
+      }}
       onChangeValue={(newValue) => onSelect(newValue)}
     />
   );
