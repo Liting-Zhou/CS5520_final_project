@@ -96,6 +96,7 @@ export default function Rates() {
       <CustomModal
         isModalVisible={isModalVisible}
         onBackdropPress={toggleModal}
+        valuePassed={""}
         handleValueChange={addCurrencyAfterSelect}
       ></CustomModal>
       <View style={styles.buttonContainer}>

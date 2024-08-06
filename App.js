@@ -13,8 +13,8 @@ import ProfileDetail from "./screens/ProfileDetail";
 import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
 
-import TabBarButton from "./components/TabBarButton";
 import { colors, textSizes } from "./helpers/Constants";
+import RegularButton from "./components/RegularButton";
 
 const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
@@ -88,9 +88,14 @@ export default function App() {
             options={({ navigation }) => ({
               headerTitle: "Convert Currency",
               tabBarButton: () => (
-                <TabBarButton onPress={() => navigation.navigate("Conversion")}>
-                  <Text style={styles.buttonText}>Convert</Text>
-                </TabBarButton>
+                <RegularButton
+                  onPress={() => navigation.navigate("Conversion")}
+                  childrenStyle={styles.convertButtonChildren}
+                  buttonStyle={styles.convertButton}
+                  buttonTextStyle={{ fontSize: textSizes.small }}
+                >
+                  <Text>Convert</Text>
+                </RegularButton>
               ),
             })}
           />
@@ -110,8 +115,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  buttonText: {
-    color: colors.white,
-    fontSize: textSizes.small,
+  convertButton: {
+    top: -10,
+    backgroundColor: "none",
+    margin: 0,
+  },
+  convertButtonChildren: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: colors.tabBarbutton,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

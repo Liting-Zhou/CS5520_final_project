@@ -5,7 +5,6 @@ import DropDownMenu from "../components/DropDownMenu";
 import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
-import CellRendererComponent from "../components/CellRendererComponent";
 import { calculateTotal } from "../helpers/RatesHelper";
 
 export default function Assets() {
@@ -56,7 +55,7 @@ export default function Assets() {
 
   // when the user presses the headerRight add button, add an empty asset
   const handleAdd = () => {
-    // console.log("Assets.js 67, before add", assets);
+    // console.log("Assets.js 58, before add", assets);
     const newGeneratedId = Math.random() * 1000;
     const addedAsset = { currency: "CAD", amount: "0", id: newGeneratedId };
     setNewAsset(addedAsset);
@@ -73,7 +72,7 @@ export default function Assets() {
   };
 
   const handleSave = () => {
-    console.log("Assets.js 49, save");
+    console.log("Assets.js 76, save");
   };
 
   const handleDelete = (id) => {
@@ -88,7 +87,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, currency: newCurrency } : asset
       )
     );
-    // console.log("Assets.js 99, change currency", newCurrency);
+    // console.log("Assets.js 90, change currency", newCurrency);
   };
 
   //when the user changes the amount of an asset, update the amount
@@ -98,7 +97,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, amount: newAmount } : asset
       )
     );
-    // console.log("Assets.js 109, new amount", newAmount);
+    // console.log("Assets.js 100, new amount", newAmount);
   };
 
   return (
@@ -128,8 +127,6 @@ export default function Assets() {
               onChangeAmount={handleChangeAmount}
             />
           )}
-          contentContainerStyle={styles.flatListContent}
-          CellRendererComponent={CellRendererComponent}
         />
         <View style={styles.textContainer}>
           <Text>
@@ -164,7 +161,7 @@ const styles = StyleSheet.create({
     width: "80%",
     paddingBottom: 20,
   },
-  flatListContent: {},
+
   textContainer: {
     alignItems: "center",
   },
@@ -173,8 +170,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "80%",
     justifyContent: "space-around",
-  },
-  customCell: {
-    backgroundColor: "blue",
   },
 });

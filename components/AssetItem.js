@@ -1,21 +1,9 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  Modal,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useState } from "react";
-import DropDownPicker from "react-native-dropdown-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import DropDownMenu from "./DropDownMenu";
 import Input from "./Input";
 import DeleteButton from "./DeleteButton";
-import RegularButton from "./RegularButton";
-import { currencies, colors } from "../helpers/Constants";
+import { colors } from "../helpers/Constants";
 import CustomModal from "./CustomModal";
 
 // the item has a currency and an amount, and a delete button
@@ -54,13 +42,13 @@ export default function AssetItem({
           <MaterialIcons name="mode-edit" size={24} color="black" />
         </View>
       </Pressable>
-      <DeleteButton onPress={onDelete} style={styles.deleteButton} />
       <CustomModal
         isModalVisible={isModalVisible}
         onBackdropPress={toggleModal}
-        value={currency}
+        valuePassed={currency}
         handleValueChange={handleChangeCurrency}
       ></CustomModal>
+      <DeleteButton onPress={onDelete} style={styles.deleteButton} />
     </View>
   );
 }
@@ -82,6 +70,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     height: 40,
   },
+
   input: { width: "30%", marginRight: 15, borderRadius: 8 },
 
   deleteButton: { marginLeft: 15 },

@@ -1,14 +1,26 @@
-import { StyleSheet, Text, Pressable } from "react-native";
+import { StyleSheet, Text, Pressable, View } from "react-native";
 import React from "react";
 import { colors } from "../helpers/Constants";
 
-export default function RegularButton({ children, onPress }) {
+export default function RegularButton({
+  children,
+  onPress,
+  childrenStyle,
+  buttonStyle,
+  buttonTextStyle,
+}) {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.button, pressed ? styles.pressed : null]}
+      style={({ pressed }) => [
+        styles.button,
+        pressed ? styles.pressed : null,
+        buttonStyle,
+      ]}
     >
-      <Text style={styles.buttonText}>{children}</Text>
+      <View style={childrenStyle}>
+        <Text style={[styles.buttonText, buttonTextStyle]}>{children}</Text>
+      </View>
     </Pressable>
   );
 }

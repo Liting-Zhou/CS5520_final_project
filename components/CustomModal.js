@@ -4,6 +4,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import React, { useState } from "react";
 import { currencies, colors } from "../helpers/Constants";
 
+// this Modal is used to pop up a dropdown picker to select a currency
 export default function CustomModal({
   isModalVisible,
   onBackdropPress,
@@ -13,6 +14,7 @@ export default function CustomModal({
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(valuePassed);
   const [items, setItems] = useState(currencies);
+
   return (
     <Modal
       transparent={true}
