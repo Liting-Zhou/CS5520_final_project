@@ -5,17 +5,18 @@ import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 import RegularButton from '../components/RegularButton';
 import { colors, textSizes } from '../helpers/Constants';
+import { writeProfileToDB } from '../firebase/firebaseHelper'; // Ensure this path is correct
 
 export default function ProfileDetail() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { name, email, photo, updateProfile } = route.params;
+  const { userId, name, email, photo } = route.params; // Get userId from params
 
   const [newName, setNewName] = useState(name);
   const [newEmail, setNewEmail] = useState(email);
   const [newPhoto, setNewPhoto] = useState(photo);
 
-  // let the user pick an image from the gallery
+  // Let the user pick an image from the gallery
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -29,10 +30,16 @@ export default function ProfileDetail() {
     }
   };
 
-  // save the new profile information
-  const handleSave = () => {
-    updateProfile(newName, newEmail, newPhoto);
-    navigation.goBack();
+  // Save the new profile information
+  const handleSave = async () => {
+    console.log('Saving profile...');
+    try {
+      const userId = "User1";
+      await writeProfileToDB({ userId, name: newName, email: newEmail, photo: newPhoto }, "users");
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error saving profile: ", error);
+    }
   };
 
   return (
@@ -63,8 +70,8 @@ export default function ProfileDetail() {
         keyboardType="email-address"
       />
       <View style={styles.buttonContainer}>
-      <RegularButton onPress={handleSave}>Save</RegularButton>
-        </View>
+        <RegularButton onPress={handleSave}>Save</RegularButton>
+      </View>
     </View>
   );
 }
@@ -129,4 +136,3 @@ const styles = StyleSheet.create({
     color: colors.gray,
   },
 });
-

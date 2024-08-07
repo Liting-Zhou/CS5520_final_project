@@ -33,3 +33,20 @@ export const writeRatesToDB = async (
     console.error("Error saving rates: ", error);
   }
 };
+
+export const writeProfileToDB = async (
+  { userId, name, email, photo },
+  collectionName
+) => {
+  try {
+    // Reference to the user document
+    const userDocRef = doc(db, collectionName, userId);
+
+    // Save the profile information to the user document
+    await setDoc(userDocRef, { name, email, photo }, { merge: true });
+
+    console.log("Profile saved successfully");
+  } catch (error) {
+    console.error("Error saving profile: ", error);
+  }
+};
