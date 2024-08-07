@@ -71,8 +71,8 @@ export default function Rates() {
     setModalVisible(true);
   };
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+  const closeModal = () => {
+    setModalVisible(false);
   };
 
   // when the user selects a base currency, update the base
@@ -111,6 +111,7 @@ export default function Rates() {
   // add the currency to the list after select
   const addCurrencyAfterSelect = (currency) => {
     setSelectedCurrencies([...selectedCurrencies, currency]);
+    setModalVisible(false);
   };
 
   return (
@@ -135,9 +136,9 @@ export default function Rates() {
       </View>
       <CustomModal
         isModalVisible={isModalVisible}
-        onBackdropPress={toggleModal}
         valuePassed={""}
         handleValueChange={addCurrencyAfterSelect}
+        handleModalClose={closeModal}
       ></CustomModal>
       <View style={styles.buttonContainer}>
         <RegularButton onPress={handleReset}>Reset</RegularButton>
