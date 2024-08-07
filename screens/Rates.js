@@ -7,6 +7,8 @@ import { getSelectedCurrencies } from "../helpers/RatesHelper";
 import RegularButton from "../components/RegularButton";
 import AddButton from "../components/AddButton";
 import CustomModal from "../components/CustomModal";
+import { doc, setDoc } from "firebase/firestore";
+import { writeRatesToDB } from "../firebase/firebaseHelper";
 
 export default function Rates() {
   const navigation = useNavigation();
@@ -63,9 +65,15 @@ export default function Rates() {
     setSelectedCurrencies(defaultCurrencies);
   };
 
-  // todo: save the rates to the database
-  const handleSave = () => {
+  // save the rates to the database
+  const handleSave = async () => {
     console.log("Saving rates");
+    try {
+      const userId = "User1";
+      await writeRatesToDB({ userId, base, selectedCurrencies }, "users");
+    } catch (error) {
+      console.error("Error saving rates: ", error);
+    }
   };
 
   // add the currency to the list after select
