@@ -65,6 +65,30 @@ Notifications Subcollection:
 
 ### 3. current state of the application
 
+Anonymous user can use these functions:
+
+- customize list of interested currencies, but cannot save
+- customize assets to see the total result, but cannot save
+- convert currencies
+
+Fake user "User1" can use these functions (authentication not implemented):
+
+- customize list of interested currencies and save
+- customize assets to see the total result, and save
+- retrieve the saved data from DB
+- convert currencies
+
+Currency exchange rates are called from 3rd party API:
+https://rapidapi.com/principalapis/api/currency-conversion-and-exchange-rates
+
+Functions to be implemented:
+
+- Authentication
+- Camera use
+- Location use
+- Notification
+- Styling and coloring
+
 ### 4. screenshots (at least 1)
 
 ### 5. contributions
@@ -72,3 +96,8 @@ Notifications Subcollection:
 #### Qianyi Fu
 
 #### Liting Zhou
+
+- screen of list of currencies
+- screen of asset management
+- screen of conversion
+- some components and helpers

@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { rapidApiKey } from "@env";
 
 const API_URL =
   "https://currency-conversion-and-exchange-rates.p.rapidapi.com/latest";
-const RAPIDAPI_KEY = "98b25a2fc4msh2168b01a868f18dp196105jsna9715150ed92";
+const RAPIDAPI_KEY = rapidApiKey;
 const CACHE_KEY = "cachedRates";
 const CACHE_TIMESTAMP_KEY = "cachedRatesTimestamp";
 const CACHE_DURATION = 24 * 60 * 60 * 1000;
