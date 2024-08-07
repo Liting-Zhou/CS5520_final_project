@@ -1,57 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, FlatList } from "react-native";
+import { StyleSheet, View, Text, FlatList, Pressable } from "react-native";
 import AddButton from "../components/AddButton";
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { textSizes } from "../helpers/Constants";
 import TransactionDetail from "../components/TransactionDetail";
+import { readTransactionsFromDB } from '../firebase/firebaseHelper';
 
 export default function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
   const navigation = useNavigation();
-  const route = useRoute();
-  const { transaction, shouldDelete } = route.params || {};
+  const isFocused = useIsFocused(); 
+  const userId = "User1"; 
 
-  // this button will be displayed on the right side of the header to add a new transaction
+  // Fetch transactions from Firestore when the component mounts or when the screen is focused
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const fetchedTransactions = await readTransactionsFromDB(userId);
+      setTransactions(fetchedTransactions);
+    };
+
+    if (isFocused) {
+      fetchTransactions();
+    }
+  }, [isFocused]);
+
+  // Set the header right button to add a new transaction
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <AddButton onPress={() => navigation.navigate('AddTransaction')} />
+        <AddButton onPress={() => navigation.navigate('AddTransaction', { userId })} />
       ),
     });
   }, [navigation]);
-
-  // add, edit or delete a transaction
-  useEffect(() => {
-    console.log(transaction);
-    if (shouldDelete && transaction?.id) {
-      // Delete the transaction
-      setTransactions((prevTransactions) =>
-        prevTransactions.filter((t) => t.id !== transaction.id)
-      );
-    } else if (transaction) {
-      if (transactions.some((t) => t.id === transaction.id)) {
-        // Edit existing transaction
-        setTransactions((prevTransactions) =>
-          prevTransactions.map((t) =>
-            t.id === transaction.id ? transaction : t
-          )
-        );
-      } else {
-        // Add new transaction
-        setTransactions((prevTransactions) => [
-          ...prevTransactions,
-          transaction
-        ]);
-      }
-    }
-  }, [route.params]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Your exchange transaction history:</Text>
       <FlatList
         data={transactions}
-        renderItem={({ item }) => <TransactionDetail transaction={item} />}
+        renderItem={({ item }) => (
+          <Pressable onPress={() => navigation.navigate('AddTransaction', { userId, transaction: item })}>
+            <TransactionDetail transaction={item} />
+          </Pressable>
+        )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
       />

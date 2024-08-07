@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { StyleSheet, View, Alert, Pressable, Text, TextInput } from "react-native";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import RegularButton from "../components/RegularButton";
@@ -9,62 +9,36 @@ import { colors, textSizes } from "../helpers/Constants";
 import Entypo from 'react-native-vector-icons/Entypo';
 import TrashBinButton from "../components/TrashBinButton";
 import { writeTransactionToDB, updateTransactionInDB, deleteTransactionFromDB } from '../firebase/firebaseHelper';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase/firebaseSetup';
 
 export default function AddTransaction() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { userId = "User1", transactionId } = route.params || {};
+  const { userId = "User1", transaction } = route.params || {};
+  const transactionId = transaction ? transaction.id : undefined;
 
-  const [transaction, setTransaction] = useState(null);
-  const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-  const [date, setDate] = useState(null);
-  const [fromCurrency, setFromCurrency] = useState('');
-  const [toCurrency, setToCurrency] = useState('');
-  const [fromAmount, setFromAmount] = useState('');
-  const [toAmount, setToAmount] = useState('');
+  // Initialize the state variables for the transaction information
+  // If transaction is not null, set the state variables to the transaction data
+  const [description, setDescription] = useState(transaction ? transaction.description : '');
+  const [location, setLocation] = useState(transaction ? transaction.location : '');
+  const [date, setDate] = useState(transaction ? new Date(transaction.date) : null);
+  const [fromCurrency, setFromCurrency] = useState(transaction ? transaction.fromCurrency : '');
+  const [toCurrency, setToCurrency] = useState(transaction ? transaction.toCurrency : '');
+  const [fromAmount, setFromAmount] = useState(transaction ? transaction.fromAmount : '');
+  const [toAmount, setToAmount] = useState(transaction ? transaction.toAmount : '');
 
-  useEffect(() => {
-    if (transactionId) {
-      fetchTransaction();
-    }
-  }, [transactionId]);
-
-  const fetchTransaction = async () => {
-    try {
-      const transactionDocRef = doc(db, `users/${userId}/transactions`, transactionId);
-      const transactionDoc = await getDoc(transactionDocRef);
-      if (transactionDoc.exists()) {
-        const transactionData = transactionDoc.data();
-        setTransaction(transactionData);
-        setDescription(transactionData.description);
-        setLocation(transactionData.location);
-        setDate(new Date(transactionData.date));
-        setFromCurrency(transactionData.fromCurrency);
-        setToCurrency(transactionData.toCurrency);
-        setFromAmount(transactionData.fromAmount);
-        setToAmount(transactionData.toAmount);
-      } else {
-        console.log("No such document!");
-      }
-    } catch (error) {
-      console.error("Error fetching transaction: ", error);
-    }
-  };
-
+  // Set the header title and right button based on whether the transaction is new or existing
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: transaction ? 'Edit Transaction' : 'Add Transaction',
+      headerTitle: transactionId ? 'Edit Transaction' : 'Add Transaction',
       headerRight: () => (
-        transaction && (
+        transactionId && (
           <TrashBinButton onPress={handleDeleteTransaction} />
         )
       ),
     });
-  }, [navigation, transaction]);
+  }, [navigation, transactionId]);
 
+  // Save the transaction to Firestore
   const handleSaveTransaction = async () => {
     if (!description || !location || !date || !fromCurrency || !toCurrency || !fromAmount || !toAmount) {
       Alert.alert("Error", "All fields are required");
@@ -89,14 +63,16 @@ export default function AddTransaction() {
     };
 
     try {
-      if (transaction) {
-        newTransaction.id = transaction.id;
+      // If transactionId exists, update the transaction in Firestore
+      if (transactionId) {
+        newTransaction.id = transactionId;
         await updateTransactionInDB(userId, newTransaction);
       } else {
+        // If transactionId does not exist, write a new transaction to Firestore
         const newTransactionId = await writeTransactionToDB(userId, newTransaction);
         newTransaction.id = newTransactionId;
       }
-      navigation.navigate('TransactionHistory', { transaction: newTransaction });
+      navigation.navigate('TransactionHistory');
     } catch (error) {
       console.error("Error saving transaction: ", error);
       Alert.alert("Error", "There was a problem saving your transaction.");
@@ -117,8 +93,8 @@ export default function AddTransaction() {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteTransactionFromDB(userId, transaction.id);
-              navigation.navigate('TransactionHistory', { shouldDelete: true });
+              await deleteTransactionFromDB(userId, transactionId);
+              navigation.navigate('TransactionHistory');
             } catch (error) {
               console.error("Error deleting transaction: ", error);
               Alert.alert("Error", "There was a problem deleting your transaction.");
@@ -192,7 +168,7 @@ export default function AddTransaction() {
         </View>
       </View>
       <RegularButton onPress={handleSaveTransaction}>
-        {transaction ? 'Save Changes' : 'Add Transaction'}
+        {transactionId ? 'Save Changes' : 'Add Transaction'}
       </RegularButton>
     </View>
   );

@@ -59,11 +59,11 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: textSizes.small,
-    color: colors.lightGray,
+    color: colors.gray,
     marginBottom: 5,
   },
   location: {
-    fontSize: textSizes.medium,
+    fontSize: textSizes.small,
     color: colors.gray,
     marginBottom: 5,
   },
