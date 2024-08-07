@@ -6,7 +6,7 @@ import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
 import { calculateTotal } from "../helpers/RatesHelper";
-import { writeAssetsToDB } from "../firebase/firebaseHelper";
+import { readAssetsFromDB, writeAssetsToDB } from "../firebase/firebaseHelper";
 
 export default function Assets() {
   const navigation = useNavigation();
@@ -20,6 +20,25 @@ export default function Assets() {
   const [total, setTotal] = useState(0);
   const [newAsset, setNewAsset] = useState(null);
   const flatListRef = useRef(null);
+
+  // todo: fetch customized assets when the component mounts if loggin
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        const userId = "User1";
+        const data = await readAssetsFromDB(userId, "users");
+        if (data) {
+          // console.log("Assets.js 31, data from DB", data);
+          setBase(data.base);
+          setAssets(data.assets);
+          return;
+        }
+      } catch (error) {
+        console.error("Error fetching assets: ", error);
+      }
+    };
+    fetchAssets();
+  }, []);
 
   // calculate the total when assets or base change
   useEffect(() => {

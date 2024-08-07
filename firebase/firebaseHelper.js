@@ -47,11 +47,8 @@ export const readCurrenciesFromDB = async (userId, collectionName) => {
       }
     }
     return null;
-    // return default currencies if the user document does not exist
-    // return { base: "CAD", selectedCurrencies: ["USD", "EUR", "JPY"] };
   } catch (error) {
     console.error("Error fetching selected currencies: ", error);
-    // return { base: "CAD", selectedCurrencies: ["USD", "EUR", "JPY"] };
     return null;
   }
 };
@@ -69,6 +66,30 @@ export const writeAssetsToDB = async (
     console.log("Assets saved successfully");
   } catch (error) {
     console.error("Error saving rates: ", error);
+  }
+};
+
+// read assets from the database
+export const readAssetsFromDB = async (userId, collectionName) => {
+  try {
+    // reference to the user document
+    const userDocRef = doc(db, collectionName, userId);
+    // get the user's document
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      console.log("firebaseHelper.js 81, data from DB", data);
+      if (data.assetsBase && data.myAssets) {
+        return {
+          base: data.assetsBase,
+          assets: data.myAssets,
+        };
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching assets: ", error);
+    return null;
   }
 };
 
