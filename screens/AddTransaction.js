@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { StyleSheet, View, Alert, Pressable, Text, TextInput } from "react-native";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import RegularButton from "../components/RegularButton";
@@ -8,22 +8,52 @@ import DropDownMenu from "../components/DropDownMenu";
 import { colors, textSizes } from "../helpers/Constants";
 import Entypo from 'react-native-vector-icons/Entypo';
 import TrashBinButton from "../components/TrashBinButton";
+import { writeTransactionToDB, updateTransactionInDB, deleteTransactionFromDB } from '../firebase/firebaseHelper';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/firebaseSetup';
 
 export default function AddTransaction() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { transaction } = route.params || {};
+  const { userId = "User1", transactionId } = route.params || {};
 
-  const [description, setDescription] = useState(transaction?.description || '');
-  const [location, setLocation] = useState(transaction?.location || '');
-  const [date, setDate] = useState(transaction ? new Date(transaction.date) : null);
-  const [fromCurrency, setFromCurrency] = useState(transaction?.fromCurrency || '');
-  const [toCurrency, setToCurrency] = useState(transaction?.toCurrency || '');
-  const [fromAmount, setFromAmount] = useState(transaction?.fromAmount || '');
-  const [toAmount, setToAmount] = useState(transaction?.toAmount || '');
+  const [transaction, setTransaction] = useState(null);
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [date, setDate] = useState(null);
+  const [fromCurrency, setFromCurrency] = useState('');
+  const [toCurrency, setToCurrency] = useState('');
+  const [fromAmount, setFromAmount] = useState('');
+  const [toAmount, setToAmount] = useState('');
 
-  // use useLayoutEffect to set the header title dynamically based on whether we are adding or editing a transaction
-  // also add a delete icon to the right side of the header when editing
+  useEffect(() => {
+    if (transactionId) {
+      fetchTransaction();
+    }
+  }, [transactionId]);
+
+  const fetchTransaction = async () => {
+    try {
+      const transactionDocRef = doc(db, `users/${userId}/transactions`, transactionId);
+      const transactionDoc = await getDoc(transactionDocRef);
+      if (transactionDoc.exists()) {
+        const transactionData = transactionDoc.data();
+        setTransaction(transactionData);
+        setDescription(transactionData.description);
+        setLocation(transactionData.location);
+        setDate(new Date(transactionData.date));
+        setFromCurrency(transactionData.fromCurrency);
+        setToCurrency(transactionData.toCurrency);
+        setFromAmount(transactionData.fromAmount);
+        setToAmount(transactionData.toAmount);
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching transaction: ", error);
+    }
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: transaction ? 'Edit Transaction' : 'Add Transaction',
@@ -35,8 +65,7 @@ export default function AddTransaction() {
     });
   }, [navigation, transaction]);
 
-  // check if all fields are filled out and if the from and to currencies are different
-  const handleSaveTransaction = () => {
+  const handleSaveTransaction = async () => {
     if (!description || !location || !date || !fromCurrency || !toCurrency || !fromAmount || !toAmount) {
       Alert.alert("Error", "All fields are required");
       return;
@@ -49,10 +78,7 @@ export default function AddTransaction() {
 
     const formattedDate = date.toISOString();
 
-    // create a new transaction object
-    // give id a random value if it's a new transaction, otherwise use the existing id
     const newTransaction = {
-      id: transaction?.id || Math.random().toString(),
       description,
       location,
       date: formattedDate,
@@ -62,10 +88,22 @@ export default function AddTransaction() {
       toAmount
     };
 
-    navigation.navigate('TransactionHistory', { transaction: newTransaction });
+    try {
+      if (transaction) {
+        newTransaction.id = transaction.id;
+        await updateTransactionInDB(userId, newTransaction);
+      } else {
+        const newTransactionId = await writeTransactionToDB(userId, newTransaction);
+        newTransaction.id = newTransactionId;
+      }
+      navigation.navigate('TransactionHistory', { transaction: newTransaction });
+    } catch (error) {
+      console.error("Error saving transaction: ", error);
+      Alert.alert("Error", "There was a problem saving your transaction.");
+    }
   };
 
-  const handleDeleteTransaction = () => {
+  const handleDeleteTransaction = async () => {
     Alert.alert(
       "Confirm Delete",
       "Are you sure you want to delete this transaction?",
@@ -77,8 +115,14 @@ export default function AddTransaction() {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => {
-            navigation.navigate('TransactionHistory', { transaction, shouldDelete: true });
+          onPress: async () => {
+            try {
+              await deleteTransactionFromDB(userId, transaction.id);
+              navigation.navigate('TransactionHistory', { shouldDelete: true });
+            } catch (error) {
+              console.error("Error deleting transaction: ", error);
+              Alert.alert("Error", "There was a problem deleting your transaction.");
+            }
           }
         }
       ]

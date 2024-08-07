@@ -34,6 +34,7 @@ export const writeRatesToDB = async (
   }
 };
 
+// Function to write a new profile to Firestore
 export const writeProfileToDB = async (
   { userId, name, email, photo },
   collectionName
@@ -51,7 +52,7 @@ export const writeProfileToDB = async (
   }
 };
 
-
+// Function to updtate the profile information in Firestore
 export const updateProfileInDB = async (userId, { name, email, photo }, collectionName) => {
   try {
     // Reference to the user document
@@ -63,5 +64,39 @@ export const updateProfileInDB = async (userId, { name, email, photo }, collecti
     console.log("Profile updated successfully");
   } catch (error) {
     console.error("Error updating profile: ", error);
+  }
+};
+
+
+// Function to write a new transaction to Firestore with an auto-generated ID
+export const writeTransactionToDB = async (userId, transaction) => {
+  try {
+    const transactionsCollectionRef = collection(db, `users/${userId}/transactions`);
+    const transactionDocRef = await addDoc(transactionsCollectionRef, transaction);
+    console.log("Transaction written successfully with ID: ", transactionDocRef.id);
+  } catch (error) {
+    console.error("Error writing transaction: ", error);
+  }
+};
+
+// Function to update an existing transaction in Firestore
+export const updateTransactionInDB = async (userId, transaction) => {
+  try {
+    const transactionDocRef = doc(db, `users/${userId}/transactions`, transaction.id);
+    await updateDoc(transactionDocRef, transaction);
+    console.log("Transaction updated successfully");
+  } catch (error) {
+    console.error("Error updating transaction: ", error);
+  }
+};
+
+// Function to delete a transaction from Firestore
+export const deleteTransactionFromDB = async (userId, transactionId) => {
+  try {
+    const transactionDocRef = doc(db, `users/${userId}/transactions`, transactionId);
+    await deleteDoc(transactionDocRef);
+    console.log("Transaction deleted successfully");
+  } catch (error) {
+    console.error("Error deleting transaction: ", error);
   }
 };
