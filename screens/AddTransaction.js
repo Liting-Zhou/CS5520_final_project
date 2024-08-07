@@ -8,35 +8,38 @@ import DropDownMenu from "../components/DropDownMenu";
 import { colors, textSizes } from "../helpers/Constants";
 import Entypo from 'react-native-vector-icons/Entypo';
 import TrashBinButton from "../components/TrashBinButton";
+import { writeTransactionToDB, updateTransactionInDB, deleteTransactionFromDB } from '../firebase/firebaseHelper';
 
 export default function AddTransaction() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { transaction } = route.params || {};
+  const { userId = "User1", transaction } = route.params || {};
+  const transactionId = transaction ? transaction.id : undefined;
 
-  const [description, setDescription] = useState(transaction?.description || '');
-  const [location, setLocation] = useState(transaction?.location || '');
+  // Initialize the state variables for the transaction information
+  // If transaction is not null, set the state variables to the transaction data
+  const [description, setDescription] = useState(transaction ? transaction.description : '');
+  const [location, setLocation] = useState(transaction ? transaction.location : '');
   const [date, setDate] = useState(transaction ? new Date(transaction.date) : null);
-  const [fromCurrency, setFromCurrency] = useState(transaction?.fromCurrency || '');
-  const [toCurrency, setToCurrency] = useState(transaction?.toCurrency || '');
-  const [fromAmount, setFromAmount] = useState(transaction?.fromAmount || '');
-  const [toAmount, setToAmount] = useState(transaction?.toAmount || '');
+  const [fromCurrency, setFromCurrency] = useState(transaction ? transaction.fromCurrency : '');
+  const [toCurrency, setToCurrency] = useState(transaction ? transaction.toCurrency : '');
+  const [fromAmount, setFromAmount] = useState(transaction ? transaction.fromAmount : '');
+  const [toAmount, setToAmount] = useState(transaction ? transaction.toAmount : '');
 
-  // use useLayoutEffect to set the header title dynamically based on whether we are adding or editing a transaction
-  // also add a delete icon to the right side of the header when editing
+  // Set the header title and right button based on whether the transaction is new or existing
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: transaction ? 'Edit Transaction' : 'Add Transaction',
+      headerTitle: transactionId ? 'Edit Transaction' : 'Add Transaction',
       headerRight: () => (
-        transaction && (
+        transactionId && (
           <TrashBinButton onPress={handleDeleteTransaction} />
         )
       ),
     });
-  }, [navigation, transaction]);
+  }, [navigation, transactionId]);
 
-  // check if all fields are filled out and if the from and to currencies are different
-  const handleSaveTransaction = () => {
+  // Save the transaction to Firestore
+  const handleSaveTransaction = async () => {
     if (!description || !location || !date || !fromCurrency || !toCurrency || !fromAmount || !toAmount) {
       Alert.alert("Error", "All fields are required");
       return;
@@ -49,10 +52,7 @@ export default function AddTransaction() {
 
     const formattedDate = date.toISOString();
 
-    // create a new transaction object
-    // give id a random value if it's a new transaction, otherwise use the existing id
     const newTransaction = {
-      id: transaction?.id || Math.random().toString(),
       description,
       location,
       date: formattedDate,
@@ -62,10 +62,24 @@ export default function AddTransaction() {
       toAmount
     };
 
-    navigation.navigate('TransactionHistory', { transaction: newTransaction });
+    try {
+      // If transactionId exists, update the transaction in Firestore
+      if (transactionId) {
+        newTransaction.id = transactionId;
+        await updateTransactionInDB(userId, newTransaction);
+      } else {
+        // If transactionId does not exist, write a new transaction to Firestore
+        const newTransactionId = await writeTransactionToDB(userId, newTransaction);
+        newTransaction.id = newTransactionId;
+      }
+      navigation.navigate('TransactionHistory');
+    } catch (error) {
+      console.error("Error saving transaction: ", error);
+      Alert.alert("Error", "There was a problem saving your transaction.");
+    }
   };
 
-  const handleDeleteTransaction = () => {
+  const handleDeleteTransaction = async () => {
     Alert.alert(
       "Confirm Delete",
       "Are you sure you want to delete this transaction?",
@@ -77,8 +91,14 @@ export default function AddTransaction() {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => {
-            navigation.navigate('TransactionHistory', { transaction, shouldDelete: true });
+          onPress: async () => {
+            try {
+              await deleteTransactionFromDB(userId, transactionId);
+              navigation.navigate('TransactionHistory');
+            } catch (error) {
+              console.error("Error deleting transaction: ", error);
+              Alert.alert("Error", "There was a problem deleting your transaction.");
+            }
           }
         }
       ]
@@ -148,7 +168,7 @@ export default function AddTransaction() {
         </View>
       </View>
       <RegularButton onPress={handleSaveTransaction}>
-        {transaction ? 'Save Changes' : 'Add Transaction'}
+        {transactionId ? 'Save Changes' : 'Add Transaction'}
       </RegularButton>
     </View>
   );

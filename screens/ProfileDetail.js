@@ -1,21 +1,48 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, Pressable, Image, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 import RegularButton from '../components/RegularButton';
 import { colors, textSizes } from '../helpers/Constants';
+import { updateProfileInDB } from '../firebase/firebaseHelper'; 
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/firebaseSetup';
 
 export default function ProfileDetail() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { name, email, photo, updateProfile } = route.params;
+  // Get the userId from the route params
+  const { userId } = route.params; 
 
-  const [newName, setNewName] = useState(name);
-  const [newEmail, setNewEmail] = useState(email);
-  const [newPhoto, setNewPhoto] = useState(photo);
+  // Initialize the state variables for the new profile information
+  const [newName, setNewName] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newPhoto, setNewPhoto] = useState(null);
 
-  // let the user pick an image from the gallery
+  // Fetch the user profile from Firestore
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const userDocRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setNewName(userData.name || '');
+          setNewEmail(userData.email || '');
+          setNewPhoto(userData.photo || null);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching profile: ", error);
+      }
+    };
+
+    fetchProfile();
+  }, [userId]);
+
+  // Let the user pick an image from the gallery
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -29,10 +56,27 @@ export default function ProfileDetail() {
     }
   };
 
-  // save the new profile information
-  const handleSave = () => {
-    updateProfile(newName, newEmail, newPhoto);
-    navigation.goBack();
+  // Save the new profile information using the updateProfileInDB function
+  // Check if the name and email are filled out and if the email is valid
+  const handleSave = async () => {
+    if (!newName || !newEmail) {
+      Alert.alert("Error", "Name and email are required.");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(newEmail)) {
+      Alert.alert("Error", "Please enter a valid email address.");
+      return;
+    }
+
+    console.log('Saving profile...');
+    try {
+      await updateProfileInDB(userId, { name: newName, email: newEmail, photo: newPhoto }, "users");
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error saving profile: ", error);
+      Alert.alert("Error", "There was a problem saving your profile.");
+    }
   };
 
   return (
@@ -63,8 +107,8 @@ export default function ProfileDetail() {
         keyboardType="email-address"
       />
       <View style={styles.buttonContainer}>
-      <RegularButton onPress={handleSave}>Save</RegularButton>
-        </View>
+        <RegularButton onPress={handleSave}>Save</RegularButton>
+      </View>
     </View>
   );
 }
@@ -129,4 +173,3 @@ const styles = StyleSheet.create({
     color: colors.gray,
   },
 });
-
