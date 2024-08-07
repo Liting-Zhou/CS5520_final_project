@@ -14,6 +14,7 @@ import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
 import { calculateTotal } from "../helpers/RatesHelper";
 import { readAssetsFromDB, writeAssetsToDB } from "../firebase/firebaseHelper";
+import { positiveNumberChecker } from "../helpers/Checker";
 
 export default function Assets() {
   const navigation = useNavigation();
@@ -49,6 +50,12 @@ export default function Assets() {
 
   // calculate the total when assets or base change
   useEffect(() => {
+    // check if the amounts are all positive numbers
+    for (let asset of assets) {
+      if (!positiveNumberChecker(asset.amount)) {
+        return;
+      }
+    }
     const fetchTotal = async () => {
       const data = { base, assets };
       const total = await calculateTotal({ data });
