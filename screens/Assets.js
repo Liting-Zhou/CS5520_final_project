@@ -6,6 +6,7 @@ import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
 import { calculateTotal } from "../helpers/RatesHelper";
+import { writeAssetsToDB } from "../firebase/firebaseHelper";
 
 export default function Assets() {
   const navigation = useNavigation();
@@ -71,8 +72,9 @@ export default function Assets() {
     setAssets(defaultAssets);
   };
 
-  const handleSave = () => {
-    console.log("Assets.js 76, save");
+  const handleSave = async () => {
+    console.log("Assets.js 75, saving assets");
+    await writeAssetsToDB({ userId: "User1", base, assets }, "users");
   };
 
   const handleDelete = (id) => {
