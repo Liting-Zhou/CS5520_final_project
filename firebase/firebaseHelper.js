@@ -17,25 +17,11 @@ export const writeRatesToDB = async (
   try {
     // reference to the user document
     const userDocRef = doc(db, collectionName, userId);
-
-    // save the base currency to the user document
-    await setDoc(userDocRef, { ratesBase: base });
-
-    // reference to the subcollection
-    const subCollectionRef = collection(userDocRef, "myRates");
-
-    // get all documents in the subcollection
-    const existingDocs = await getDocs(subCollectionRef);
-
-    // delete each document in the subcollection
-    for (const doc of existingDocs.docs) {
-      await deleteDoc(doc.ref);
-    }
-
-    // save each selected currency to the subcollection
-    for (const currency of selectedCurrencies) {
-      await addDoc(subCollectionRef, { currency });
-    }
+    // add selected currencies and base to the user's document
+    await updateDoc(userDocRef, {
+      myRates: selectedCurrencies,
+      ratesBase: base,
+    });
     console.log("Rates saved successfully");
   } catch (error) {
     console.error("Error saving rates: ", error);
@@ -50,14 +36,8 @@ export const writeAssetsToDB = async (
   try {
     // reference to the user document
     const userDocRef = doc(db, collectionName, userId);
-
     // add asset details and base to the user's document
-    await setDoc(
-      userDocRef,
-      { myAssets: assets, assetsBase: base },
-      { merge: true }
-    );
-
+    await updateDoc(userDocRef, { myAssets: assets, assetsBase: base });
     console.log("Assets saved successfully");
   } catch (error) {
     console.error("Error saving rates: ", error);
