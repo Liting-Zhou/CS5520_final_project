@@ -78,7 +78,7 @@ export const readAssetsFromDB = async (userId, collectionName) => {
     const userDoc = await getDoc(userDocRef);
     if (userDoc.exists()) {
       const data = userDoc.data();
-      console.log("firebaseHelper.js 81, data from DB", data);
+      // console.log("firebaseHelper.js 81, data from DB", data);
       if (data.assetsBase && data.myAssets) {
         return {
           base: data.assetsBase,

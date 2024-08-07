@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Platform, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  FlatList,
+  Alert,
+} from "react-native";
 import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import DropDownMenu from "../components/DropDownMenu";
@@ -86,14 +93,20 @@ export default function Assets() {
     setBase(base);
   };
 
+  //todo: if loggin, retrieve the customized assets from the database
   const handleReset = () => {
     setBase(defaultBase);
     setAssets(defaultAssets);
   };
 
   const handleSave = async () => {
-    console.log("Assets.js 75, saving assets");
-    await writeAssetsToDB({ userId: "User1", base, assets }, "users");
+    console.log("Assets.js 103, saving assets");
+    try {
+      await writeAssetsToDB({ userId: "User1", base, assets }, "users");
+      Alert.alert("", "Your assets have been saved successfully!");
+    } catch (error) {
+      Alert.alert("", "Failed to save assets. Please try again later.");
+    }
   };
 
   const handleDelete = (id) => {

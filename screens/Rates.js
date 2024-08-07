@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, FlatList, Platform } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Platform,
+  Alert,
+} from "react-native";
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import DropDownMenu from "../components/DropDownMenu";
@@ -81,6 +88,7 @@ export default function Rates() {
   };
 
   // reset the rates to the default rates
+  // todo: when loggin, fetch rates from the database
   const handleReset = () => {
     setBase(defaultBase);
     setSelectedCurrencies(defaultCurrencies);
@@ -90,10 +98,13 @@ export default function Rates() {
   const handleSave = async () => {
     console.log("Saving rates");
     try {
-      const userId = "User1";
-      await writeCurrenciesToDB({ userId, base, selectedCurrencies }, "users");
+      await writeCurrenciesToDB(
+        { userId: "User1", base, selectedCurrencies },
+        "users"
+      );
+      Alert.alert("", "Your list has been saved successfully!");
     } catch (error) {
-      console.error("Error saving rates: ", error);
+      Alert.alert("", "Failed to save list. Please try again later.");
     }
   };
 
