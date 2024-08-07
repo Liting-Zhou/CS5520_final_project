@@ -1,8 +1,14 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { colors, textSizes } from "../helpers/Constants";
+import { colors, textSizes } from "../helpers/ConstantsHelper";
 
-export default function TextInputBox({ label, value, onChangeText, placeholder, editable = true }) {
+export default function TextInputBox({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  editable = true,
+}) {
   return (
     <View>
       <Text style={styles.label}>{label}</Text>

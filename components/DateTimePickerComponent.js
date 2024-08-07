@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View, TextInput, Pressable, Modal } from "react-native";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { colors } from "../helpers/Constants";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { colors } from "../helpers/ConstantsHelper";
 
 const DateTimePickerComponent = ({ date, setDate }) => {
   const [show, setShow] = useState(false);
@@ -10,10 +10,10 @@ const DateTimePickerComponent = ({ date, setDate }) => {
   // This function is called when the user selects a date from the date picker
   // It updates the date state with the selected date and closes the date picker
   const handleDateChange = (event, selectedDate) => {
-    setShow(false); 
+    setShow(false);
     if (selectedDate) {
-      setDate(selectedDate); 
-      setTempDate(selectedDate); 
+      setDate(selectedDate);
+      setTempDate(selectedDate);
     }
   };
 
@@ -27,8 +27,8 @@ const DateTimePickerComponent = ({ date, setDate }) => {
   // This function is called when the user clicks outside the date picker
   // It closes the date picker and resets the date state to the previous value
   const handleOutsideClick = () => {
-    setShow(false); 
-    setDate(tempDate); 
+    setShow(false);
+    setDate(tempDate);
   };
 
   return (
@@ -36,7 +36,7 @@ const DateTimePickerComponent = ({ date, setDate }) => {
       <Pressable onPress={showMode}>
         <View pointerEvents="none">
           <TextInput
-            value={date ? date.toLocaleDateString() : ''}
+            value={date ? date.toLocaleDateString() : ""}
             placeholder="Select date"
             editable={false}
             style={styles.input}
@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: colors.modalOverlay,
   },
   modalContent: {

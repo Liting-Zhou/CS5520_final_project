@@ -1,14 +1,25 @@
 import React, { useState, useLayoutEffect } from "react";
-import { StyleSheet, View, Alert, Pressable, Text, TextInput } from "react-native";
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  StyleSheet,
+  View,
+  Alert,
+  Pressable,
+  Text,
+  TextInput,
+} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import RegularButton from "../components/RegularButton";
 import TextInputBox from "../components/TextInputBox";
 import DateTimePickerComponent from "../components/DateTimePickerComponent";
 import DropDownMenu from "../components/DropDownMenu";
-import { colors, textSizes } from "../helpers/Constants";
-import Entypo from 'react-native-vector-icons/Entypo';
+import { colors, textSizes } from "../helpers/ConstantsHelper";
+import Entypo from "react-native-vector-icons/Entypo";
 import TrashBinButton from "../components/TrashBinButton";
-import { writeTransactionToDB, updateTransactionInDB, deleteTransactionFromDB } from '../firebase/firebaseHelper';
+import {
+  writeTransactionToDB,
+  updateTransactionInDB,
+  deleteTransactionFromDB,
+} from "../firebase/firebaseHelper";
 
 export default function AddTransaction() {
   const navigation = useNavigation();
@@ -18,29 +29,48 @@ export default function AddTransaction() {
 
   // Initialize the state variables for the transaction information
   // If transaction is not null, set the state variables to the transaction data
-  const [description, setDescription] = useState(transaction ? transaction.description : '');
-  const [location, setLocation] = useState(transaction ? transaction.location : '');
-  const [date, setDate] = useState(transaction ? new Date(transaction.date) : null);
-  const [fromCurrency, setFromCurrency] = useState(transaction ? transaction.fromCurrency : '');
-  const [toCurrency, setToCurrency] = useState(transaction ? transaction.toCurrency : '');
-  const [fromAmount, setFromAmount] = useState(transaction ? transaction.fromAmount : '');
-  const [toAmount, setToAmount] = useState(transaction ? transaction.toAmount : '');
+  const [description, setDescription] = useState(
+    transaction ? transaction.description : ""
+  );
+  const [location, setLocation] = useState(
+    transaction ? transaction.location : ""
+  );
+  const [date, setDate] = useState(
+    transaction ? new Date(transaction.date) : null
+  );
+  const [fromCurrency, setFromCurrency] = useState(
+    transaction ? transaction.fromCurrency : ""
+  );
+  const [toCurrency, setToCurrency] = useState(
+    transaction ? transaction.toCurrency : ""
+  );
+  const [fromAmount, setFromAmount] = useState(
+    transaction ? transaction.fromAmount : ""
+  );
+  const [toAmount, setToAmount] = useState(
+    transaction ? transaction.toAmount : ""
+  );
 
   // Set the header title and right button based on whether the transaction is new or existing
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: transactionId ? 'Edit Transaction' : 'Add Transaction',
-      headerRight: () => (
-        transactionId && (
-          <TrashBinButton onPress={handleDeleteTransaction} />
-        )
-      ),
+      headerTitle: transactionId ? "Edit Transaction" : "Add Transaction",
+      headerRight: () =>
+        transactionId && <TrashBinButton onPress={handleDeleteTransaction} />,
     });
   }, [navigation, transactionId]);
 
   // Save the transaction to Firestore
   const handleSaveTransaction = async () => {
-    if (!description || !location || !date || !fromCurrency || !toCurrency || !fromAmount || !toAmount) {
+    if (
+      !description ||
+      !location ||
+      !date ||
+      !fromCurrency ||
+      !toCurrency ||
+      !fromAmount ||
+      !toAmount
+    ) {
       Alert.alert("Error", "All fields are required");
       return;
     }
@@ -59,7 +89,7 @@ export default function AddTransaction() {
       fromCurrency,
       toCurrency,
       fromAmount,
-      toAmount
+      toAmount,
     };
 
     try {
@@ -69,10 +99,13 @@ export default function AddTransaction() {
         await updateTransactionInDB(userId, newTransaction);
       } else {
         // If transactionId does not exist, write a new transaction to Firestore
-        const newTransactionId = await writeTransactionToDB(userId, newTransaction);
+        const newTransactionId = await writeTransactionToDB(
+          userId,
+          newTransaction
+        );
         newTransaction.id = newTransactionId;
       }
-      navigation.navigate('TransactionHistory');
+      navigation.navigate("TransactionHistory");
     } catch (error) {
       console.error("Error saving transaction: ", error);
       Alert.alert("Error", "There was a problem saving your transaction.");
@@ -86,7 +119,7 @@ export default function AddTransaction() {
       [
         {
           text: "Cancel",
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Delete",
@@ -94,13 +127,16 @@ export default function AddTransaction() {
           onPress: async () => {
             try {
               await deleteTransactionFromDB(userId, transactionId);
-              navigation.navigate('TransactionHistory');
+              navigation.navigate("TransactionHistory");
             } catch (error) {
               console.error("Error deleting transaction: ", error);
-              Alert.alert("Error", "There was a problem deleting your transaction.");
+              Alert.alert(
+                "Error",
+                "There was a problem deleting your transaction."
+              );
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -110,24 +146,24 @@ export default function AddTransaction() {
       <View style={styles.inputContainer}>
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionInputWrapper}>
-            <TextInputBox 
+            <TextInputBox
               label="Description"
               value={description}
               onChangeText={setDescription}
               placeholder="Enter description"
             />
           </View>
-          <Pressable onPress={() => console.log('Camera icon pressed')} style={styles.cameraIcon}>
+          <Pressable
+            onPress={() => console.log("Camera icon pressed")}
+            style={styles.cameraIcon}
+          >
             <Entypo name="camera" size={24} color="black" />
           </Pressable>
         </View>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Date</Text>
-        <DateTimePickerComponent
-          date={date}
-          setDate={setDate}
-        />
+        <DateTimePickerComponent date={date} setDate={setDate} />
       </View>
       <View style={styles.inputContainer}>
         <TextInputBox
@@ -168,7 +204,7 @@ export default function AddTransaction() {
         </View>
       </View>
       <RegularButton onPress={handleSaveTransaction}>
-        {transactionId ? 'Save Changes' : 'Add Transaction'}
+        {transactionId ? "Save Changes" : "Add Transaction"}
       </RegularButton>
     </View>
   );
@@ -181,9 +217,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   descriptionContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
   },
   descriptionInputWrapper: {
     flex: 1,
@@ -201,13 +237,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   rowContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginBottom: 20,
   },
   amountInputContainer: {
-    marginTop: 20, 
-    width: '30%',
+    marginTop: 20,
+    width: "30%",
   },
   amountInput: {
     borderBottomWidth: 1,

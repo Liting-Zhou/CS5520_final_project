@@ -13,7 +13,7 @@ import ProfileDetail from "./screens/ProfileDetail";
 import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
 
-import { colors, textSizes } from "./helpers/Constants";
+import { colors, textSizes } from "./helpers/ConstantsHelper";
 import RegularButton from "./components/RegularButton";
 
 const Tab = createBottomTabNavigator();

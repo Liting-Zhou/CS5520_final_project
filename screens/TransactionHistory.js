@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, FlatList, Pressable } from "react-native";
 import AddButton from "../components/AddButton";
-import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { textSizes } from "../helpers/Constants";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { textSizes } from "../helpers/ConstantsHelper";
 import TransactionDetail from "../components/TransactionDetail";
-import { readTransactionsFromDB } from '../firebase/firebaseHelper';
+import { readTransactionsFromDB } from "../firebase/firebaseHelper";
 
 export default function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
   const navigation = useNavigation();
-  const isFocused = useIsFocused(); 
-  const userId = "User1"; 
+  const isFocused = useIsFocused();
+  const userId = "User1";
 
   // Fetch transactions from Firestore when the component mounts or when the screen is focused
   useEffect(() => {
@@ -28,7 +28,9 @@ export default function TransactionHistory() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <AddButton onPress={() => navigation.navigate('AddTransaction', { userId })} />
+        <AddButton
+          onPress={() => navigation.navigate("AddTransaction", { userId })}
+        />
       ),
     });
   }, [navigation]);
@@ -39,7 +41,14 @@ export default function TransactionHistory() {
       <FlatList
         data={transactions}
         renderItem={({ item }) => (
-          <Pressable onPress={() => navigation.navigate('AddTransaction', { userId, transaction: item })}>
+          <Pressable
+            onPress={() =>
+              navigation.navigate("AddTransaction", {
+                userId,
+                transaction: item,
+              })
+            }
+          >
             <TransactionDetail transaction={item} />
           </Pressable>
         )}
@@ -58,7 +67,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: textSizes.medium,
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   list: {
     paddingBottom: 20,

@@ -1,13 +1,13 @@
-import React from 'react';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { colors, textSizes } from '../helpers/Constants';
+import React from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { colors, textSizes } from "../helpers/ConstantsHelper";
 
 export default function TransactionDetail({ transaction }) {
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate('AddTransaction', { transaction });
+    navigation.navigate("AddTransaction", { transaction });
   };
 
   return (
@@ -15,18 +15,24 @@ export default function TransactionDetail({ transaction }) {
       onPress={handlePress}
       style={({ pressed }) => [
         styles.container,
-        { backgroundColor: pressed ? colors.lightGray : colors.white }
+        { backgroundColor: pressed ? colors.lightGray : colors.white },
       ]}
       android_ripple={{ color: colors.lightGray }}
     >
       <View style={styles.leftColumn}>
         <Text style={styles.description}>{transaction.description}</Text>
-        <Text style={styles.date}>{new Date(transaction.date).toLocaleDateString()}</Text>
+        <Text style={styles.date}>
+          {new Date(transaction.date).toLocaleDateString()}
+        </Text>
         <Text style={styles.location}>{transaction.location}</Text>
       </View>
       <View style={styles.rightColumn}>
-        <Text style={styles.currency}>From: {transaction.fromAmount} {transaction.fromCurrency}</Text>
-        <Text style={styles.currency}>To: {transaction.toAmount} {transaction.toCurrency}</Text>
+        <Text style={styles.currency}>
+          From: {transaction.fromAmount} {transaction.fromCurrency}
+        </Text>
+        <Text style={styles.currency}>
+          To: {transaction.toAmount} {transaction.toCurrency}
+        </Text>
       </View>
     </Pressable>
   );
@@ -40,8 +46,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray,
     borderRadius: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   leftColumn: {
     flex: 1,
@@ -49,12 +55,12 @@ const styles = StyleSheet.create({
   },
   rightColumn: {
     flex: 1,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     marginTop: 35,
   },
   description: {
     fontSize: textSizes.large,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   date: {

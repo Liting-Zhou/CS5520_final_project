@@ -37,7 +37,7 @@ users:
     user2:
 ```
 
-### 2. which of the CRUD operations are implemented on which collections
+### 2. Which of the CRUD operations are implemented on which collections
 
 Users Collection:
 
@@ -63,7 +63,7 @@ Notifications Subcollection:
 - Update Notifications in DB
 - Delete Notifications from DB
 
-### 3. current state of the application
+### 3. Current state of the application
 
 Anonymous user can use these functions:
 
@@ -71,7 +71,7 @@ Anonymous user can use these functions:
 - customize assets to see the total result, but cannot save
 - convert currencies
 
-Fake user "User1" can use these functions (authentication not implemented):
+Fake user "User1" can use these functions (authentication not yet implemented):
 
 - customize list of interested currencies and save
 - customize assets to see the total result, and save
@@ -80,7 +80,7 @@ Fake user "User1" can use these functions (authentication not implemented):
 - edit profile
 - add/edit transaction history
 
-Currency exchange rates are called from 3rd party API:
+Currency exchange rates are called from 3rd party API:  
 https://rapidapi.com/principalapis/api/currency-conversion-and-exchange-rates
 
 Functions to be implemented:
@@ -91,28 +91,38 @@ Functions to be implemented:
 - Notification
 - Styling and coloring
 
-### 4. screenshots (at least 1)
-- Assets Management Screen  
-<img src="./documents/iteration1_screenshots/assets.png" alt="" style="width:30%"/>
+### 4. Screenshots
 
-- Recent Rates Screen  
-<img src="./documents/iteration1_screenshots/rates.png" alt="" style="width:30%"/>
+- Recent Rates Screen
+- Asset Management Screen
+- Convert Currency Screen
 
-- Convert Currency Screen  
-<img src="./documents/iteration1_screenshots/convert.png" alt="" style="width:30%"/>
+<div style="display: flex; justify-content: space-between;">
+  <img src="./documents/iteration1_screenshots/rates.png" alt="Recent Rates Screen" style="width:33%;"/>
+  <img src="./documents/iteration1_screenshots/assets.png" alt="Assets Management Screen" style="width:33%;"/>
+  <img src="./documents/iteration1_screenshots/convert.png" alt="Convert Currency Screen" style="width:33%;"/>
+</div>
+<br />
 
-- Profile Screen  
-<img src="./documents/iteration1_screenshots/profile.png" alt="" style="width:30%"/>
-<img src="./documents/iteration1_screenshots/editProfile.png" alt="" style="width:30%"/>
+- Profile Screen
 
-- Transaction Screen  
-<img src="./documents/iteration1_screenshots/transactionHistory.png" alt="" style="width:30%"/>
-<img src="./documents/iteration1_screenshots/addTransaction.png" alt="" style="width:30%"/>
-<img src="./documents/iteration1_screenshots/editTransaction.png" alt="" style="width:30%"/>
+<div style="display: flex;">
+  <img src="./documents/iteration1_screenshots/profile.png" alt="" style="width:33%;  margin-right:3px;"/>
+  <img src="./documents/iteration1_screenshots/editProfile.png" alt="" style="width:33%"/>
+</div>
+<br />
 
-### 5. contributions
+- Transaction Screen
+<div style="display: flex; justify-content: space-between;">
+  <img src="./documents/iteration1_screenshots/transactionHistory.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration1_screenshots/addTransaction.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration1_screenshots/editTransaction.png" alt="" style="width:33%"/>
+</div>
+
+### 5. Contributions
 
 #### Qianyi Fu
+
 - screen of profile
 - screen of transaction history
 - components related to profile/transaction history
@@ -122,4 +132,4 @@ Functions to be implemented:
 - screen of list of currencies
 - screen of asset management
 - screen of conversion
-- some components and helpers
+- components and helpers related

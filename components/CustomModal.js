@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import DropDownPicker from "react-native-dropdown-picker";
 import React, { useState } from "react";
-import { currencies, colors } from "../helpers/Constants";
+import { currencies, colors } from "../helpers/ConstantsHelper";
 
 // this Modal is used to pop up a dropdown picker to select a currency
 export default function CustomModal({

@@ -1,23 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, Image, Alert } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
-import { FontAwesome } from '@expo/vector-icons';
-import RegularButton from '../components/RegularButton';
-import { colors, textSizes } from '../helpers/Constants';
-import { updateProfileInDB } from '../firebase/firebaseHelper'; 
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase/firebaseSetup';
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  Image,
+  Alert,
+} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import { FontAwesome } from "@expo/vector-icons";
+import RegularButton from "../components/RegularButton";
+import { colors, textSizes } from "../helpers/ConstantsHelper";
+import { updateProfileInDB } from "../firebase/firebaseHelper";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/firebaseSetup";
 
 export default function ProfileDetail() {
   const navigation = useNavigation();
   const route = useRoute();
   // Get the userId from the route params
-  const { userId } = route.params; 
+  const { userId } = route.params;
 
   // Initialize the state variables for the new profile information
-  const [newName, setNewName] = useState('');
-  const [newEmail, setNewEmail] = useState('');
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
   const [newPhoto, setNewPhoto] = useState(null);
 
   // Fetch the user profile from Firestore
@@ -28,8 +36,8 @@ export default function ProfileDetail() {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          setNewName(userData.name || '');
-          setNewEmail(userData.email || '');
+          setNewName(userData.name || "");
+          setNewEmail(userData.email || "");
           setNewPhoto(userData.photo || null);
         } else {
           console.log("No such document!");
@@ -69,9 +77,13 @@ export default function ProfileDetail() {
       return;
     }
 
-    console.log('Saving profile...');
+    console.log("Saving profile...");
     try {
-      await updateProfileInDB(userId, { name: newName, email: newEmail, photo: newPhoto }, "users");
+      await updateProfileInDB(
+        userId,
+        { name: newName, email: newEmail, photo: newPhoto },
+        "users"
+      );
       navigation.goBack();
     } catch (error) {
       console.error("Error saving profile: ", error);
@@ -81,10 +93,28 @@ export default function ProfileDetail() {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={pickImage} style={({ pressed }) => [styles.photoContainer, pressed && styles.pressed]}>
-        <Image source={newPhoto ? { uri: newPhoto } : require('../assets/default_user_photo.jpg')} style={styles.photo} />
+      <Pressable
+        onPress={pickImage}
+        style={({ pressed }) => [
+          styles.photoContainer,
+          pressed && styles.pressed,
+        ]}
+      >
+        <Image
+          source={
+            newPhoto
+              ? { uri: newPhoto }
+              : require("../assets/default_user_photo.jpg")
+          }
+          style={styles.photo}
+        />
         <View style={styles.cameraIconContainer}>
-          <FontAwesome name="camera" size={textSizes.small} color={colors.white} style={styles.cameraIcon} />
+          <FontAwesome
+            name="camera"
+            size={textSizes.small}
+            color={colors.white}
+            style={styles.cameraIcon}
+          />
         </View>
       </Pressable>
       <View style={styles.labelContainer}>
@@ -116,18 +146,18 @@ export default function ProfileDetail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     backgroundColor: colors.white,
     padding: 20,
   },
   title: {
     fontSize: textSizes.large,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   input: {
-    width: '100%',
+    width: "100%",
     padding: 10,
     borderWidth: 1,
     borderColor: colors.gray,
@@ -135,9 +165,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   photoContainer: {
-    position: 'relative',
+    position: "relative",
     marginBottom: 20,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   photo: {
     width: 100,
@@ -145,7 +175,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   cameraIconContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     right: 0,
     backgroundColor: colors.transparentGray,
@@ -161,11 +191,11 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   buttonContainer: {
-    width: '40%',
-    alignSelf: 'center',
+    width: "40%",
+    alignSelf: "center",
   },
   labelContainer: {
-    width: '100%',
+    width: "100%",
     marginBottom: 5,
   },
   label: {

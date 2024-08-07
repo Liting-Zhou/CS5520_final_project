@@ -8,8 +8,8 @@ import { positiveNumberChecker } from "../helpers/Checker";
 
 export default function Conversion() {
   const [convertedAmount, setConvertedAmount] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [from, setFrom] = useState("CAD");
+  const [to, setTo] = useState("USD");
   const [amount, setAmount] = useState("");
 
   // select the currency to convert from

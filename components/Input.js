@@ -1,6 +1,6 @@
 import { StyleSheet, TextInput } from "react-native";
 import React from "react";
-import colors from "../helpers/Constants";
+import colors from "../helpers/ConstantsHelper";
 
 export default function Input({ onChangeText, style, defaultValue }) {
   return (

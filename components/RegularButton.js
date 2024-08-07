@@ -1,6 +1,6 @@
 import { StyleSheet, Text, Pressable, View } from "react-native";
 import React from "react";
-import { colors } from "../helpers/Constants";
+import { colors } from "../helpers/ConstantsHelper";
 
 export default function RegularButton({
   children,

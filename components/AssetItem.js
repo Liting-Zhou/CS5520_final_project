@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Input from "./Input";
-import { colors } from "../helpers/Constants";
+import { colors } from "../helpers/ConstantsHelper";
 import CustomModal from "./CustomModal";
 import TrashBinButton from "./TrashBinButton";
 
