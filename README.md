@@ -77,6 +77,8 @@ Fake user "User1" can use these functions (authentication not implemented):
 - customize assets to see the total result, and save
 - retrieve the saved data from DB
 - convert currencies
+- edit profile
+- add/edit transaction history
 
 Currency exchange rates are called from 3rd party API:
 https://rapidapi.com/principalapis/api/currency-conversion-and-exchange-rates
@@ -90,10 +92,30 @@ Functions to be implemented:
 - Styling and coloring
 
 ### 4. screenshots (at least 1)
+- Assets Management Screen
+<img src="./documents/iteration1_screenshots/assets.png" alt="" />
+
+- Recent Rates Screen
+<img src="./documents/iteration1_screenshots/rates.png" alt="" />
+
+- Convert Currency Screen
+<img src="./documents/iteration1_screenshots/convert.png" alt="" />
+
+- Profile Screen
+<img src="./documents/iteration1_screenshots/profile.png" alt="" />
+<img src="./documents/iteration1_screenshots/editProfile.png" alt="" />
+
+- Transaction Screen
+<img src="./documents/iteration1_screenshots/transactionHistory.png" alt="" />
+<img src="./documents/iteration1_screenshots/addTransaction.png" alt="" />
+<img src="./documents/iteration1_screenshots/editTransaction.png" alt="" />
 
 ### 5. contributions
 
 #### Qianyi Fu
+- screen of profile
+- screen of transaction history
+- components related to profile/transaction history
 
 #### Liting Zhou
 
