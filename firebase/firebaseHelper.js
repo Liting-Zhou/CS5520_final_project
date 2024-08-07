@@ -50,3 +50,18 @@ export const writeProfileToDB = async (
     console.error("Error saving profile: ", error);
   }
 };
+
+
+export const updateProfileInDB = async (userId, { name, email, photo }, collectionName) => {
+  try {
+    // Reference to the user document
+    const userDocRef = doc(db, collectionName, userId);
+
+    // Update the profile information in the user document
+    await updateDoc(userDocRef, { name, email, photo });
+
+    console.log("Profile updated successfully");
+  } catch (error) {
+    console.error("Error updating profile: ", error);
+  }
+};

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ProfilePressable from '../components/ProfilePressable';
 import defaultUserPhoto from '../assets/default_user_photo.jpg';
@@ -13,7 +13,8 @@ export default function Profile() {
   const [name, setName] = useState('User');
   const [email, setEmail] = useState('username@example.com');
   const navigation = useNavigation();
-  const userId = "User1";
+  // temporary use user id and collection name for testing
+  const userId = "User1"; 
   const collectionName = "users"; 
 
   // Fetch user profile from Firestore
@@ -33,19 +34,12 @@ export default function Profile() {
       console.error("Error fetching profile: ", error);
     });
 
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, [userId, collectionName]);
-
-  // This function is called when the user updates the profile
-  const updateProfile = (newName, newEmail, newPhoto) => {
-    setName(newName);
-    setEmail(newEmail);
-    setPhoto(newPhoto);
-  };
 
   return (
     <View style={styles.container}>
-      <ProfilePressable onPress={() => navigation.navigate('ProfileDetail', { name, email, photo, updateProfile })}>
+      <ProfilePressable onPress={() => navigation.navigate('ProfileDetail', { userId })}>
         <Image source={photo ? { uri: photo } : defaultUserPhoto} style={styles.photo} />
         <View style={styles.textContainer}>
           <Text style={styles.name}>{name}</Text>
