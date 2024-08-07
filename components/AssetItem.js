@@ -23,6 +23,7 @@ export default function AssetItem({
 
   const handleChangeCurrency = (newCurrency) => {
     onChangeCurrency({ id, newCurrency });
+    setModalVisible(false);
   };
 
   const handleChangeAmount = (newAmount) => {
@@ -44,11 +45,10 @@ export default function AssetItem({
       </Pressable>
       <CustomModal
         isModalVisible={isModalVisible}
-        onBackdropPress={toggleModal}
         valuePassed={currency}
         handleValueChange={handleChangeCurrency}
+        handleModalClose={toggleModal}
       ></CustomModal>
-      {/* <DeleteButton onPress={onDelete} style={styles.deleteButton} /> */}
       <TrashBinButton
         onPress={onDelete}
         customStyle={styles.deleteButton}

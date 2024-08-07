@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, Platform } from "react-native";
+import { StyleSheet, Text, View, Platform, Alert } from "react-native";
 import React, { useState } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import Input from "../components/Input";
 import RegularButton from "../components/RegularButton";
 import { convert } from "../helpers/RatesHelper";
+import { positiveNumberChecker } from "../helpers/Checker";
 
 export default function Conversion() {
   const [convertedAmount, setConvertedAmount] = useState("");
@@ -31,9 +32,11 @@ export default function Conversion() {
 
   // when the user presses the submit button, call the convert function to get the result
   const handleSubmit = async () => {
-    //todo, add controls for empty fields and invalid input
-    const result = await convert({ data: { from, to, amount } });
-    setConvertedAmount(result);
+    //check if amount is a positive number
+    if (positiveNumberChecker(amount)) {
+      const result = await convert({ data: { from, to, amount } });
+      setConvertedAmount(result);
+    }
   };
 
   return (
@@ -45,7 +48,11 @@ export default function Conversion() {
         ]}
       >
         <Text style={styles.label}>From: </Text>
-        <DropDownMenu onSelect={onSelectFrom} style={{ width: "100%" }} />
+        <DropDownMenu
+          onSelect={onSelectFrom}
+          base={"CAD"}
+          style={{ width: "100%" }}
+        />
       </View>
       <View
         style={[
@@ -54,7 +61,11 @@ export default function Conversion() {
         ]}
       >
         <Text style={{ marginRight: 25 }}>To: </Text>
-        <DropDownMenu onSelect={onSelectTo} style={{ width: "100%" }} />
+        <DropDownMenu
+          onSelect={onSelectTo}
+          base={"USD"}
+          style={{ width: "100%" }}
+        />
       </View>
       <View style={styles.itemContainer}>
         <Text style={styles.label}>Amount: </Text>

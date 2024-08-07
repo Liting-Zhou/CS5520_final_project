@@ -7,25 +7,25 @@ import { currencies, colors } from "../helpers/Constants";
 // this Modal is used to pop up a dropdown picker to select a currency
 export default function CustomModal({
   isModalVisible,
-  onBackdropPress,
   valuePassed,
   handleValueChange,
+  handleModalClose,
 }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(valuePassed);
   const [items, setItems] = useState(currencies);
 
+  const modalCloseHandler = () => {
+    setOpen(false);
+    handleModalClose();
+  };
+
   return (
-    <Modal
-      transparent={true}
-      visible={isModalVisible}
-      onBackdropPress={onBackdropPress}
-      animationType="slide"
-    >
+    <Modal transparent={true} visible={isModalVisible} animationType="slide">
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Pressable
-            onPress={onBackdropPress}
+            onPress={modalCloseHandler}
             style={styles.deleteButtonInModal}
           >
             <FontAwesome6 name="times-circle" size={24} color="black" />
@@ -41,7 +41,6 @@ export default function CustomModal({
             searchPlaceholder="Search..."
             onChangeValue={(newValue) => {
               handleValueChange(newValue);
-              onBackdropPress();
             }}
           />
         </View>

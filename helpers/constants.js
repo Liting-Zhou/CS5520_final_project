@@ -1,3 +1,4 @@
+// will change colors later
 export const colors = {
   white: "#fff",
   tabBarbutton: "skyblue",

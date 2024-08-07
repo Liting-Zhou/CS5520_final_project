@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, FlatList, Platform } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Platform,
+  Alert,
+} from "react-native";
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import DropDownMenu from "../components/DropDownMenu";
@@ -7,8 +14,10 @@ import { getSelectedCurrencies } from "../helpers/RatesHelper";
 import RegularButton from "../components/RegularButton";
 import AddButton from "../components/AddButton";
 import CustomModal from "../components/CustomModal";
-import { doc, setDoc } from "firebase/firestore";
-import { writeRatesToDB } from "../firebase/firebaseHelper";
+import {
+  readCurrenciesFromDB,
+  writeCurrenciesToDB,
+} from "../firebase/firebaseHelper";
 
 export default function Rates() {
   const navigation = useNavigation();
@@ -20,13 +29,32 @@ export default function Rates() {
   const [rates, setRates] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
 
+  // todo: fetch selected currencies when the component mounts if loggin
+  useEffect(() => {
+    const fetchSelectedCurrencies = async () => {
+      try {
+        const userId = "User1";
+        const data = await readCurrenciesFromDB(userId, "users");
+        if (data) {
+          // console.log("Rates.js 33, data from DB", data);
+          setBase(data.base);
+          setSelectedCurrencies(data.selectedCurrencies);
+          return;
+        }
+      } catch (error) {
+        console.error("Error fetching selected currencies: ", error);
+      }
+    };
+    fetchSelectedCurrencies();
+  }, []);
+
   // update whenever the base currency or the selected currencies change
   useEffect(() => {
     const fetchRates = async () => {
       const data = { base, selectedCurrencies };
       const rates = await getSelectedCurrencies({ data });
       setRates(rates);
-      // console.log("Rates.js 27, rates", rates);
+      // console.log("Rates.js 29, rates", rates);
     };
     fetchRates();
   }, [base, selectedCurrencies]);
@@ -43,8 +71,8 @@ export default function Rates() {
     setModalVisible(true);
   };
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+  const closeModal = () => {
+    setModalVisible(false);
   };
 
   // when the user selects a base currency, update the base
@@ -60,6 +88,7 @@ export default function Rates() {
   };
 
   // reset the rates to the default rates
+  // todo: when loggin, fetch rates from the database
   const handleReset = () => {
     setBase(defaultBase);
     setSelectedCurrencies(defaultCurrencies);
@@ -69,16 +98,20 @@ export default function Rates() {
   const handleSave = async () => {
     console.log("Saving rates");
     try {
-      const userId = "User1";
-      await writeRatesToDB({ userId, base, selectedCurrencies }, "users");
+      await writeCurrenciesToDB(
+        { userId: "User1", base, selectedCurrencies },
+        "users"
+      );
+      Alert.alert("", "Your list has been saved successfully!");
     } catch (error) {
-      console.error("Error saving rates: ", error);
+      Alert.alert("", "Failed to save list. Please try again later.");
     }
   };
 
   // add the currency to the list after select
   const addCurrencyAfterSelect = (currency) => {
     setSelectedCurrencies([...selectedCurrencies, currency]);
+    setModalVisible(false);
   };
 
   return (
@@ -103,9 +136,9 @@ export default function Rates() {
       </View>
       <CustomModal
         isModalVisible={isModalVisible}
-        onBackdropPress={toggleModal}
         valuePassed={""}
         handleValueChange={addCurrencyAfterSelect}
+        handleModalClose={closeModal}
       ></CustomModal>
       <View style={styles.buttonContainer}>
         <RegularButton onPress={handleReset}>Reset</RegularButton>

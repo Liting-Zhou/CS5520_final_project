@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Platform, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  FlatList,
+  Alert,
+} from "react-native";
 import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import DropDownMenu from "../components/DropDownMenu";
@@ -6,6 +13,8 @@ import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
 import { calculateTotal } from "../helpers/RatesHelper";
+import { readAssetsFromDB, writeAssetsToDB } from "../firebase/firebaseHelper";
+import { positiveNumberChecker } from "../helpers/Checker";
 
 export default function Assets() {
   const navigation = useNavigation();
@@ -20,8 +29,33 @@ export default function Assets() {
   const [newAsset, setNewAsset] = useState(null);
   const flatListRef = useRef(null);
 
+  // todo: fetch customized assets when the component mounts if loggin
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        const userId = "User1";
+        const data = await readAssetsFromDB(userId, "users");
+        if (data) {
+          // console.log("Assets.js 31, data from DB", data);
+          setBase(data.base);
+          setAssets(data.assets);
+          return;
+        }
+      } catch (error) {
+        console.error("Error fetching assets: ", error);
+      }
+    };
+    fetchAssets();
+  }, []);
+
   // calculate the total when assets or base change
   useEffect(() => {
+    // check if the amounts are all positive numbers
+    for (let asset of assets) {
+      if (!positiveNumberChecker(asset.amount)) {
+        return;
+      }
+    }
     const fetchTotal = async () => {
       const data = { base, assets };
       const total = await calculateTotal({ data });
@@ -66,13 +100,20 @@ export default function Assets() {
     setBase(base);
   };
 
+  //todo: if loggin, retrieve the customized assets from the database
   const handleReset = () => {
     setBase(defaultBase);
     setAssets(defaultAssets);
   };
 
-  const handleSave = () => {
-    console.log("Assets.js 76, save");
+  const handleSave = async () => {
+    console.log("Assets.js 103, saving assets");
+    try {
+      await writeAssetsToDB({ userId: "User1", base, assets }, "users");
+      Alert.alert("", "Your assets have been saved successfully!");
+    } catch (error) {
+      Alert.alert("", "Failed to save assets. Please try again later.");
+    }
   };
 
   const handleDelete = (id) => {

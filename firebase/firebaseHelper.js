@@ -6,31 +6,90 @@ import {
   deleteDoc,
   updateDoc,
   getDocs,
+  getDoc,
 } from "firebase/firestore";
 import { db, auth } from "./firebaseSetup";
 
-export const writeRatesToDB = async (
+// save the customized list of currencies to the database
+export const writeCurrenciesToDB = async (
   { userId, base, selectedCurrencies },
   collectionName
 ) => {
   try {
     // reference to the user document
     const userDocRef = doc(db, collectionName, userId);
+    // add selected currencies and base to the user's document
+    await updateDoc(userDocRef, {
+      myCurrencies: selectedCurrencies,
+      currenciesBase: base,
+    });
+    console.log("Currencies saved successfully");
+  } catch (error) {
+    console.error("Error saving currencies: ", error);
+  }
+};
 
-    // save the base currency to the user document
-    await setDoc(userDocRef, { ratesBase: base });
-
-    // reference to the subcollection
-    const subCollectionRef = collection(userDocRef, "myRates");
-
-    // save each selected currency to the subcollection
-    for (const currency of selectedCurrencies) {
-      const currencyDocRef = doc(subCollectionRef, currency);
-      await setDoc(currencyDocRef, { currency });
+// read the customized list of currencies from the database
+export const readCurrenciesFromDB = async (userId, collectionName) => {
+  try {
+    // reference to the user document
+    const userDocRef = doc(db, collectionName, userId);
+    // get the user's document
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      // console.log("firebaseHelper.js 41, data from DB", data);
+      if (data.currenciesBase && data.myCurrencies) {
+        return {
+          base: data.currenciesBase,
+          selectedCurrencies: data.myCurrencies,
+        };
+      }
     }
-    console.log("Rates saved successfully");
+    return null;
+  } catch (error) {
+    console.error("Error fetching selected currencies: ", error);
+    return null;
+  }
+};
+
+// save assets to the database
+export const writeAssetsToDB = async (
+  { userId, base, assets },
+  collectionName
+) => {
+  try {
+    // reference to the user document
+    const userDocRef = doc(db, collectionName, userId);
+    // add asset details and base to the user's document
+    await updateDoc(userDocRef, { myAssets: assets, assetsBase: base });
+    console.log("Assets saved successfully");
   } catch (error) {
     console.error("Error saving rates: ", error);
+  }
+};
+
+// read assets from the database
+export const readAssetsFromDB = async (userId, collectionName) => {
+  try {
+    // reference to the user document
+    const userDocRef = doc(db, collectionName, userId);
+    // get the user's document
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      // console.log("firebaseHelper.js 81, data from DB", data);
+      if (data.assetsBase && data.myAssets) {
+        return {
+          base: data.assetsBase,
+          assets: data.myAssets,
+        };
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching assets: ", error);
+    return null;
   }
 };
 
@@ -53,7 +112,11 @@ export const writeProfileToDB = async (
 };
 
 // Function to updtate the profile information in Firestore
-export const updateProfileInDB = async (userId, { name, email, photo }, collectionName) => {
+export const updateProfileInDB = async (
+  userId,
+  { name, email, photo },
+  collectionName
+) => {
   try {
     // Reference to the user document
     const userDocRef = doc(db, collectionName, userId);
@@ -72,10 +135,10 @@ export const writeTransactionToDB = async (userId, transaction) => {
   try {
     const transactionRef = doc(collection(db, `users/${userId}/transactions`));
     await setDoc(transactionRef, transaction);
-    console.log('Transaction written with ID: ', transactionRef.id);
+    console.log("Transaction written with ID: ", transactionRef.id);
     return transactionRef.id;
   } catch (error) {
-    console.error('Error writing transaction: ', error);
+    console.error("Error writing transaction: ", error);
   }
 };
 
@@ -83,36 +146,50 @@ export const writeTransactionToDB = async (userId, transaction) => {
 export const updateTransactionInDB = async (userId, transaction) => {
   try {
     if (!transaction.id) {
-      throw new Error('Transaction ID is required for updating');
+      throw new Error("Transaction ID is required for updating");
     }
-    const transactionRef = doc(db, `users/${userId}/transactions`, transaction.id);
+    const transactionRef = doc(
+      db,
+      `users/${userId}/transactions`,
+      transaction.id
+    );
     await updateDoc(transactionRef, transaction);
-    console.log('Transaction updated with ID: ', transaction.id);
+    console.log("Transaction updated with ID: ", transaction.id);
   } catch (error) {
-    console.error('Error updating transaction: ', error);
+    console.error("Error updating transaction: ", error);
   }
 };
 
 // Function to delete a transaction from Firestore
 export const deleteTransactionFromDB = async (userId, transactionId) => {
   try {
-    const transactionRef = doc(db, `users/${userId}/transactions`, transactionId);
+    const transactionRef = doc(
+      db,
+      `users/${userId}/transactions`,
+      transactionId
+    );
     await deleteDoc(transactionRef);
-    console.log('Transaction deleted with ID: ', transactionId);
+    console.log("Transaction deleted with ID: ", transactionId);
   } catch (error) {
-    console.error('Error deleting transaction: ', error);
+    console.error("Error deleting transaction: ", error);
   }
 };
 
 // Function to read transactions from Firestore
 export const readTransactionsFromDB = async (userId) => {
   try {
-    const transactionsCollection = collection(db, `users/${userId}/transactions`);
+    const transactionsCollection = collection(
+      db,
+      `users/${userId}/transactions`
+    );
     const transactionsSnapshot = await getDocs(transactionsCollection);
-    const transactionsList = transactionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const transactionsList = transactionsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     return transactionsList;
   } catch (error) {
-    console.error('Error reading transactions: ', error);
+    console.error("Error reading transactions: ", error);
     return [];
   }
 };
