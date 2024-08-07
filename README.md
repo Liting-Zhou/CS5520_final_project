@@ -92,23 +92,23 @@ Functions to be implemented:
 - Styling and coloring
 
 ### 4. screenshots (at least 1)
-- Assets Management Screen
-<img src="./documents/iteration1_screenshots/assets.png" alt="" />
+- Assets Management Screen  
+<img src="./documents/iteration1_screenshots/assets.png" alt="" style="width:30%"/>
 
-- Recent Rates Screen
-<img src="./documents/iteration1_screenshots/rates.png" alt="" />
+- Recent Rates Screen  
+<img src="./documents/iteration1_screenshots/rates.png" alt="" style="width:30%"/>
 
-- Convert Currency Screen
-<img src="./documents/iteration1_screenshots/convert.png" alt="" />
+- Convert Currency Screen  
+<img src="./documents/iteration1_screenshots/convert.png" alt="" style="width:30%"/>
 
-- Profile Screen
-<img src="./documents/iteration1_screenshots/profile.png" alt="" />
-<img src="./documents/iteration1_screenshots/editProfile.png" alt="" />
+- Profile Screen  
+<img src="./documents/iteration1_screenshots/profile.png" alt="" style="width:30%"/>
+<img src="./documents/iteration1_screenshots/editProfile.png" alt="" style="width:30%"/>
 
-- Transaction Screen
-<img src="./documents/iteration1_screenshots/transactionHistory.png" alt="" />
-<img src="./documents/iteration1_screenshots/addTransaction.png" alt="" />
-<img src="./documents/iteration1_screenshots/editTransaction.png" alt="" />
+- Transaction Screen  
+<img src="./documents/iteration1_screenshots/transactionHistory.png" alt="" style="width:30%"/>
+<img src="./documents/iteration1_screenshots/addTransaction.png" alt="" style="width:30%"/>
+<img src="./documents/iteration1_screenshots/editTransaction.png" alt="" style="width:30%"/>
 
 ### 5. contributions
 
