@@ -1,19 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ProfilePressable from '../components/ProfilePressable';
 import defaultUserPhoto from '../assets/default_user_photo.jpg';
 import { colors, textSizes } from "../helpers/Constants";
-
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase/firebaseSetup'; 
 
 export default function Profile() {
   const [photo, setPhoto] = useState(null);
   const [name, setName] = useState('User');
   const [email, setEmail] = useState('username@example.com');
   const navigation = useNavigation();
+  const userId = "User1";
+  const collectionName = "users"; 
 
-  // this function is called when the user updates the profile
+  // Fetch user profile from Firestore
+  useEffect(() => {
+    const userDocRef = doc(db, collectionName, userId);
+    
+    const unsubscribe = onSnapshot(userDocRef, (doc) => {
+      if (doc.exists()) {
+        const userData = doc.data();
+        setName(userData.name || 'User');
+        setEmail(userData.email || 'username@example.com');
+        setPhoto(userData.photo || null);
+      } else {
+        console.log("No such document!");
+      }
+    }, (error) => {
+      console.error("Error fetching profile: ", error);
+    });
+
+    return () => unsubscribe(); 
+  }, [userId, collectionName]);
+
+  // This function is called when the user updates the profile
   const updateProfile = (newName, newEmail, newPhoto) => {
     setName(newName);
     setEmail(newEmail);
@@ -31,7 +54,7 @@ export default function Profile() {
       </ProfilePressable>
       <ProfilePressable onPress={() => navigation.navigate('TransactionHistory')}>
         <View style={styles.transactionContainer}>
-        <MaterialIcons name="currency-exchange" size={20} color={colors.buttonBackground} />
+          <MaterialIcons name="currency-exchange" size={20} color={colors.buttonBackground} />
           <Text style={styles.historyText}>Exchange Transaction History</Text>
         </View>
       </ProfilePressable>
