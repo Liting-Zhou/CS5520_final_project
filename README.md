@@ -13,8 +13,8 @@ users:
         email: "email1"
         password: "password1"
         image: "image1"
-        ratesBase: "CAD"
-        myRates:
+        currenciesBase: "CAD"
+        myCurrencies:
             ["USD", "CNY"]
         assetsBase: "USD"
         myAssets:

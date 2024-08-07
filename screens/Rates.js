@@ -7,8 +7,10 @@ import { getSelectedCurrencies } from "../helpers/RatesHelper";
 import RegularButton from "../components/RegularButton";
 import AddButton from "../components/AddButton";
 import CustomModal from "../components/CustomModal";
-import { doc, setDoc } from "firebase/firestore";
-import { writeRatesToDB } from "../firebase/firebaseHelper";
+import {
+  readCurrenciesFromDB,
+  writeCurrenciesToDB,
+} from "../firebase/firebaseHelper";
 
 export default function Rates() {
   const navigation = useNavigation();
@@ -20,13 +22,32 @@ export default function Rates() {
   const [rates, setRates] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
 
+  // todo: fetch selected currencies when the component mounts if loggin
+  useEffect(() => {
+    const fetchSelectedCurrencies = async () => {
+      try {
+        const userId = "User1";
+        const data = await readCurrenciesFromDB(userId, "users");
+        if (data) {
+          // console.log("Rates.js 33, data from DB", data);
+          setBase(data.base);
+          setSelectedCurrencies(data.selectedCurrencies);
+          return;
+        }
+      } catch (error) {
+        console.error("Error fetching selected currencies: ", error);
+      }
+    };
+    fetchSelectedCurrencies();
+  }, []);
+
   // update whenever the base currency or the selected currencies change
   useEffect(() => {
     const fetchRates = async () => {
       const data = { base, selectedCurrencies };
       const rates = await getSelectedCurrencies({ data });
       setRates(rates);
-      // console.log("Rates.js 27, rates", rates);
+      // console.log("Rates.js 29, rates", rates);
     };
     fetchRates();
   }, [base, selectedCurrencies]);
@@ -70,7 +91,7 @@ export default function Rates() {
     console.log("Saving rates");
     try {
       const userId = "User1";
-      await writeRatesToDB({ userId, base, selectedCurrencies }, "users");
+      await writeCurrenciesToDB({ userId, base, selectedCurrencies }, "users");
     } catch (error) {
       console.error("Error saving rates: ", error);
     }

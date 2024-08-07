@@ -6,11 +6,12 @@ import {
   deleteDoc,
   updateDoc,
   getDocs,
+  getDoc,
 } from "firebase/firestore";
 import { db, auth } from "./firebaseSetup";
 
-// save the customized list of rates to the database
-export const writeRatesToDB = async (
+// save the customized list of currencies to the database
+export const writeCurrenciesToDB = async (
   { userId, base, selectedCurrencies },
   collectionName
 ) => {
@@ -19,12 +20,39 @@ export const writeRatesToDB = async (
     const userDocRef = doc(db, collectionName, userId);
     // add selected currencies and base to the user's document
     await updateDoc(userDocRef, {
-      myRates: selectedCurrencies,
-      ratesBase: base,
+      myCurrencies: selectedCurrencies,
+      currenciesBase: base,
     });
-    console.log("Rates saved successfully");
+    console.log("Currencies saved successfully");
   } catch (error) {
-    console.error("Error saving rates: ", error);
+    console.error("Error saving currencies: ", error);
+  }
+};
+
+// read the customized list of currencies from the database
+export const readCurrenciesFromDB = async (userId, collectionName) => {
+  try {
+    // reference to the user document
+    const userDocRef = doc(db, collectionName, userId);
+    // get the user's document
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      // console.log("firebaseHelper.js 41, data from DB", data);
+      if (data.currenciesBase && data.myCurrencies) {
+        return {
+          base: data.currenciesBase,
+          selectedCurrencies: data.myCurrencies,
+        };
+      }
+    }
+    return null;
+    // return default currencies if the user document does not exist
+    // return { base: "CAD", selectedCurrencies: ["USD", "EUR", "JPY"] };
+  } catch (error) {
+    console.error("Error fetching selected currencies: ", error);
+    // return { base: "CAD", selectedCurrencies: ["USD", "EUR", "JPY"] };
+    return null;
   }
 };
 
