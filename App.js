@@ -124,6 +124,7 @@ export default function App() {
             name="Finder"
             component={LocationFinder}
             options={{
+              headerShown: false,
               headerStyle: styles.headerStyle,
               tabBarActiveTintColor: colors.secondTheme,
               tabBarInactiveTintColor: colors.firstTheme,
