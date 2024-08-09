@@ -1,10 +1,13 @@
 import { StyleSheet, Text, View, Platform, Alert } from "react-native";
 import React, { useState } from "react";
+
 import DropDownMenu from "../components/DropDownMenu";
 import Input from "../components/Input";
 import RegularButton from "../components/RegularButton";
+
 import { convert } from "../helpers/RatesHelper";
 import { positiveNumberChecker } from "../helpers/Checker";
+import { colors } from "../helpers/ConstantsHelper";
 
 export default function Conversion() {
   const [convertedAmount, setConvertedAmount] = useState("");
@@ -90,6 +93,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: colors.thirdTheme,
   },
   dropdownContainer: {
     width: "80%",

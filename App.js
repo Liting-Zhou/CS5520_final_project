@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -61,14 +61,13 @@ function ProfileStackNavigator() {
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
+    // <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <NavigationContainer>
         <Tab.Navigator
           initialRouteName="Rates"
           screenOptions={{
-            tabBarStyle: {
-              // backgroundColor: colors.thirdTheme,
-            },
+            tabBarStyle: {},
           }}
         >
           <Tab.Screen
@@ -94,6 +93,7 @@ export default function App() {
             component={Assets}
             options={{
               headerTitle: "Asset Management",
+              headerStyle: styles.headerStyle,
               tabBarActiveTintColor: colors.secondTheme,
               tabBarInactiveTintColor: colors.firstTheme,
               tabBarIcon: ({ focused }) => (
@@ -110,6 +110,7 @@ export default function App() {
             component={Conversion}
             options={({ navigation }) => ({
               headerTitle: "Convert Currency",
+              headerStyle: styles.headerStyle,
               tabBarActiveTintColor: colors.secondTheme,
               tabBarInactiveTintColor: colors.firstTheme,
               tabBarButton: () => (
@@ -123,6 +124,7 @@ export default function App() {
             name="Finder"
             component={LocationFinder}
             options={{
+              headerStyle: styles.headerStyle,
               tabBarActiveTintColor: colors.secondTheme,
               tabBarInactiveTintColor: colors.firstTheme,
               tabBarIcon: ({ focused }) => (
@@ -139,6 +141,7 @@ export default function App() {
             component={ProfileStackNavigator}
             options={{
               headerShown: false,
+              headerStyle: styles.headerStyle,
               tabBarActiveTintColor: colors.secondTheme,
               tabBarInactiveTintColor: colors.firstTheme,
               tabBarIcon: ({ focused }) => (
@@ -152,7 +155,8 @@ export default function App() {
           />
         </Tab.Navigator>
       </NavigationContainer>
-    </SafeAreaView>
+    </View>
+    // </SafeAreaView>
   );
 }
 

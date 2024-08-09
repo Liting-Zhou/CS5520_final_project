@@ -1,15 +1,17 @@
-// main colors
-// #2988BC Grecian Blue
-// #2F496E Sea
-// #F4EADE Plaster
-// #ED8C72 Coral
+// main color themes
+
+const firstTheme = "#6EB5C0";
+const secondTheme = "#006C84";
+const thirdTheme = "#E2E8E4";
+const fourthTheme = "#ED8C72";
+
 export const colors = {
   white: "#fff",
-  firstTheme: "#2988BC",
-  secondTheme: "#2F496E",
-  thirdTheme: "#F4EADE",
-  fourthTheme: "#ED8C72",
-  buttonBackground: "#ED8C72",
+  firstTheme: firstTheme,
+  secondTheme: secondTheme,
+  thirdTheme: thirdTheme,
+  fourthTheme: fourthTheme,
+  buttonBackground: fourthTheme,
   buttonTextColor: "#fff",
   gray: "#808080",
   lightGray: "#f0f0f0",
