@@ -14,6 +14,8 @@ import Profile from "./screens/Profile";
 import ProfileDetail from "./screens/ProfileDetail";
 import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
 
 import { colors, textSizes } from "./helpers/ConstantsHelper";
 import ConvertButton from "./components/ConvertButton";
@@ -24,7 +26,17 @@ const ProfileStack = createStackNavigator();
 // ProfileStackNavigator is a stack navigator for the Profile screen
 function ProfileStackNavigator() {
   return (
-    <ProfileStack.Navigator initialRouteName="ProfileScreen">
+    <ProfileStack.Navigator initialRouteName="LogInScreen">
+            <ProfileStack.Screen
+        name="LogInScreen"
+        component={Login}
+        options={{ title: "Log In" }}
+      />
+                  <ProfileStack.Screen
+        name="SignUpScreen"
+        component={Signup}
+        options={{ title: "Sign Up" }}
+      />
       <ProfileStack.Screen
         name="ProfileScreen"
         component={Profile}
