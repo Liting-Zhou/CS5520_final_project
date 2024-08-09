@@ -1,8 +1,15 @@
-// will change colors later
+// main colors
+// #2988BC Grecian Blue
+// #2F496E Sea
+// #F4EADE Plaster
+// #ED8C72 Coral
 export const colors = {
   white: "#fff",
-  tabBarbutton: "skyblue",
-  buttonBackground: "skyblue",
+  firstTheme: "#2988BC",
+  secondTheme: "#2F496E",
+  thirdTheme: "#F4EADE",
+  fourthTheme: "#ED8C72",
+  buttonBackground: "#ED8C72",
   buttonTextColor: "#fff",
   gray: "#808080",
   lightGray: "#f0f0f0",
