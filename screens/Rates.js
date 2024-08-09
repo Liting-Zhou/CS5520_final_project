@@ -8,12 +8,15 @@ import {
 } from "react-native";
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import DropDownMenu from "../components/DropDownMenu";
-import RateItem from "../components/RateItem";
-import { getSelectedCurrencies } from "../helpers/RatesHelper";
 import RegularButton from "../components/RegularButton";
 import AddButton from "../components/AddButton";
 import CustomModal from "../components/CustomModal";
+import DropDownMenu from "../components/DropDownMenu";
+import RateItem from "../components/RateItem";
+
+import { getSelectedCurrencies } from "../helpers/RatesHelper";
+import { colors } from "../helpers/ConstantsHelper";
+
 import {
   readCurrenciesFromDB,
   writeCurrenciesToDB,
@@ -153,6 +156,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: colors.thirdTheme,
   },
   baseContainer: {
     flex: 1,

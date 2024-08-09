@@ -1,8 +1,17 @@
-// will change colors later
+// main color themes
+
+const firstTheme = "#6EB5C0";
+const secondTheme = "#006C84";
+const thirdTheme = "#E2E8E4";
+const fourthTheme = "#ED8C72";
+
 export const colors = {
   white: "#fff",
-  tabBarbutton: "skyblue",
-  buttonBackground: "skyblue",
+  firstTheme: firstTheme,
+  secondTheme: secondTheme,
+  thirdTheme: thirdTheme,
+  fourthTheme: fourthTheme,
+  buttonBackground: fourthTheme,
   buttonTextColor: "#fff",
   gray: "#808080",
   lightGray: "#f0f0f0",

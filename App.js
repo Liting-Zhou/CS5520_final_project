@@ -1,8 +1,10 @@
-import { SafeAreaView, StyleSheet, Text } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import Rates from "./screens/Rates";
 import Conversion from "./screens/Conversion";
@@ -14,7 +16,7 @@ import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
 
 import { colors, textSizes } from "./helpers/ConstantsHelper";
-import RegularButton from "./components/RegularButton";
+import ConvertButton from "./components/ConvertButton";
 
 const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
@@ -59,7 +61,8 @@ function ProfileStackNavigator() {
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
+    // <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <NavigationContainer>
         <Tab.Navigator
           initialRouteName="Rates"
@@ -71,8 +74,18 @@ export default function App() {
             name="Rates"
             component={Rates}
             options={{
-              tabBarLabel: "Rates",
               headerTitle: "Recent Rates",
+              headerStyle: styles.headerStyle,
+              tabBarLabel: "Rates",
+              tabBarActiveTintColor: colors.secondTheme,
+              tabBarInactiveTintColor: colors.firstTheme,
+              tabBarIcon: ({ focused }) => (
+                <MaterialCommunityIcons
+                  name="finance"
+                  size={24}
+                  color={focused ? colors.secondTheme : colors.firstTheme}
+                />
+              ),
             }}
           />
           <Tab.Screen
@@ -80,6 +93,16 @@ export default function App() {
             component={Assets}
             options={{
               headerTitle: "Asset Management",
+              headerStyle: styles.headerStyle,
+              tabBarActiveTintColor: colors.secondTheme,
+              tabBarInactiveTintColor: colors.firstTheme,
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="attach-money"
+                  size={24}
+                  color={focused ? colors.secondTheme : colors.firstTheme}
+                />
+              ),
             }}
           />
           <Tab.Screen
@@ -87,27 +110,54 @@ export default function App() {
             component={Conversion}
             options={({ navigation }) => ({
               headerTitle: "Convert Currency",
+              headerStyle: styles.headerStyle,
+              tabBarActiveTintColor: colors.secondTheme,
+              tabBarInactiveTintColor: colors.firstTheme,
               tabBarButton: () => (
-                <RegularButton
+                <ConvertButton
                   onPress={() => navigation.navigate("Conversion")}
-                  childrenStyle={styles.convertButtonChildren}
-                  buttonStyle={styles.convertButton}
-                  buttonTextStyle={{ fontSize: textSizes.small }}
-                >
-                  <Text>Convert</Text>
-                </RegularButton>
+                />
               ),
             })}
           />
-          <Tab.Screen name="Finder" component={LocationFinder} />
+          <Tab.Screen
+            name="Finder"
+            component={LocationFinder}
+            options={{
+              headerShown: false,
+              headerStyle: styles.headerStyle,
+              tabBarActiveTintColor: colors.secondTheme,
+              tabBarInactiveTintColor: colors.firstTheme,
+              tabBarIcon: ({ focused }) => (
+                <MaterialIcons
+                  name="location-pin"
+                  size={24}
+                  color={focused ? colors.secondTheme : colors.firstTheme}
+                />
+              ),
+            }}
+          />
           <Tab.Screen
             name="Profile"
             component={ProfileStackNavigator}
-            options={{ headerShown: false }}
+            options={{
+              headerShown: false,
+              headerStyle: styles.headerStyle,
+              tabBarActiveTintColor: colors.secondTheme,
+              tabBarInactiveTintColor: colors.firstTheme,
+              tabBarIcon: ({ focused }) => (
+                <MaterialCommunityIcons
+                  name="account"
+                  size={24}
+                  color={focused ? colors.secondTheme : colors.firstTheme}
+                />
+              ),
+            }}
           />
         </Tab.Navigator>
       </NavigationContainer>
-    </SafeAreaView>
+    </View>
+    // </SafeAreaView>
   );
 }
 
@@ -115,17 +165,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  convertButton: {
-    top: -10,
-    backgroundColor: "none",
-    margin: 0,
-  },
-  convertButtonChildren: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: colors.tabBarbutton,
-    justifyContent: "center",
-    alignItems: "center",
+  headerStyle: {
+    backgroundColor: colors.firstTheme,
   },
 });

@@ -8,13 +8,16 @@ import {
 } from "react-native";
 import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
+
 import DropDownMenu from "../components/DropDownMenu";
 import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
+
 import { calculateTotal } from "../helpers/RatesHelper";
-import { readAssetsFromDB, writeAssetsToDB } from "../firebase/firebaseHelper";
+import { colors } from "../helpers/ConstantsHelper";
 import { positiveNumberChecker } from "../helpers/Checker";
+import { readAssetsFromDB, writeAssetsToDB } from "../firebase/firebaseHelper";
 
 export default function Assets() {
   const navigation = useNavigation();
@@ -189,6 +192,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: colors.thirdTheme,
   },
   baseContainer: {
     flex: 1,
