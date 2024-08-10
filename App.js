@@ -1,8 +1,8 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import React from "react";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -24,19 +24,24 @@ const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
 
 // ProfileStackNavigator is a stack navigator for the Profile screen
-function ProfileStackNavigator() {
+function ProfileStackNavigator({ isLoggedIn, setIsLoggedIn }) {
   return (
-    <ProfileStack.Navigator initialRouteName="LogInScreen">
-            <ProfileStack.Screen
-        name="LogInScreen"
-        component={Login}
-        options={{ title: "Log In" }}
-      />
-                  <ProfileStack.Screen
-        name="SignUpScreen"
-        component={Signup}
-        options={{ title: "Sign Up" }}
-      />
+    <ProfileStack.Navigator initialRouteName={isLoggedIn ? "ProfileScreen" : "LogInScreen"}>
+      {!isLoggedIn && (
+        <>
+          <ProfileStack.Screen
+            name="LogInScreen"
+            options={{ title: "Log In" }}
+          >
+            {(props) => <Login {...props} setIsLoggedIn={setIsLoggedIn} />}
+          </ProfileStack.Screen>
+          <ProfileStack.Screen
+            name="SignUpScreen"
+            component={Signup}
+            options={{ title: "Sign Up" }}
+          />
+        </>
+      )}
       <ProfileStack.Screen
         name="ProfileScreen"
         component={Profile}
@@ -72,8 +77,9 @@ function ProfileStackNavigator() {
 }
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if user is logged in
+
   return (
-    // <SafeAreaView style={styles.container}>
     <View style={styles.container}>
       <NavigationContainer>
         <Tab.Navigator
@@ -151,7 +157,7 @@ export default function App() {
           />
           <Tab.Screen
             name="Profile"
-            component={ProfileStackNavigator}
+            children={() => <ProfileStackNavigator isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
             options={{
               headerShown: false,
               headerStyle: styles.headerStyle,
@@ -169,7 +175,6 @@ export default function App() {
         </Tab.Navigator>
       </NavigationContainer>
     </View>
-    // </SafeAreaView>
   );
 }
 
