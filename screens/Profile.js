@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useLayoutEffect} from "react";
 import { StyleSheet, Text, View, Image, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ProfilePressable from "../components/ProfilePressable";
@@ -13,7 +13,6 @@ export default function Profile() {
   const [name, setName] = useState("User");
   const [email, setEmail] = useState("username@example.com");
   const navigation = useNavigation();
-  // temporary use user id and collection name for testing
   const userId = "User1";
   const collectionName = "users";
 
@@ -40,6 +39,26 @@ export default function Profile() {
 
     return () => unsubscribe();
   }, [userId, collectionName]);
+
+  // Add logout icon to the header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <MaterialIcons
+          name="logout"
+          size={24}
+          color={colors.firstTheme}
+          onPress={() => {
+            Alert.alert("Logout", "You have been logged out.");
+            navigation.navigate("Profile", {
+              screen: "LogInScreen",
+            });
+          }}
+          style={{ marginRight: 10 }}
+        />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
