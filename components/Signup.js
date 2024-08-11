@@ -8,6 +8,7 @@ const Signup = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
   const handleSignup = async () => {
     if (!email.length) {

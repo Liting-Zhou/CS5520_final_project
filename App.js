@@ -54,12 +54,12 @@ function ProfileStackNavigator() {
           <ProfileStack.Screen
             name="LogInScreen"
             component={Login}
-            options={{ title: "Log In" }}
+            options={{ title: "Log In"} }
           />
           <ProfileStack.Screen
             name="SignUpScreen"
             component={Signup}
-            options={{ title: "Sign Up" }}
+            options={{ title: "Sign Up"}}
           />
         </>
       )}
