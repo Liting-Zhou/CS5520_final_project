@@ -1,7 +1,8 @@
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import RegularButton from "./RegularButton"; 
+import TextInputBox from "./TextInputBox"; 
 
 const Signup = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -62,31 +63,28 @@ const Signup = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Sign Up</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
+      <TextInputBox
         value={email}
         onChangeText={setEmail}
+        placeholder="Enter your email"
         keyboardType="email-address"
         autoCapitalize="none"
       />
       {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
+      <TextInputBox
         value={password}
         onChangeText={setPassword}
+        placeholder="Enter your password"
         secureTextEntry={true}
       />
       {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
       {passwordStrength ? <Text style={styles.passwordStrength}>{passwordStrength}</Text> : null}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
+      <TextInputBox
         value={confirmPassword}
         onChangeText={setConfirmPassword}
+        placeholder="Confirm your password"
         secureTextEntry={true}
       />
 
@@ -94,9 +92,9 @@ const Signup = ({ navigation }) => {
         Sign Up
       </RegularButton>
 
-      <TouchableOpacity onPress={() => navigation.replace('LogInScreen')}>
+      <Pressable onPress={() => navigation.replace('LogInScreen')}>
         <Text style={styles.signInText}>Already Registered? Log in</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };
@@ -114,17 +112,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  input: {
-    width: "100%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    marginBottom: 20,
-  },
   errorText: {
     color: "red",
     marginBottom: 10,
+    marginTop: 10,
     textAlign: "center",
   },
   passwordStrength: {

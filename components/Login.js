@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TextInput, Alert, Pressable } from "react-native";
+import { StyleSheet, View, Text, Alert, Pressable } from "react-native";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase/firebaseSetup";
-import RegularButton from "./RegularButton"; 
+import RegularButton from "./RegularButton";
+import TextInputBox from "./TextInputBox"; 
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
@@ -18,7 +19,6 @@ export default function Login({ navigation }) {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert("Login", `Welcome back, ${email}!`);
-
       navigation.navigate("ProfileScreen");
     } catch (error) {
       console.error("Login error: ", error);
@@ -45,20 +45,18 @@ export default function Login({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
+      <TextInputBox
         value={email}
         onChangeText={setEmail}
+        placeholder="Enter your email"
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
+      <TextInputBox
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
+        placeholder="Enter your password"
+        secureTextEntry={true}
       />
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
       <RegularButton onPress={handleLogin}>
@@ -86,14 +84,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
-  },
-  input: {
-    width: "100%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    marginBottom: 20,
   },
   errorText: {
     color: "red",
