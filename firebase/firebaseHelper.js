@@ -130,6 +130,33 @@ export const updateProfileInDB = async (
   }
 };
 
+// Function to read a user's profile from Firestore
+export const readProfileFromDB = async (userId, collectionName) => {
+  try {
+    // Reference to the user document
+    const userDocRef = doc(db, collectionName, userId);
+
+    // Get the user's document
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      return {
+        name: data.name || "", 
+        email: data.email || "", 
+        photo: data.photo || null, 
+      };
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching profile: ", error);
+    return null;
+  }
+};
+
+
 // Function to write a new transaction to Firestore
 export const writeTransactionToDB = async (userId, transaction) => {
   try {

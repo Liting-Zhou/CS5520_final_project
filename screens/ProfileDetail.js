@@ -8,22 +8,19 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome } from "@expo/vector-icons";
 import RegularButton from "../components/RegularButton";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
-import { updateProfileInDB } from "../firebase/firebaseHelper";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/firebaseSetup";
+import { updateProfileInDB, readProfileFromDB } from "../firebase/firebaseHelper";
+import { getAuth } from "firebase/auth";
 
 export default function ProfileDetail() {
   const navigation = useNavigation();
-  const route = useRoute();
-  // Get the userId from the route params
-  const { userId } = route.params;
+  const auth = getAuth();
+  const userId = auth.currentUser?.uid;
 
-  // Initialize the state variables for the new profile information
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhoto, setNewPhoto] = useState(null);
@@ -31,19 +28,13 @@ export default function ProfileDetail() {
   // Fetch the user profile from Firestore
   useEffect(() => {
     const fetchProfile = async () => {
-      try {
-        const userDocRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setNewName(userData.name || "");
-          setNewEmail(userData.email || "");
-          setNewPhoto(userData.photo || null);
-        } else {
-          console.log("No such document!");
+      if (userId) {
+        const userProfile = await readProfileFromDB(userId, "users");
+        if (userProfile) {
+          setNewName(userProfile.name);
+          setNewEmail(userProfile.email);
+          setNewPhoto(userProfile.photo);
         }
-      } catch (error) {
-        console.error("Error fetching profile: ", error);
       }
     };
 
@@ -59,13 +50,12 @@ export default function ProfileDetail() {
       quality: 1,
     });
 
-    if (!result.canceled) {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
       setNewPhoto(result.assets[0].uri);
     }
   };
 
   // Save the new profile information using the updateProfileInDB function
-  // Check if the name and email are filled out and if the email is valid
   const handleSave = async () => {
     if (!newName || !newEmail) {
       Alert.alert("Error", "Name and email are required.");
@@ -149,12 +139,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.white,
     padding: 20,
-  },
-  title: {
-    fontSize: textSizes.large,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
   },
   input: {
     width: "100%",

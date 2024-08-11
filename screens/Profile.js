@@ -1,49 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import ProfilePressable from "../components/ProfilePressable";
 import defaultUserPhoto from "../assets/default_user_photo.jpg";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase/firebaseSetup";
-import { getAuth } from "firebase/auth"; 
+import { getAuth } from "firebase/auth";
+import { readProfileFromDB } from "../firebase/firebaseHelper";
 
 export default function Profile() {
   const [photo, setPhoto] = useState(null);
-  const [name, setName] = useState("User");
-  const [email, setEmail] = useState("username@example.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const navigation = useNavigation();
 
   const auth = getAuth();
-  const userId = auth.currentUser?.uid; 
-  const collectionName = "users";
+  const userId = auth.currentUser?.uid;
 
   // Fetch user profile from Firestore
-  useEffect(() => {
+  const fetchProfile = useCallback(async () => {
     if (userId) {
-      const userDocRef = doc(db, collectionName, userId);
-
-      const unsubscribe = onSnapshot(
-        userDocRef,
-        (doc) => {
-          if (doc.exists()) {
-            const userData = doc.data();
-            setName(userData.name || "User");
-            setEmail(userData.email || "username@example.com");
-            setPhoto(userData.photo || null);
-          } else {
-            console.log("No such document!");
-          }
-        },
-        (error) => {
-          console.error("Error fetching profile: ", error);
-        }
-      );
-
-      return () => unsubscribe();
+      const userProfile = await readProfileFromDB(userId, "users");
+      if (userProfile) {
+        setName(userProfile.name);
+        setEmail(userProfile.email);
+        setPhoto(userProfile.photo);
+      }
     }
-  }, [userId, collectionName]);
+  }, [userId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, [fetchProfile])
+  );
 
   if (!userId) {
     return (
@@ -56,7 +46,7 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <ProfilePressable
-        onPress={() => navigation.navigate("ProfileDetail", { userId })}
+        onPress={() => navigation.navigate("ProfileDetail")}
       >
         <Image
           source={photo ? { uri: photo } : defaultUserPhoto}
