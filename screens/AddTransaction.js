@@ -20,15 +20,18 @@ import {
   updateTransactionInDB,
   deleteTransactionFromDB,
 } from "../firebase/firebaseHelper";
+import { getAuth } from "firebase/auth";
 
 export default function AddTransaction() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { userId = "User1", transaction } = route.params || {};
+  const { transaction } = route.params || {};
   const transactionId = transaction ? transaction.id : undefined;
 
+  const auth = getAuth();
+  const userId = auth.currentUser?.uid;
+
   // Initialize the state variables for the transaction information
-  // If transaction is not null, set the state variables to the transaction data
   const [description, setDescription] = useState(
     transaction ? transaction.description : ""
   );
@@ -214,7 +217,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: colors.white,
+    backgroundColor: colors.thirdTheme,
   },
   descriptionContainer: {
     width: "100%",

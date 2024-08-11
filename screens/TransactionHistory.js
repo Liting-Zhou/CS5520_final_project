@@ -2,34 +2,38 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, FlatList, Pressable } from "react-native";
 import AddButton from "../components/AddButton";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { textSizes } from "../helpers/ConstantsHelper";
+import { colors, textSizes } from "../helpers/ConstantsHelper";
 import TransactionDetail from "../components/TransactionDetail";
 import { readTransactionsFromDB } from "../firebase/firebaseHelper";
+import { getAuth } from "firebase/auth";
 
 export default function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const userId = "User1";
+  const auth = getAuth();
+  const userId = auth.currentUser?.uid;
 
   // Fetch transactions from Firestore when the component mounts or when the screen is focused
   useEffect(() => {
     const fetchTransactions = async () => {
-      const fetchedTransactions = await readTransactionsFromDB(userId);
-      setTransactions(fetchedTransactions);
+      if (userId) {
+        const fetchedTransactions = await readTransactionsFromDB(userId);
+        setTransactions(fetchedTransactions);
+      }
     };
 
     if (isFocused) {
       fetchTransactions();
     }
-  }, [isFocused]);
+  }, [isFocused, userId]);
 
   // Set the header right button to add a new transaction
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <AddButton
-          onPress={() => navigation.navigate("AddTransaction", { userId })}
+          onPress={() => navigation.navigate("AddTransaction")}
         />
       ),
     });
@@ -44,7 +48,6 @@ export default function TransactionHistory() {
           <Pressable
             onPress={() =>
               navigation.navigate("AddTransaction", {
-                userId,
                 transaction: item,
               })
             }
@@ -63,6 +66,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor:colors.thirdTheme,
   },
   text: {
     fontSize: textSizes.medium,

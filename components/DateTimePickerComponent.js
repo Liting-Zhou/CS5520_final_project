@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
+    backgroundColor: colors.white,
   },
   modalOverlay: {
     flex: 1,
