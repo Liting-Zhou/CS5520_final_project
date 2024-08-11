@@ -20,7 +20,9 @@ export const colors = {
   profilePressableBackground: "#f9f9f9",
   profilePressableFeedback: "#e0e0e0",
   buttonPressedBackground: "lightblue",
-};
+  blue: '#0066cc',
+  red: '#ff0000',
+}
 
 export const textSizes = {
   small: 12,

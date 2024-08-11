@@ -8,6 +8,7 @@ export default function TextInputBox({
   onChangeText,
   placeholder,
   editable = true,
+  secureTextEntry = false,
 }) {
   return (
     <View>
@@ -18,6 +19,7 @@ export default function TextInputBox({
         onChangeText={onChangeText}
         placeholder={placeholder}
         editable={editable}
+        secureTextEntry={secureTextEntry}
       />
     </View>
   );
@@ -34,5 +36,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
+    backgroundColor: colors.white,
   },
 });

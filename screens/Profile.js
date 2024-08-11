@@ -1,50 +1,52 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Image, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useCallback } from "react";
+import { StyleSheet, Text, View, Image } from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import ProfilePressable from "../components/ProfilePressable";
 import defaultUserPhoto from "../assets/default_user_photo.jpg";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase/firebaseSetup";
+import { getAuth } from "firebase/auth";
+import { readProfileFromDB } from "../firebase/firebaseHelper";
 
 export default function Profile() {
   const [photo, setPhoto] = useState(null);
-  const [name, setName] = useState("User");
-  const [email, setEmail] = useState("username@example.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const navigation = useNavigation();
-  // temporary use user id and collection name for testing
-  const userId = "User1";
-  const collectionName = "users";
+
+  const auth = getAuth();
+  const userId = auth.currentUser?.uid;
 
   // Fetch user profile from Firestore
-  useEffect(() => {
-    const userDocRef = doc(db, collectionName, userId);
-
-    const unsubscribe = onSnapshot(
-      userDocRef,
-      (doc) => {
-        if (doc.exists()) {
-          const userData = doc.data();
-          setName(userData.name || "User");
-          setEmail(userData.email || "username@example.com");
-          setPhoto(userData.photo || null);
-        } else {
-          console.log("No such document!");
-        }
-      },
-      (error) => {
-        console.error("Error fetching profile: ", error);
+  const fetchProfile = useCallback(async () => {
+    if (userId) {
+      const userProfile = await readProfileFromDB(userId, "users");
+      if (userProfile) {
+        setName(userProfile.name);
+        setEmail(userProfile.email);
+        setPhoto(userProfile.photo);
       }
-    );
+    }
+  }, [userId]);
 
-    return () => unsubscribe();
-  }, [userId, collectionName]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, [fetchProfile])
+  );
+
+  if (!userId) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>User not logged in</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <ProfilePressable
-        onPress={() => navigation.navigate("ProfileDetail", { userId })}
+        onPress={() => navigation.navigate("ProfileDetail")}
       >
         <Image
           source={photo ? { uri: photo } : defaultUserPhoto}
@@ -74,9 +76,8 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: colors.white,
+    backgroundColor: colors.thirdTheme,
   },
   photo: {
     width: 70,
@@ -104,5 +105,10 @@ const styles = StyleSheet.create({
     fontSize: textSizes.medium,
     color: colors.primary,
     marginLeft: 10,
+  },
+  errorText: {
+    fontSize: textSizes.large,
+    color: colors.red,
+    textAlign: "center",
   },
 });

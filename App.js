@@ -1,8 +1,8 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Pressable } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import React from "react";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -14,54 +14,108 @@ import Profile from "./screens/Profile";
 import ProfileDetail from "./screens/ProfileDetail";
 import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
 
-import { colors, textSizes } from "./helpers/ConstantsHelper";
+import { colors } from "./helpers/ConstantsHelper";
 import ConvertButton from "./components/ConvertButton";
+import { auth } from "./firebase/firebaseSetup";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
 
+// Logout function
+const handleLogout = async (navigation) => {
+  try {
+    await signOut(auth);
+    console.log(auth.currentUser);
+    navigation.navigate("LogInScreen");
+  } catch (error) {
+    console.error("Error logging out: ", error);
+  }
+};
+
 // ProfileStackNavigator is a stack navigator for the Profile screen
 function ProfileStackNavigator() {
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsUserAuthenticated(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
-    <ProfileStack.Navigator initialRouteName="ProfileScreen">
-      <ProfileStack.Screen
-        name="ProfileScreen"
-        component={Profile}
-        options={{ title: "Profile" }}
-      />
-      {/* ProfileDetail is a screen allow users to edit the Profile */}
-      <ProfileStack.Screen
-        name="ProfileDetail"
-        component={ProfileDetail}
-        options={{
-          title: "Edit Profile",
-          headerBackTitle: "Back",
-        }}
-      />
-      <ProfileStack.Screen
-        name="TransactionHistory"
-        component={TransactionHistory}
-        options={{
-          title: "Transaction History",
-          headerBackTitle: "Back",
-        }}
-      />
-      <ProfileStack.Screen
-        name="AddTransaction"
-        component={AddTransaction}
-        options={{
-          title: "Add Transaction",
-          headerBackTitle: "Back",
-        }}
-      />
+    <ProfileStack.Navigator initialRouteName={isUserAuthenticated ? "ProfileScreen" : "LogInScreen"}>
+      {!isUserAuthenticated && (
+        <>
+          <ProfileStack.Screen
+            name="LogInScreen"
+            component={Login}
+            options={{ title: "Log In",  headerShown: false } }
+          />
+          <ProfileStack.Screen
+            name="SignUpScreen"
+            component={Signup}
+            options={{ title: "Sign Up", headerShown: false }}
+          />
+        </>
+      )}
+      {isUserAuthenticated && (
+        <>
+          <ProfileStack.Screen
+            name="ProfileScreen"
+            component={Profile}
+            options={({ navigation }) => ({
+              headerStyle: styles.headerStyle,
+              title: "Profile",
+              headerShown: true,
+              headerRight: () => (
+                <View style={{ paddingRight: 16 }}>
+                  <Pressable onPress={() => handleLogout(navigation)}>
+                    <MaterialIcons name="logout" size={24} color="black" />
+                  </Pressable>
+                </View>
+              ),
+            })}
+          />
+          <ProfileStack.Screen
+            name="ProfileDetail"
+            component={ProfileDetail}
+            options={{
+              title: "Edit Profile",
+              headerBackTitle: "Back",
+              headerStyle: styles.headerStyle
+            }}
+          />
+          <ProfileStack.Screen
+            name="TransactionHistory"
+            component={TransactionHistory}
+            options={{
+              title: "Transaction History",
+              headerBackTitle: "Back",
+              headerStyle: styles.headerStyle
+            }}
+          />
+          <ProfileStack.Screen
+            name="AddTransaction"
+            component={AddTransaction}
+            options={{
+              title: "Add Transaction",
+              headerBackTitle: "Back",
+              headerStyle: styles.headerStyle
+            }}
+          />
+        </>
+      )}
     </ProfileStack.Navigator>
   );
 }
 
 export default function App() {
   return (
-    // <SafeAreaView style={styles.container}>
     <View style={styles.container}>
       <NavigationContainer>
         <Tab.Navigator
@@ -141,6 +195,7 @@ export default function App() {
             name="Profile"
             component={ProfileStackNavigator}
             options={{
+              title: "Profile",
               headerShown: false,
               headerStyle: styles.headerStyle,
               tabBarActiveTintColor: colors.secondTheme,
@@ -157,7 +212,6 @@ export default function App() {
         </Tab.Navigator>
       </NavigationContainer>
     </View>
-    // </SafeAreaView>
   );
 }
 
