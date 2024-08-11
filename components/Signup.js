@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { writeProfileToDB } from '../firebase/firebaseHelper';
 import RegularButton from "./RegularButton"; 
 import TextInputBox from "./TextInputBox"; 
+import { colors } from "../helpers/ConstantsHelper";
 
 const Signup = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
   const [passwordStrength, setPasswordStrength] = useState('');
 
   useEffect(() => {
@@ -26,19 +25,16 @@ const Signup = ({ navigation }) => {
   }, [password]);
 
   const handleSignup = async () => {
-    setEmailError('');
-    setPasswordError('');
-
     if (!email.length) {
-      setEmailError('Email is required');
+      Alert.alert('Error', 'Email is required');
       return;
     }
     if (!password.length) {
-      setPasswordError('Password is required');
+      Alert.alert('Error', 'Password is required');
       return;
     }
     if (password !== confirmPassword) {
-      setPasswordError('Passwords do not match');
+      Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
@@ -60,15 +56,14 @@ const Signup = ({ navigation }) => {
 
       navigation.navigate('ProfileScreen');
     } catch (e) {
-      console.error(e);
       if (e.code === 'auth/invalid-email') {
-        setEmailError('Invalid email address');
+        Alert.alert('Error', 'Invalid email address');
       } else if (e.code === 'auth/email-already-in-use') {
-        setEmailError('Email is already in use');
+        Alert.alert('Error', 'Email is already in use');
       } else if (e.code === 'auth/weak-password') {
-        setPasswordError('Password should be at least 6 characters');
+        Alert.alert('Error', 'Password should be at least 6 characters');
       } else {
-        setPasswordError(e.message);
+        Alert.alert('Error', e.message);
       }
     }
   };
@@ -84,7 +79,6 @@ const Signup = ({ navigation }) => {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
       <TextInputBox
         value={password}
@@ -92,7 +86,6 @@ const Signup = ({ navigation }) => {
         placeholder="Enter your password"
         secureTextEntry={true}
       />
-      {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
       {passwordStrength ? <Text style={styles.passwordStrength}>{passwordStrength}</Text> : null}
 
       <TextInputBox
@@ -118,7 +111,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: colors.thirdTheme,
   },
   title: {
     fontSize: 24,
@@ -126,20 +119,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  errorText: {
-    color: "red",
-    marginBottom: 10,
-    marginTop: 10,
-    textAlign: "center",
-  },
   passwordStrength: {
     fontSize: 14,
-    marginBottom: 10,
-    color: "#666",
+    marginTop: 10,
+    color: colors.gray,
     textAlign: "center",
   },
   signInText: {
-    color: "#0066cc",
+    color: colors.blue,
     textAlign: "center",
     marginTop: 20,
   },

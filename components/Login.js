@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/aut
 import { auth } from "../firebase/firebaseSetup";
 import RegularButton from "./RegularButton";
 import TextInputBox from "./TextInputBox"; 
+import { colors } from "../helpers/ConstantsHelper";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: colors.thirdTheme,
   },
   title: {
     fontSize: 24,
@@ -86,17 +87,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   errorText: {
-    color: "red",
+    color: colors.red,
     marginBottom: 10,
     textAlign: "center",
   },
   forgotPasswordText: {
-    color: "#0066cc",
+    color: colors.blue,
     textAlign: "center",
     marginTop: 20,
   },
   signUpText: {
-    color: "#0066cc",
+    color: colors.blue,
     textAlign: "center",
     marginTop: 20,
   },

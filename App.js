@@ -54,12 +54,12 @@ function ProfileStackNavigator() {
           <ProfileStack.Screen
             name="LogInScreen"
             component={Login}
-            options={{ title: "Log In"} }
+            options={{ title: "Log In",  headerShown: false } }
           />
           <ProfileStack.Screen
             name="SignUpScreen"
             component={Signup}
-            options={{ title: "Sign Up"}}
+            options={{ title: "Sign Up", headerShown: false }}
           />
         </>
       )}
@@ -69,6 +69,7 @@ function ProfileStackNavigator() {
             name="ProfileScreen"
             component={Profile}
             options={({ navigation }) => ({
+              headerStyle: styles.headerStyle,
               title: "Profile",
               headerShown: true,
               headerRight: () => (
@@ -86,6 +87,7 @@ function ProfileStackNavigator() {
             options={{
               title: "Edit Profile",
               headerBackTitle: "Back",
+              headerStyle: styles.headerStyle
             }}
           />
           <ProfileStack.Screen
@@ -94,6 +96,7 @@ function ProfileStackNavigator() {
             options={{
               title: "Transaction History",
               headerBackTitle: "Back",
+              headerStyle: styles.headerStyle
             }}
           />
           <ProfileStack.Screen
@@ -102,6 +105,7 @@ function ProfileStackNavigator() {
             options={{
               title: "Add Transaction",
               headerBackTitle: "Back",
+              headerStyle: styles.headerStyle
             }}
           />
         </>
