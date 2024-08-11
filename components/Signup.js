@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { writeProfileToDB } from '../firebase/firebaseHelper';
 import RegularButton from "./RegularButton"; 
 import TextInputBox from "./TextInputBox"; 
 
@@ -43,7 +44,20 @@ const Signup = ({ navigation }) => {
 
     try {
       const auth = getAuth();
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const userId = user.uid;
+
+      await writeProfileToDB(
+        {
+          userId,
+          name: "Username", 
+          email,
+          photo: null 
+        },
+        "users" 
+      );
+
       navigation.navigate('ProfileScreen');
     } catch (e) {
       console.error(e);

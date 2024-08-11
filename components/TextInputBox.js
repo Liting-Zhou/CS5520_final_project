@@ -8,6 +8,7 @@ export default function TextInputBox({
   onChangeText,
   placeholder,
   editable = true,
+  secureTextEntry = false,
 }) {
   return (
     <View>
@@ -18,6 +19,7 @@ export default function TextInputBox({
         onChangeText={onChangeText}
         placeholder={placeholder}
         editable={editable}
+        secureTextEntry={secureTextEntry}
       />
     </View>
   );
