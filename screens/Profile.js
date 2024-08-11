@@ -40,26 +40,6 @@ export default function Profile() {
     return () => unsubscribe();
   }, [userId, collectionName]);
 
-  // Add logout icon to the header
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <MaterialIcons
-          name="logout"
-          size={24}
-          color={colors.firstTheme}
-          onPress={() => {
-            Alert.alert("Logout", "You have been logged out.");
-            navigation.navigate("Profile", {
-              screen: "LogInScreen",
-            });
-          }}
-          style={{ marginRight: 10 }}
-        />
-      ),
-    });
-  }, [navigation]);
-
   return (
     <View style={styles.container}>
       <ProfilePressable

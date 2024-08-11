@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Pressable } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -17,24 +17,45 @@ import AddTransaction from "./screens/AddTransaction";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 
-import { colors, textSizes } from "./helpers/ConstantsHelper";
+import { colors } from "./helpers/ConstantsHelper";
 import ConvertButton from "./components/ConvertButton";
+import { auth } from "./firebase/firebaseSetup";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
 
+// Logout function
+const handleLogout = async (navigation) => {
+  try {
+    await signOut(auth);
+    console.log(auth.currentUser);
+    navigation.navigate("LogInScreen");
+  } catch (error) {
+    console.error("Error logging out: ", error);
+  }
+};
+
 // ProfileStackNavigator is a stack navigator for the Profile screen
-function ProfileStackNavigator({ isLoggedIn, setIsLoggedIn }) {
+function ProfileStackNavigator() {
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsUserAuthenticated(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
-    <ProfileStack.Navigator initialRouteName={isLoggedIn ? "ProfileScreen" : "LogInScreen"}>
-      {!isLoggedIn && (
+    <ProfileStack.Navigator initialRouteName={isUserAuthenticated ? "ProfileScreen" : "LogInScreen"}>
+      {!isUserAuthenticated && (
         <>
           <ProfileStack.Screen
             name="LogInScreen"
+            component={Login}
             options={{ title: "Log In" }}
-          >
-            {(props) => <Login {...props} setIsLoggedIn={setIsLoggedIn} />}
-          </ProfileStack.Screen>
+          />
           <ProfileStack.Screen
             name="SignUpScreen"
             component={Signup}
@@ -42,43 +63,54 @@ function ProfileStackNavigator({ isLoggedIn, setIsLoggedIn }) {
           />
         </>
       )}
-      <ProfileStack.Screen
-        name="ProfileScreen"
-        component={Profile}
-        options={{ title: "Profile" }}
-      />
-      {/* ProfileDetail is a screen allow users to edit the Profile */}
-      <ProfileStack.Screen
-        name="ProfileDetail"
-        component={ProfileDetail}
-        options={{
-          title: "Edit Profile",
-          headerBackTitle: "Back",
-        }}
-      />
-      <ProfileStack.Screen
-        name="TransactionHistory"
-        component={TransactionHistory}
-        options={{
-          title: "Transaction History",
-          headerBackTitle: "Back",
-        }}
-      />
-      <ProfileStack.Screen
-        name="AddTransaction"
-        component={AddTransaction}
-        options={{
-          title: "Add Transaction",
-          headerBackTitle: "Back",
-        }}
-      />
+      {isUserAuthenticated && (
+        <>
+          <ProfileStack.Screen
+            name="ProfileScreen"
+            component={Profile}
+            options={({ navigation }) => ({
+              title: "Profile",
+              headerShown: true,
+              headerRight: () => (
+                <View style={{ paddingRight: 16 }}>
+                  <Pressable onPress={() => handleLogout(navigation)}>
+                    <MaterialIcons name="logout" size={24} color="black" />
+                  </Pressable>
+                </View>
+              ),
+            })}
+          />
+          <ProfileStack.Screen
+            name="ProfileDetail"
+            component={ProfileDetail}
+            options={{
+              title: "Edit Profile",
+              headerBackTitle: "Back",
+            }}
+          />
+          <ProfileStack.Screen
+            name="TransactionHistory"
+            component={TransactionHistory}
+            options={{
+              title: "Transaction History",
+              headerBackTitle: "Back",
+            }}
+          />
+          <ProfileStack.Screen
+            name="AddTransaction"
+            component={AddTransaction}
+            options={{
+              title: "Add Transaction",
+              headerBackTitle: "Back",
+            }}
+          />
+        </>
+      )}
     </ProfileStack.Navigator>
   );
 }
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if user is logged in
-
   return (
     <View style={styles.container}>
       <NavigationContainer>
@@ -157,8 +189,9 @@ export default function App() {
           />
           <Tab.Screen
             name="Profile"
-            children={() => <ProfileStackNavigator isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
+            component={ProfileStackNavigator}
             options={{
+              title: "Profile",
               headerShown: false,
               headerStyle: styles.headerStyle,
               tabBarActiveTintColor: colors.secondTheme,

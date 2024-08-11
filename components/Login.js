@@ -1,24 +1,31 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, TextInput, Alert } from "react-native";
-import RegularButton from "./RegularButton"; // Adjust the import path as necessary
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase/firebaseSetup"; 
+import RegularButton from "./RegularButton"; 
 
-export default function Login({ navigation, setIsLoggedIn }) {
+export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    // Placeholder for login logic
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Please enter both email and password.");
       return;
     }
 
-    // Assuming login is successful
-    Alert.alert("Login", `Welcome back, ${email}!`);
-    setIsLoggedIn(true); // Update isLoggedIn state to true
+    try {
+      // Firebase Authentication with email and password
+      await signInWithEmailAndPassword(auth, email, password);
+      Alert.alert("Login", `Welcome back, ${email}!`);
+      console.log("Logged in as: ", auth.currentUser);
 
-    // Navigate to ProfileScreen
-    navigation.navigate("ProfileScreen");
+      // Navigate to ProfileScreen
+      navigation.navigate("ProfileScreen");
+    } catch (error) {
+      console.error("Login error: ", error);
+      Alert.alert("Login Error", error.message);
+    }
   };
 
   return (
