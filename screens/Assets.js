@@ -18,6 +18,7 @@ import { calculateTotal } from "../helpers/RatesHelper";
 import { colors } from "../helpers/ConstantsHelper";
 import { positiveNumberChecker } from "../helpers/Checker";
 import { readAssetsFromDB, writeAssetsToDB } from "../firebase/firebaseHelper";
+import { auth } from "../firebase/firebaseSetup";
 
 export default function Assets() {
   const navigation = useNavigation();
@@ -31,24 +32,18 @@ export default function Assets() {
   const [total, setTotal] = useState(0);
   const [newAsset, setNewAsset] = useState(null);
   const flatListRef = useRef(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // todo: fetch customized assets when the component mounts if loggin
+  // fetch customized assets when the component mounts if loggin
   useEffect(() => {
-    const fetchAssets = async () => {
-      try {
-        const userId = "User1";
-        const data = await readAssetsFromDB(userId, "users");
-        if (data) {
-          // console.log("Assets.js 31, data from DB", data);
-          setBase(data.base);
-          setAssets(data.assets);
-          return;
-        }
-      } catch (error) {
-        console.error("Error fetching assets: ", error);
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setCurrentUser(user);
+      if (user) {
+        console.log("Assets.js 42, user is logged in");
+        fetchAssets(user.uid);
       }
-    };
-    fetchAssets();
+    });
+    return () => unsubscribe();
   }, []);
 
   // calculate the total when assets or base change
@@ -89,6 +84,24 @@ export default function Assets() {
       setNewAsset(null); // reset newAsset after adding
     }
   }, [newAsset]);
+
+  // fetch base and assets from the database
+  const fetchAssets = async (id) => {
+    try {
+      console.log("Assets.js 96, user id", id);
+      const data = await readAssetsFromDB(id, "users");
+      if (data) {
+        console.log("Assets.js 99, data from DB", data);
+        setBase(data.base);
+        setAssets(data.assets);
+      } else {
+        setBase(defaultBase);
+        setAssets(defaultAssets);
+      }
+    } catch (error) {
+      console.error("Error fetching assets: ", error);
+    }
+  };
 
   // when the user presses the headerRight add button, add an empty asset
   const handleAdd = () => {
