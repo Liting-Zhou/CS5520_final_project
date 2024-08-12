@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import DropDownPicker from "react-native-dropdown-picker";
 import React, { useState } from "react";
-import { currencies, colors } from "../helpers/ConstantsHelper";
+import { currencies, colors, textSizes } from "../helpers/ConstantsHelper";
 
 // this Modal is used to pop up a dropdown picker to select a currency
 export default function CustomModal({
@@ -30,6 +30,7 @@ export default function CustomModal({
           >
             <FontAwesome6 name="times-circle" size={24} color="black" />
           </Pressable>
+          <Text style={styles.textStyle}>Add Currency</Text>
           <DropDownPicker
             open={open}
             value={value}
@@ -62,6 +63,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
+    // justifyContent: "center",
+    alignItems: "center",
   },
   deleteButtonInModal: {
     position: "absolute",
@@ -69,5 +72,10 @@ const styles = StyleSheet.create({
     right: 5,
     zIndex: 10000,
     backgroundColor: colors.white,
+  },
+  textStyle: {
+    fontSize: textSizes.medium,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
 });
