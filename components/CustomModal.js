@@ -28,6 +28,7 @@ export default function CustomModal({
           <Pressable
             onPress={modalCloseHandler}
             style={styles.deleteButtonInModal}
+            pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
           >
             <FontAwesome6 name="times-circle" size={24} color="black" />
           </Pressable>
