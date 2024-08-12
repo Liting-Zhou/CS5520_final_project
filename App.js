@@ -48,13 +48,15 @@ function ProfileStackNavigator() {
   }, []);
 
   return (
-    <ProfileStack.Navigator initialRouteName={isUserAuthenticated ? "ProfileScreen" : "LogInScreen"}>
+    <ProfileStack.Navigator
+      initialRouteName={isUserAuthenticated ? "ProfileScreen" : "LogInScreen"}
+    >
       {!isUserAuthenticated && (
         <>
           <ProfileStack.Screen
             name="LogInScreen"
             component={Login}
-            options={{ title: "Log In",  headerShown: false } }
+            options={{ title: "Log In", headerShown: false }}
           />
           <ProfileStack.Screen
             name="SignUpScreen"
@@ -87,7 +89,7 @@ function ProfileStackNavigator() {
             options={{
               title: "Edit Profile",
               headerBackTitle: "Back",
-              headerStyle: styles.headerStyle
+              headerStyle: styles.headerStyle,
             }}
           />
           <ProfileStack.Screen
@@ -96,7 +98,7 @@ function ProfileStackNavigator() {
             options={{
               title: "Transaction History",
               headerBackTitle: "Back",
-              headerStyle: styles.headerStyle
+              headerStyle: styles.headerStyle,
             }}
           />
           <ProfileStack.Screen
@@ -105,7 +107,7 @@ function ProfileStackNavigator() {
             options={{
               title: "Add Transaction",
               headerBackTitle: "Back",
-              headerStyle: styles.headerStyle
+              headerStyle: styles.headerStyle,
             }}
           />
         </>
@@ -178,8 +180,8 @@ export default function App() {
             name="Finder"
             component={LocationFinder}
             options={{
-              headerShown: false,
-              headerStyle: styles.headerStyle,
+              headerTitle: "Nearby places to change currency",
+              headerStyle: { backgroundColor: colors.thirdTheme },
               tabBarActiveTintColor: colors.secondTheme,
               tabBarInactiveTintColor: colors.firstTheme,
               tabBarIcon: ({ focused }) => (

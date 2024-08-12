@@ -39,7 +39,7 @@ export default function Assets() {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setCurrentUser(user);
       if (user) {
-        console.log("Assets.js 42, user is logged in");
+        // console.log("Assets.js 42, user is logged in");
         fetchAssets(user.uid);
       }
     });
@@ -88,10 +88,10 @@ export default function Assets() {
   // fetch base and assets from the database
   const fetchAssets = async (id) => {
     try {
-      console.log("Assets.js 91, user id", id);
+      // console.log("Assets.js 91, user id", id);
       const data = await readAssetsFromDB(id, "users");
       if (data) {
-        console.log("Assets.js 94, data from DB", data);
+        // console.log("Assets.js 94, data from DB", data);
         setBase(data.base);
         setAssets(data.assets);
       } else {
@@ -105,7 +105,7 @@ export default function Assets() {
 
   // when the user presses the headerRight add button, add an empty asset
   const handleAdd = () => {
-    // console.log("Assets.js 58, before add", assets);
+    // console.log("Assets.js 108, before add", assets);
     const newGeneratedId = Math.random() * 1000;
     const addedAsset = { currency: "CAD", amount: "0", id: newGeneratedId };
     setNewAsset(addedAsset);
@@ -163,7 +163,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, currency: newCurrency } : asset
       )
     );
-    // console.log("Assets.js 90, change currency", newCurrency);
+    // console.log("Assets.js 166, change currency", newCurrency);
   };
 
   //when the user changes the amount of an asset, update the amount
@@ -173,7 +173,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, amount: newAmount } : asset
       )
     );
-    // console.log("Assets.js 100, new amount", newAmount);
+    // console.log("Assets.js 176, new amount", newAmount);
   };
 
   return (
