@@ -34,53 +34,17 @@ export default function Rates() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
+  //if the user is logged in, fetch the selected currencies from the database
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setCurrentUser(user);
       if (user) {
-        try {
-          // get current user id
-          console.log("Rates.js 43, user.uid", user.uid);
-          const userId = user.uid;
-          const data = await readCurrenciesFromDB(userId, "users");
-          console.log("Rates.js 46, data from DB", data);
-          if (data) {
-            // console.log("Rates.js 48, data from DB", data);
-            setBase(data.base);
-            setSelectedCurrencies(data.selectedCurrencies);
-          }
-        } catch (error) {
-          console.error("Error fetching selected currencies: ", error);
-        }
-      } else {
-        setBase(defaultBase);
-        setSelectedCurrencies(defaultCurrencies);
+        console.log("Rates.js 42, user is logged in");
+        fetchSelectedCurrencies(user.uid);
       }
     });
     return () => unsubscribe();
   }, []);
-
-  // fetch selected currencies when the component mounts if loggin
-  // useEffect(() => {
-  //   const fetchSelectedCurrencies = async () => {
-  //     try {
-  //       // get current user id
-  //       console.log("Rates.js 41, auth.currentUser.uid", auth.currentUser.uid);
-  //       const userId = auth.currentUser?.uid;
-  //       const data = await readCurrenciesFromDB(userId, "users");
-  //       console.log("Rates.js 44, data from DB", data);
-  //       if (data) {
-  //         // console.log("Rates.js 33, data from DB", data);
-  //         setBase(data.base);
-  //         setSelectedCurrencies(data.selectedCurrencies);
-  //         return;
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching selected currencies: ", error);
-  //     }
-  //   };
-  //   fetchSelectedCurrencies();
-  // }, []);
 
   // update whenever the base currency or the selected currencies change
   useEffect(() => {
@@ -99,6 +63,24 @@ export default function Rates() {
       headerRight: () => <AddButton onPress={handleAdd} />,
     });
   }, [navigation]);
+
+  // fetch base and selected currencies from the database
+  const fetchSelectedCurrencies = async (id) => {
+    try {
+      // console.log("Rates.js 70, user id", id);
+      const data = await readCurrenciesFromDB(id, "users");
+      if (data) {
+        console.log("Rates.js 73, data from DB", data);
+        setBase(data.base);
+        setSelectedCurrencies(data.selectedCurrencies);
+      } else {
+        setBase(defaultBase);
+        setSelectedCurrencies(defaultCurrencies);
+      }
+    } catch (error) {
+      console.error("Error fetching selected currencies: ", error);
+    }
+  };
 
   // when press the headerRight add button, show the Modal to add a currency
   const handleAdd = () => {
@@ -122,10 +104,15 @@ export default function Rates() {
   };
 
   // reset the rates to the default rates
-  // todo: when loggin, fetch rates from the database
+  // when loggin, fetch rates from the database
   const handleReset = () => {
-    setBase(defaultBase);
-    setSelectedCurrencies(defaultCurrencies);
+    console.log("Resetting rates");
+    if (currentUser === null) {
+      setBase(defaultBase);
+      setSelectedCurrencies(defaultCurrencies);
+    } else {
+      fetchSelectedCurrencies(currentUser.uid);
+    }
   };
 
   // save the rates to the database

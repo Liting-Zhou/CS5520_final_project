@@ -38,7 +38,7 @@ export const readCurrenciesFromDB = async (userId, collectionName) => {
     const userDoc = await getDoc(userDocRef);
     if (userDoc.exists()) {
       const data = userDoc.data();
-      console.log("firebaseHelper.js 41, data from DB", data);
+      // console.log("firebaseHelper.js 41, data from DB", data);
       if (data.currenciesBase && data.myCurrencies) {
         return {
           base: data.currenciesBase,
