@@ -19,10 +19,10 @@ export const colors = {
   transparentGray: "rgba(128, 128, 128, 0.5)",
   profilePressableBackground: "#f9f9f9",
   profilePressableFeedback: "#e0e0e0",
-  buttonPressedBackground: "lightblue",
-  blue: '#0066cc',
-  red: '#ff0000',
-}
+  buttonPressedBackground: "#FFCCBB",
+  blue: "#0066cc",
+  red: "#ff0000",
+};
 
 export const textSizes = {
   small: 12,

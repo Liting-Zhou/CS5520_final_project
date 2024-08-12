@@ -10,6 +10,7 @@ export default function CustomModal({
   valuePassed,
   handleValueChange,
   handleModalClose,
+  title,
 }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(valuePassed);
@@ -30,7 +31,7 @@ export default function CustomModal({
           >
             <FontAwesome6 name="times-circle" size={24} color="black" />
           </Pressable>
-          <Text style={styles.textStyle}>Add Currency</Text>
+          <Text style={styles.textStyle}>{title}</Text>
           <DropDownPicker
             open={open}
             value={value}

@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 40,
     justifyContent: "center",
+    minWidth: 80,
   },
   pressed: {
     backgroundColor: colors.buttonPressedBackground,

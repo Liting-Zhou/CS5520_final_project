@@ -188,6 +188,7 @@ export default function Rates() {
           valuePassed={""}
           handleValueChange={addCurrencyAfterSelect}
           handleModalClose={closeModal}
+          title="Add a currency"
         ></CustomModal>
         <View style={styles.buttonContainer}>
           <RegularButton onPress={handleReset}>Reset</RegularButton>
