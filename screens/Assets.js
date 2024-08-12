@@ -116,14 +116,19 @@ export default function Assets() {
     setBase(base);
   };
 
-  //todo: if loggin, retrieve the customized assets from the database
+  // if loggin, retrieve the customized assets from the database
   const handleReset = () => {
-    setBase(defaultBase);
-    setAssets(defaultAssets);
+    console.log("Resetting assets");
+    if (currentUser === null) {
+      setBase(defaultBase);
+      setSelectedCurrencies(defaultCurrencies);
+    } else {
+      fetchAssets(currentUser.uid);
+    }
   };
 
   const handleSave = async () => {
-    console.log("Assets.js 126, saving assets");
+    console.log("Assets.js 131, saving assets");
     // if not login, alert user and navigate to the profile screen
     if (currentUser === null) {
       Alert.alert("", "Please log in to save your currencies.", [
@@ -183,7 +188,7 @@ export default function Assets() {
         <DropDownMenu onSelect={baseHandler} base={base} />
       </View>
       <View style={styles.listContainer}>
-        <Text>Your currencies: </Text>
+        <Text style={{ marginBottom: 10 }}>Your currencies: </Text>
 
         <FlatList
           ref={flatListRef}
@@ -236,6 +241,7 @@ const styles = StyleSheet.create({
 
   textContainer: {
     alignItems: "center",
+    marginTop: 10,
   },
   buttonContainer: {
     flex: 1,
