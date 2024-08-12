@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import DropDownPicker from "react-native-dropdown-picker";
 import React, { useState } from "react";
-import { currencies, colors } from "../helpers/ConstantsHelper";
+import { currencies, colors, textSizes } from "../helpers/ConstantsHelper";
 
 // this Modal is used to pop up a dropdown picker to select a currency
 export default function CustomModal({
@@ -10,6 +10,7 @@ export default function CustomModal({
   valuePassed,
   handleValueChange,
   handleModalClose,
+  title,
 }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(valuePassed);
@@ -27,9 +28,11 @@ export default function CustomModal({
           <Pressable
             onPress={modalCloseHandler}
             style={styles.deleteButtonInModal}
+            pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
           >
             <FontAwesome6 name="times-circle" size={24} color="black" />
           </Pressable>
+          <Text style={styles.textStyle}>{title}</Text>
           <DropDownPicker
             open={open}
             value={value}
@@ -59,15 +62,22 @@ const styles = StyleSheet.create({
 
   modalContent: {
     width: "80%",
-    backgroundColor: "white",
+    backgroundColor: colors.thirdTheme,
     padding: 20,
     borderRadius: 10,
+    // justifyContent: "center",
+    alignItems: "center",
   },
   deleteButtonInModal: {
     position: "absolute",
     top: 5,
     right: 5,
     zIndex: 10000,
-    backgroundColor: colors.white,
+    backgroundColor: colors.thirdTheme,
+  },
+  textStyle: {
+    fontSize: textSizes.medium,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
 });

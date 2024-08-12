@@ -5,6 +5,7 @@ import {
   FlatList,
   Platform,
   Alert,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -21,6 +22,8 @@ import {
   readCurrenciesFromDB,
   writeCurrenciesToDB,
 } from "../firebase/firebaseHelper";
+import { auth } from "../firebase/firebaseSetup";
+import CustomText from "../components/CustomText";
 
 export default function Rates() {
   const navigation = useNavigation();
@@ -31,24 +34,19 @@ export default function Rates() {
     useState(defaultCurrencies);
   const [rates, setRates] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // todo: fetch selected currencies when the component mounts if loggin
+  //if the user is logged in, fetch the selected currencies from the database
   useEffect(() => {
-    const fetchSelectedCurrencies = async () => {
-      try {
-        const userId = "User1";
-        const data = await readCurrenciesFromDB(userId, "users");
-        if (data) {
-          // console.log("Rates.js 33, data from DB", data);
-          setBase(data.base);
-          setSelectedCurrencies(data.selectedCurrencies);
-          return;
-        }
-      } catch (error) {
-        console.error("Error fetching selected currencies: ", error);
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setCurrentUser(user);
+      if (user) {
+        // console.log("Rates.js 42, user is logged in");
+        fetchSelectedCurrencies(user.uid);
       }
-    };
-    fetchSelectedCurrencies();
+    });
+    return () => unsubscribe();
   }, []);
 
   // update whenever the base currency or the selected currencies change
@@ -68,6 +66,24 @@ export default function Rates() {
       headerRight: () => <AddButton onPress={handleAdd} />,
     });
   }, [navigation]);
+
+  // fetch base and selected currencies from the database
+  const fetchSelectedCurrencies = async (id) => {
+    try {
+      // console.log("Rates.js 70, user id", id);
+      const data = await readCurrenciesFromDB(id, "users");
+      if (data) {
+        // console.log("Rates.js 73, data from DB", data);
+        setBase(data.base);
+        setSelectedCurrencies(data.selectedCurrencies);
+      } else {
+        setBase(defaultBase);
+        setSelectedCurrencies(defaultCurrencies);
+      }
+    } catch (error) {
+      console.error("Error fetching selected currencies: ", error);
+    }
+  };
 
   // when press the headerRight add button, show the Modal to add a currency
   const handleAdd = () => {
@@ -91,23 +107,39 @@ export default function Rates() {
   };
 
   // reset the rates to the default rates
-  // todo: when loggin, fetch rates from the database
+  // when loggin, fetch rates from the database
   const handleReset = () => {
-    setBase(defaultBase);
-    setSelectedCurrencies(defaultCurrencies);
+    console.log("Resetting rates");
+    if (currentUser === null) {
+      setBase(defaultBase);
+      setSelectedCurrencies(defaultCurrencies);
+    } else {
+      fetchSelectedCurrencies(currentUser.uid);
+    }
   };
 
   // save the rates to the database
   const handleSave = async () => {
     console.log("Saving rates");
-    try {
-      await writeCurrenciesToDB(
-        { userId: "User1", base, selectedCurrencies },
-        "users"
-      );
-      Alert.alert("", "Your list has been saved successfully!");
-    } catch (error) {
-      Alert.alert("", "Failed to save list. Please try again later.");
+    // if not login, alert user and navigate to the profile screen
+    if (currentUser === null) {
+      Alert.alert("", "Please log in to save your list.", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Profile"),
+        },
+      ]);
+    } else {
+      //for login user, save the customized list to database
+      try {
+        await writeCurrenciesToDB(
+          { userId: currentUser.uid, base, selectedCurrencies },
+          "users"
+        );
+        Alert.alert("", "Your list has been saved successfully!");
+      } catch (error) {
+        Alert.alert("", "Failed to save list. Please try again later.");
+      }
     }
   };
 
@@ -117,37 +149,56 @@ export default function Rates() {
     setModalVisible(false);
   };
 
+  const handleOutsidePress = () => {
+    if (dropdownOpen) {
+      setDropdownOpen(false);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.baseContainer,
-          Platform.OS === "ios" ? { zIndex: 1000 } : {},
-        ]}
-      >
-        <Text>Base currency: </Text>
-        <DropDownMenu onSelect={baseHandler} base={base} />
+    <TouchableWithoutFeedback onPress={handleOutsidePress}>
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.baseContainer,
+            Platform.OS === "ios" ? { zIndex: 1000 } : {},
+          ]}
+        >
+          <CustomText>Base currency: </CustomText>
+          <DropDownMenu
+            onSelect={baseHandler}
+            base={base}
+            setOpen={setDropdownOpen}
+            open={dropdownOpen}
+          />
+        </View>
+        <View style={styles.listContainer}>
+          <FlatList
+            data={rates}
+            renderItem={({ item }) => (
+              <RateItem
+                item={item}
+                onPress={() => handleDelete(item.currency)}
+              />
+            )}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.flatListContent}
+            scrollEnabled={true}
+          />
+        </View>
+        <CustomModal
+          isModalVisible={isModalVisible}
+          valuePassed={""}
+          handleValueChange={addCurrencyAfterSelect}
+          handleModalClose={closeModal}
+          title="Add a currency"
+        ></CustomModal>
+        <View style={styles.buttonContainer}>
+          <RegularButton onPress={handleReset}>Reset</RegularButton>
+          <RegularButton onPress={handleSave}>Save</RegularButton>
+        </View>
       </View>
-      <View style={styles.listContainer}>
-        <FlatList
-          data={rates}
-          renderItem={({ item }) => (
-            <RateItem item={item} onPress={() => handleDelete(item.currency)} />
-          )}
-          contentContainerStyle={styles.flatListContent}
-        />
-      </View>
-      <CustomModal
-        isModalVisible={isModalVisible}
-        valuePassed={""}
-        handleValueChange={addCurrencyAfterSelect}
-        handleModalClose={closeModal}
-      ></CustomModal>
-      <View style={styles.buttonContainer}>
-        <RegularButton onPress={handleReset}>Reset</RegularButton>
-        <RegularButton onPress={handleSave}>Save</RegularButton>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 

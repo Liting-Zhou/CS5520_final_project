@@ -142,9 +142,9 @@ export const readProfileFromDB = async (userId, collectionName) => {
     if (userDoc.exists()) {
       const data = userDoc.data();
       return {
-        name: data.name || "", 
-        email: data.email || "", 
-        photo: data.photo || null, 
+        name: data.name || "",
+        email: data.email || "",
+        photo: data.photo || null,
       };
     } else {
       console.log("No such document!");
@@ -155,7 +155,6 @@ export const readProfileFromDB = async (userId, collectionName) => {
     return null;
   }
 };
-
 
 // Function to write a new transaction to Firestore
 export const writeTransactionToDB = async (userId, transaction) => {

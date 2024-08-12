@@ -48,6 +48,7 @@ export default function AssetItem({
         valuePassed={currency}
         handleValueChange={handleChangeCurrency}
         handleModalClose={toggleModal}
+        title="Change a currency"
       ></CustomModal>
       <TrashBinButton
         onPress={onDelete}

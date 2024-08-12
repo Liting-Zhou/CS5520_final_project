@@ -12,22 +12,22 @@ export const colors = {
   thirdTheme: thirdTheme,
   fourthTheme: fourthTheme,
   buttonBackground: fourthTheme,
-  buttonTextColor: "#fff",
+  buttonPressedBackground: "#FFCCBB",
   gray: "#808080",
   lightGray: "#f0f0f0",
   modalOverlay: "rgba(0, 0, 0, 0.5)",
   transparentGray: "rgba(128, 128, 128, 0.5)",
   profilePressableBackground: "#f9f9f9",
   profilePressableFeedback: "#e0e0e0",
-  buttonPressedBackground: "lightblue",
-  blue: '#0066cc',
-  red: '#ff0000',
-}
+  blue: "#0066cc",
+  red: "#ff0000",
+};
 
 export const textSizes = {
   small: 12,
   medium: 16,
   large: 20,
+  iconSize: 28,
 };
 
 // this is copied from Postman, which gets from the external API (not free!)

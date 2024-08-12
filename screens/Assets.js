@@ -5,6 +5,7 @@ import {
   Platform,
   FlatList,
   Alert,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -13,11 +14,13 @@ import DropDownMenu from "../components/DropDownMenu";
 import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
+import CustomText from "../components/CustomText";
 
 import { calculateTotal } from "../helpers/RatesHelper";
 import { colors } from "../helpers/ConstantsHelper";
 import { positiveNumberChecker } from "../helpers/Checker";
 import { readAssetsFromDB, writeAssetsToDB } from "../firebase/firebaseHelper";
+import { auth } from "../firebase/firebaseSetup";
 
 export default function Assets() {
   const navigation = useNavigation();
@@ -31,24 +34,19 @@ export default function Assets() {
   const [total, setTotal] = useState(0);
   const [newAsset, setNewAsset] = useState(null);
   const flatListRef = useRef(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // todo: fetch customized assets when the component mounts if loggin
+  // fetch customized assets when the component mounts if loggin
   useEffect(() => {
-    const fetchAssets = async () => {
-      try {
-        const userId = "User1";
-        const data = await readAssetsFromDB(userId, "users");
-        if (data) {
-          // console.log("Assets.js 31, data from DB", data);
-          setBase(data.base);
-          setAssets(data.assets);
-          return;
-        }
-      } catch (error) {
-        console.error("Error fetching assets: ", error);
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setCurrentUser(user);
+      if (user) {
+        // console.log("Assets.js 42, user is logged in");
+        fetchAssets(user.uid);
       }
-    };
-    fetchAssets();
+    });
+    return () => unsubscribe();
   }, []);
 
   // calculate the total when assets or base change
@@ -90,9 +88,27 @@ export default function Assets() {
     }
   }, [newAsset]);
 
+  // fetch base and assets from the database
+  const fetchAssets = async (id) => {
+    try {
+      // console.log("Assets.js 91, user id", id);
+      const data = await readAssetsFromDB(id, "users");
+      if (data) {
+        // console.log("Assets.js 94, data from DB", data);
+        setBase(data.base);
+        setAssets(data.assets);
+      } else {
+        setBase(defaultBase);
+        setAssets(defaultAssets);
+      }
+    } catch (error) {
+      console.error("Error fetching assets: ", error);
+    }
+  };
+
   // when the user presses the headerRight add button, add an empty asset
   const handleAdd = () => {
-    // console.log("Assets.js 58, before add", assets);
+    // console.log("Assets.js 108, before add", assets);
     const newGeneratedId = Math.random() * 1000;
     const addedAsset = { currency: "CAD", amount: "0", id: newGeneratedId };
     setNewAsset(addedAsset);
@@ -103,19 +119,38 @@ export default function Assets() {
     setBase(base);
   };
 
-  //todo: if loggin, retrieve the customized assets from the database
+  // if loggin, retrieve the customized assets from the database
   const handleReset = () => {
-    setBase(defaultBase);
-    setAssets(defaultAssets);
+    console.log("Resetting assets");
+    if (currentUser === null) {
+      setBase(defaultBase);
+      setAssets(defaultAssets);
+    } else {
+      fetchAssets(currentUser.uid);
+    }
   };
 
   const handleSave = async () => {
-    console.log("Assets.js 103, saving assets");
-    try {
-      await writeAssetsToDB({ userId: "User1", base, assets }, "users");
-      Alert.alert("", "Your assets have been saved successfully!");
-    } catch (error) {
-      Alert.alert("", "Failed to save assets. Please try again later.");
+    console.log("Assets.js 131, saving assets");
+    // if not login, alert user and navigate to the profile screen
+    if (currentUser === null) {
+      Alert.alert("", "Please log in to save your currencies.", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Profile"),
+        },
+      ]);
+    } else {
+      //for login user, save the customized assets to database
+      try {
+        await writeAssetsToDB(
+          { userId: currentUser.uid, base, assets },
+          "users"
+        );
+        Alert.alert("", "Your assets have been saved successfully!");
+      } catch (error) {
+        Alert.alert("", "Failed to save assets. Please try again later.");
+      }
     }
   };
 
@@ -131,7 +166,7 @@ export default function Assets() {
         asset.id === id ? { ...asset, currency: newCurrency } : asset
       )
     );
-    // console.log("Assets.js 90, change currency", newCurrency);
+    // console.log("Assets.js 166, change currency", newCurrency);
   };
 
   //when the user changes the amount of an asset, update the amount
@@ -141,49 +176,64 @@ export default function Assets() {
         asset.id === id ? { ...asset, amount: newAmount } : asset
       )
     );
-    // console.log("Assets.js 100, new amount", newAmount);
+    // console.log("Assets.js 176, new amount", newAmount);
+  };
+
+  const handleOutsidePress = () => {
+    if (dropdownOpen) {
+      setDropdownOpen(false);
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.baseContainer,
-          Platform.OS === "ios" ? { zIndex: 1000 } : {},
-        ]}
-      >
-        <Text>Base currency: </Text>
-        <DropDownMenu onSelect={baseHandler} base={base} />
-      </View>
-      <View style={styles.listContainer}>
-        <Text>Your currencies: </Text>
+    <TouchableWithoutFeedback onPress={handleOutsidePress}>
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.baseContainer,
+            Platform.OS === "ios" ? { zIndex: 1000 } : {},
+          ]}
+        >
+          <CustomText>Base currency: </CustomText>
+          <DropDownMenu
+            onSelect={baseHandler}
+            base={base}
+            open={dropdownOpen}
+            setOpen={setDropdownOpen}
+          />
+        </View>
+        <View style={styles.listContainer}>
+          <CustomText style={{ marginBottom: 10 }}>Your currencies:</CustomText>
+          <FlatList
+            ref={flatListRef}
+            data={assets}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <AssetItem
+                id={item.id}
+                item={item}
+                onDelete={() => handleDelete(item.id)}
+                onChangeCurrency={handleChangeCurrency}
+                onChangeAmount={handleChangeAmount}
+              />
+            )}
+            scrollEnabled={true}
+          />
+          <View style={styles.textContainer}>
+            <CustomText>
+              Total:{" "}
+              <CustomText style={{ fontWeight: "bold" }}>{total}</CustomText>{" "}
+              {base}
+            </CustomText>
+          </View>
+        </View>
 
-        <FlatList
-          ref={flatListRef}
-          data={assets}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <AssetItem
-              id={item.id}
-              item={item}
-              onDelete={() => handleDelete(item.id)}
-              onChangeCurrency={handleChangeCurrency}
-              onChangeAmount={handleChangeAmount}
-            />
-          )}
-        />
-        <View style={styles.textContainer}>
-          <Text>
-            Total: {total} {base}
-          </Text>
+        <View style={styles.buttonContainer}>
+          <RegularButton onPress={handleReset}>Reset</RegularButton>
+          <RegularButton onPress={handleSave}>Save</RegularButton>
         </View>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <RegularButton onPress={handleReset}>Reset</RegularButton>
-        <RegularButton onPress={handleSave}>Save</RegularButton>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -209,6 +259,7 @@ const styles = StyleSheet.create({
 
   textContainer: {
     alignItems: "center",
+    marginTop: 10,
   },
   buttonContainer: {
     flex: 1,

@@ -1,7 +1,7 @@
 import { StyleSheet, Pressable } from "react-native";
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { colors } from "../helpers/ConstantsHelper";
+import { colors, textSizes } from "../helpers/ConstantsHelper";
 
 export default function AddButton({ onPress }) {
   return (
@@ -9,8 +9,9 @@ export default function AddButton({ onPress }) {
       onPress={onPress}
       style={({ pressed }) => [styles.icon, { opacity: pressed ? 0.5 : 1 }]}
       android_ripple={{ color: colors.lightGray }}
+      pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
     >
-      <Ionicons name="add" size={24} color="black" />
+      <Ionicons name="add" size={textSizes.iconSize} color="black" />
     </Pressable>
   );
 }

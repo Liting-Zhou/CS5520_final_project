@@ -16,9 +16,9 @@ import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-
-import { colors } from "./helpers/ConstantsHelper";
 import ConvertButton from "./components/ConvertButton";
+
+import { colors, textSizes } from "./helpers/ConstantsHelper";
 import { auth } from "./firebase/firebaseSetup";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
@@ -48,13 +48,15 @@ function ProfileStackNavigator() {
   }, []);
 
   return (
-    <ProfileStack.Navigator initialRouteName={isUserAuthenticated ? "ProfileScreen" : "LogInScreen"}>
+    <ProfileStack.Navigator
+      initialRouteName={isUserAuthenticated ? "ProfileScreen" : "LogInScreen"}
+    >
       {!isUserAuthenticated && (
         <>
           <ProfileStack.Screen
             name="LogInScreen"
             component={Login}
-            options={{ title: "Log In",  headerShown: false } }
+            options={{ title: "Log In", headerShown: false }}
           />
           <ProfileStack.Screen
             name="SignUpScreen"
@@ -87,7 +89,7 @@ function ProfileStackNavigator() {
             options={{
               title: "Edit Profile",
               headerBackTitle: "Back",
-              headerStyle: styles.headerStyle
+              headerStyle: styles.headerStyle,
             }}
           />
           <ProfileStack.Screen
@@ -96,7 +98,7 @@ function ProfileStackNavigator() {
             options={{
               title: "Transaction History",
               headerBackTitle: "Back",
-              headerStyle: styles.headerStyle
+              headerStyle: styles.headerStyle,
             }}
           />
           <ProfileStack.Screen
@@ -105,7 +107,7 @@ function ProfileStackNavigator() {
             options={{
               title: "Add Transaction",
               headerBackTitle: "Back",
-              headerStyle: styles.headerStyle
+              headerStyle: styles.headerStyle,
             }}
           />
         </>
@@ -121,22 +123,21 @@ export default function App() {
         <Tab.Navigator
           initialRouteName="Rates"
           screenOptions={{
-            tabBarStyle: {},
+            headerStyle: styles.headerStyle,
+            tabBarActiveTintColor: colors.secondTheme,
+            tabBarInactiveTintColor: colors.firstTheme,
+            tabBarLabelStyle: { fontSize: textSizes.small },
           }}
         >
           <Tab.Screen
             name="Rates"
             component={Rates}
             options={{
-              headerTitle: "Recent Rates",
-              headerStyle: styles.headerStyle,
-              tabBarLabel: "Rates",
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
+              headerTitle: "Exchange Rates",
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
                   name="finance"
-                  size={24}
+                  size={textSizes.iconSize}
                   color={focused ? colors.secondTheme : colors.firstTheme}
                 />
               ),
@@ -147,13 +148,10 @@ export default function App() {
             component={Assets}
             options={{
               headerTitle: "Asset Management",
-              headerStyle: styles.headerStyle,
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="attach-money"
-                  size={24}
+                  size={textSizes.iconSize}
                   color={focused ? colors.secondTheme : colors.firstTheme}
                 />
               ),
@@ -164,9 +162,6 @@ export default function App() {
             component={Conversion}
             options={({ navigation }) => ({
               headerTitle: "Convert Currency",
-              headerStyle: styles.headerStyle,
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
               tabBarButton: () => (
                 <ConvertButton
                   onPress={() => navigation.navigate("Conversion")}
@@ -178,14 +173,12 @@ export default function App() {
             name="Finder"
             component={LocationFinder}
             options={{
-              headerShown: false,
-              headerStyle: styles.headerStyle,
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
+              headerTitle: "Nearby places to change currency",
+              headerStyle: { backgroundColor: colors.thirdTheme },
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="location-pin"
-                  size={24}
+                  size={textSizes.iconSize}
                   color={focused ? colors.secondTheme : colors.firstTheme}
                 />
               ),
@@ -197,13 +190,10 @@ export default function App() {
             options={{
               title: "Profile",
               headerShown: false,
-              headerStyle: styles.headerStyle,
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
                   name="account"
-                  size={24}
+                  size={textSizes.iconSize}
                   color={focused ? colors.secondTheme : colors.firstTheme}
                 />
               ),

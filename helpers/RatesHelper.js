@@ -13,7 +13,7 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000;
 const getLatestRates = async () => {
   try {
     const cachedRates = await AsyncStorage.getItem(CACHE_KEY);
-    // console.log("CachedLatestRates.js 17, cachedRates", cachedRates);
+    // console.log("CachedLatestRates.js 16, cachedRates", cachedRates);
     const cachedTimestamp = await AsyncStorage.getItem(CACHE_TIMESTAMP_KEY);
     const now = new Date().getTime();
 
@@ -53,15 +53,16 @@ export const getSelectedCurrencies = async ({ data }) => {
   const allCurrencies = await getLatestRates();
   //   console.log("CachedLatestRates.js 54, allCurrencies", allCurrencies);
   const { base, selectedCurrencies } = data;
-  // console.log("CachedLatestRates.js 55, data", data);
+  // console.log("CachedLatestRates.js 56, data", data);
   const baseRate = allCurrencies[base];
-  // console.log("CachedLatestRates.js 57, baseRate", baseRate);
+  // console.log("CachedLatestRates.js 58, baseRate", baseRate);
   // find selected currencies from all currencies
   const selectedRates = selectedCurrencies.map((currency) => ({
     currency,
     rate: (allCurrencies[currency] / baseRate).toFixed(4),
+    id: Math.random() * 1000,
   }));
-  // console.log("CachedLatestRates.js 63, selectedRates", selectedRates);
+  // console.log("CachedLatestRates.js 65, selectedRates", selectedRates);
   return selectedRates;
 };
 
@@ -69,9 +70,9 @@ export const getSelectedCurrencies = async ({ data }) => {
 export const convert = async ({ data }) => {
   const allCurrencies = await getLatestRates();
   const { from, to, amount } = data;
-  // console.log("CachedLatestRates.js 72, data", data);
+  // console.log("CachedLatestRates.js 73, data", data);
   const result = ((amount * allCurrencies[to]) / allCurrencies[from]).toFixed(
-    4
+    2
   );
   return result;
 };
@@ -80,11 +81,11 @@ export const convert = async ({ data }) => {
 export const calculateTotal = async ({ data }) => {
   const allCurrencies = await getLatestRates();
   const { base, assets } = data;
-  // console.log("CachedLatestRates.js 82, data", data);
+  // console.log("CachedLatestRates.js 84, data", data);
   const total = assets.reduce((acc, asset) => {
     const { currency, amount } = asset;
     return acc + (amount * allCurrencies[base]) / allCurrencies[currency];
   }, 0);
-  // console.log("CachedLatestRates.js 87, total", total);
-  return total.toFixed(4);
+  // console.log("CachedLatestRates.js 89, total", total);
+  return total.toFixed(2);
 };

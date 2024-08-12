@@ -10,46 +10,58 @@ export default function LocationFinder() {
   const [location, setLocation] = useState(null);
   const [exchangePlaces, setExchangePlaces] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [response, requestPermission] = Location.useForegroundPermissions();
+
+  // check if permission of location use service is granted
+  const verifyPermission = async () => {
+    if (response && response.granted) {
+      return true;
+    }
+    const permissionResponse = await requestPermission();
+    return permissionResponse.granted;
+  };
 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission not granted",
-          "Please enable location services"
-        );
-        setLoading(false);
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      // console.log("LocationFinder.js 23 -> location", location);
-      setLocation({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-
-      // fetch nearby currency exchange places
-      const apiKey = mapsApiKey;
-      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=currency+exchange&location=${location.coords.latitude},${location.coords.longitude}&radius=1500&key=${apiKey}`;
-
+    const getLocations = async () => {
       try {
+        // check if permission is granted
+        const hasPermission = await verifyPermission();
+        // console.log("LocationFinder.js 29, hasPermission", hasPermission);
+        if (!hasPermission) {
+          Alert.alert(
+            "Permission not granted",
+            "Please enable location services"
+          );
+          setLoading(false);
+          return;
+        }
+
+        // get current location
+        const location = await Location.getCurrentPositionAsync({});
+        // console.log("LocationFinder.js 41, location", location);
+        setLocation({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+
+        // set loading to false and show the map
+        setLoading(false);
+
+        // fetch nearby currency exchange places
+        const apiKey = mapsApiKey;
+        const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=currency+exchange&location=${location.coords.latitude},${location.coords.longitude}&radius=1500&key=${apiKey}`;
+
         const response = await axios.get(url);
-        console.log("LocationFinder.js 35 -> fetch places from API");
-        console.log(
-          "LocationFinder.js 36 -> response's first item",
-          response.data.results[0]
-        );
+        // console.log("LocationFinder.js 55, fetch places from API");
         setExchangePlaces(response.data.results);
       } catch (error) {
-        console.error(error);
+        console.error("get locations error: ", error);
       }
-
-      setLoading(false);
-    })();
+    };
+    getLocations();
   }, []);
 
+  // show loading indicator
   if (loading) {
     return (
       <View style={styles.container}>
@@ -78,17 +90,18 @@ export default function LocationFinder() {
             title="Your are here"
             pinColor="blue"
           />
-          {exchangePlaces.map((place, index) => (
-            <Marker
-              key={index}
-              coordinate={{
-                latitude: place.geometry.location.lat,
-                longitude: place.geometry.location.lng,
-              }}
-              title={place.name}
-              description={place.vicinity}
-            />
-          ))}
+          {exchangePlaces &&
+            exchangePlaces.map((place, index) => (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: place.geometry.location.lat,
+                  longitude: place.geometry.location.lng,
+                }}
+                title={place.name}
+                description={place.vicinity}
+              />
+            ))}
         </MapView>
       ) : (
         <Text>Location not available</Text>
