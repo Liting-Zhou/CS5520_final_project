@@ -63,12 +63,7 @@ export default function Conversion() {
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
       <View style={styles.container}>
-        <View
-          style={[
-            styles.dropdownContainer,
-            Platform.OS === "ios" ? { zIndex: 2000 } : {},
-          ]}
-        >
+        <View style={[styles.dropdownContainer, { zIndex: 2000 }]}>
           <CustomText style={styles.label}>From: </CustomText>
           <DropDownMenu
             onSelect={onSelectFrom}
@@ -79,12 +74,7 @@ export default function Conversion() {
             onOpen={() => setOpenTo(false)}
           />
         </View>
-        <View
-          style={[
-            styles.dropdownContainer,
-            Platform.OS === "ios" ? { zIndex: 1000 } : {},
-          ]}
-        >
+        <View style={[styles.dropdownContainer, { zIndex: 1000 }]}>
           <CustomText style={{ marginRight: 29 }}>To: </CustomText>
           <DropDownMenu
             onSelect={onSelectTo}
@@ -98,15 +88,20 @@ export default function Conversion() {
         <View style={styles.itemContainer}>
           <CustomText style={styles.label}>Amount: </CustomText>
           <Input onChangeText={handleAmount}></Input>
+          <CustomText style={{ marginLeft: 10 }}>{from}</CustomText>
         </View>
         <View style={styles.itemContainer}>
           <RegularButton onPress={handleSubmit}>Submit</RegularButton>
         </View>
         {convertedAmount && (
           <View style={styles.itemContainer}>
-            <Text>
-              Result: {convertedAmount} {to}
-            </Text>
+            <CustomText>
+              Result:{" "}
+              <CustomText style={{ fontWeight: "bold" }}>
+                {convertedAmount}
+              </CustomText>{" "}
+              {to}
+            </CustomText>
           </View>
         )}
       </View>

@@ -72,7 +72,7 @@ export const convert = async ({ data }) => {
   const { from, to, amount } = data;
   // console.log("CachedLatestRates.js 73, data", data);
   const result = ((amount * allCurrencies[to]) / allCurrencies[from]).toFixed(
-    4
+    2
   );
   return result;
 };

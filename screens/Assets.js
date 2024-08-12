@@ -124,7 +124,7 @@ export default function Assets() {
     console.log("Resetting assets");
     if (currentUser === null) {
       setBase(defaultBase);
-      setSelectedCurrencies(defaultCurrencies);
+      setAssets(defaultAssets);
     } else {
       fetchAssets(currentUser.uid);
     }
@@ -221,7 +221,9 @@ export default function Assets() {
           />
           <View style={styles.textContainer}>
             <CustomText>
-              Total: {total} {base}
+              Total:{" "}
+              <CustomText style={{ fontWeight: "bold" }}>{total}</CustomText>{" "}
+              {base}
             </CustomText>
           </View>
         </View>
