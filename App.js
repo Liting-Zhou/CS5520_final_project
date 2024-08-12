@@ -16,9 +16,9 @@ import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-
-import { colors } from "./helpers/ConstantsHelper";
 import ConvertButton from "./components/ConvertButton";
+
+import { colors, textSizes } from "./helpers/ConstantsHelper";
 import { auth } from "./firebase/firebaseSetup";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
@@ -123,18 +123,16 @@ export default function App() {
         <Tab.Navigator
           initialRouteName="Rates"
           screenOptions={{
-            tabBarStyle: {},
+            headerStyle: styles.headerStyle,
+            tabBarActiveTintColor: colors.secondTheme,
+            tabBarInactiveTintColor: colors.firstTheme,
           }}
         >
           <Tab.Screen
             name="Rates"
             component={Rates}
             options={{
-              headerTitle: "Recent Rates",
-              headerStyle: styles.headerStyle,
-              tabBarLabel: "Rates",
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
+              headerTitle: "Exchange Rates",
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
                   name="finance"
@@ -149,9 +147,6 @@ export default function App() {
             component={Assets}
             options={{
               headerTitle: "Asset Management",
-              headerStyle: styles.headerStyle,
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="attach-money"
@@ -166,9 +161,6 @@ export default function App() {
             component={Conversion}
             options={({ navigation }) => ({
               headerTitle: "Convert Currency",
-              headerStyle: styles.headerStyle,
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
               tabBarButton: () => (
                 <ConvertButton
                   onPress={() => navigation.navigate("Conversion")}
@@ -182,8 +174,6 @@ export default function App() {
             options={{
               headerTitle: "Nearby places to change currency",
               headerStyle: { backgroundColor: colors.thirdTheme },
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="location-pin"
@@ -199,9 +189,6 @@ export default function App() {
             options={{
               title: "Profile",
               headerShown: false,
-              headerStyle: styles.headerStyle,
-              tabBarActiveTintColor: colors.secondTheme,
-              tabBarInactiveTintColor: colors.firstTheme,
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
                   name="account"

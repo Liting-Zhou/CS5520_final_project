@@ -26,7 +26,7 @@ export default function LocationFinder() {
       try {
         // check if permission is granted
         const hasPermission = await verifyPermission();
-        console.log("LocationFinder.js 29, hasPermission", hasPermission);
+        // console.log("LocationFinder.js 29, hasPermission", hasPermission);
         if (!hasPermission) {
           Alert.alert(
             "Permission not granted",
@@ -52,7 +52,7 @@ export default function LocationFinder() {
         const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=currency+exchange&location=${location.coords.latitude},${location.coords.longitude}&radius=1500&key=${apiKey}`;
 
         const response = await axios.get(url);
-        console.log("LocationFinder.js 55, fetch places from API");
+        // console.log("LocationFinder.js 55, fetch places from API");
         setExchangePlaces(response.data.results);
       } catch (error) {
         console.error("get locations error: ", error);

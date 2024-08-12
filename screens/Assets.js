@@ -14,6 +14,7 @@ import DropDownMenu from "../components/DropDownMenu";
 import RegularButton from "../components/RegularButton";
 import AssetItem from "../components/AssetItem";
 import AddButton from "../components/AddButton";
+import CustomText from "../components/CustomText";
 
 import { calculateTotal } from "../helpers/RatesHelper";
 import { colors } from "../helpers/ConstantsHelper";
@@ -193,7 +194,7 @@ export default function Assets() {
             Platform.OS === "ios" ? { zIndex: 1000 } : {},
           ]}
         >
-          <Text>Base currency: </Text>
+          <CustomText>Base currency: </CustomText>
           <DropDownMenu
             onSelect={baseHandler}
             base={base}
@@ -202,8 +203,7 @@ export default function Assets() {
           />
         </View>
         <View style={styles.listContainer}>
-          <Text style={{ marginBottom: 10 }}>Your currencies: </Text>
-
+          <CustomText style={{ marginBottom: 10 }}>Your currencies:</CustomText>
           <FlatList
             ref={flatListRef}
             data={assets}
@@ -220,9 +220,9 @@ export default function Assets() {
             scrollEnabled={true}
           />
           <View style={styles.textContainer}>
-            <Text>
+            <CustomText>
               Total: {total} {base}
-            </Text>
+            </CustomText>
           </View>
         </View>
 

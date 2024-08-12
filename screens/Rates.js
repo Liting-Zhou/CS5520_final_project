@@ -23,6 +23,7 @@ import {
   writeCurrenciesToDB,
 } from "../firebase/firebaseHelper";
 import { auth } from "../firebase/firebaseSetup";
+import CustomText from "../components/CustomText";
 
 export default function Rates() {
   const navigation = useNavigation();
@@ -163,7 +164,7 @@ export default function Rates() {
             Platform.OS === "ios" ? { zIndex: 1000 } : {},
           ]}
         >
-          <Text>Base currency: </Text>
+          <CustomText>Base currency: </CustomText>
           <DropDownMenu
             onSelect={baseHandler}
             base={base}

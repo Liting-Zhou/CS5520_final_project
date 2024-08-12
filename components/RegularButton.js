@@ -1,6 +1,7 @@
 import { StyleSheet, Text, Pressable, View } from "react-native";
 import React from "react";
 import { colors } from "../helpers/ConstantsHelper";
+import CustomText from "./CustomText";
 
 export default function RegularButton({
   children,
@@ -19,7 +20,7 @@ export default function RegularButton({
       ]}
     >
       <View style={childrenStyle}>
-        <Text style={[styles.buttonText, buttonTextStyle]}>{children}</Text>
+        <CustomText style={styles.buttonText}>{children}</CustomText>
       </View>
     </Pressable>
   );

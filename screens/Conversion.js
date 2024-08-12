@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import Input from "../components/Input";
 import RegularButton from "../components/RegularButton";
+import CustomText from "../components/CustomText";
 
 import { convert } from "../helpers/RatesHelper";
 import { positiveNumberChecker } from "../helpers/Checker";
@@ -68,7 +69,7 @@ export default function Conversion() {
             Platform.OS === "ios" ? { zIndex: 2000 } : {},
           ]}
         >
-          <Text style={styles.label}>From: </Text>
+          <CustomText style={styles.label}>From: </CustomText>
           <DropDownMenu
             onSelect={onSelectFrom}
             base={"CAD"}
@@ -84,7 +85,7 @@ export default function Conversion() {
             Platform.OS === "ios" ? { zIndex: 1000 } : {},
           ]}
         >
-          <Text style={{ marginRight: 25 }}>To: </Text>
+          <CustomText style={{ marginRight: 29 }}>To: </CustomText>
           <DropDownMenu
             onSelect={onSelectTo}
             base={"USD"}
@@ -95,7 +96,7 @@ export default function Conversion() {
           />
         </View>
         <View style={styles.itemContainer}>
-          <Text style={styles.label}>Amount: </Text>
+          <CustomText style={styles.label}>Amount: </CustomText>
           <Input onChangeText={handleAmount}></Input>
         </View>
         <View style={styles.itemContainer}>
