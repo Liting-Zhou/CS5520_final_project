@@ -43,7 +43,7 @@ export default function DropDownMenu({
 }
 
 const styles = StyleSheet.create({
-  dropdown: { width: "70%" },
+  dropdown: { width: "70%", backgroundColor: colors.white },
   dropDownContainer: {
     width: "70%",
     backgroundColor: colors.white,

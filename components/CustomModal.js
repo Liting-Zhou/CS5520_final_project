@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
 
   modalContent: {
     width: "80%",
-    backgroundColor: "white",
+    backgroundColor: colors.thirdTheme,
     padding: 20,
     borderRadius: 10,
     // justifyContent: "center",
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     top: 5,
     right: 5,
     zIndex: 10000,
-    backgroundColor: colors.white,
+    backgroundColor: colors.thirdTheme,
   },
   textStyle: {
     fontSize: textSizes.medium,

@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.buttonPressedBackground,
   },
   buttonText: {
-    color: colors.buttonTextColor,
+    color: colors.white,
     textAlign: "center",
   },
 });
