@@ -5,6 +5,7 @@ import {
   Platform,
   FlatList,
   Alert,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -33,6 +34,7 @@ export default function Assets() {
   const [newAsset, setNewAsset] = useState(null);
   const flatListRef = useRef(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // fetch customized assets when the component mounts if loggin
   useEffect(() => {
@@ -176,46 +178,59 @@ export default function Assets() {
     // console.log("Assets.js 176, new amount", newAmount);
   };
 
-  return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.baseContainer,
-          Platform.OS === "ios" ? { zIndex: 1000 } : {},
-        ]}
-      >
-        <Text>Base currency: </Text>
-        <DropDownMenu onSelect={baseHandler} base={base} />
-      </View>
-      <View style={styles.listContainer}>
-        <Text style={{ marginBottom: 10 }}>Your currencies: </Text>
+  const handleOutsidePress = () => {
+    if (dropdownOpen) {
+      setDropdownOpen(false);
+    }
+  };
 
-        <FlatList
-          ref={flatListRef}
-          data={assets}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <AssetItem
-              id={item.id}
-              item={item}
-              onDelete={() => handleDelete(item.id)}
-              onChangeCurrency={handleChangeCurrency}
-              onChangeAmount={handleChangeAmount}
-            />
-          )}
-        />
-        <View style={styles.textContainer}>
-          <Text>
-            Total: {total} {base}
-          </Text>
+  return (
+    <TouchableWithoutFeedback onPress={handleOutsidePress}>
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.baseContainer,
+            Platform.OS === "ios" ? { zIndex: 1000 } : {},
+          ]}
+        >
+          <Text>Base currency: </Text>
+          <DropDownMenu
+            onSelect={baseHandler}
+            base={base}
+            open={dropdownOpen}
+            setOpen={setDropdownOpen}
+          />
+        </View>
+        <View style={styles.listContainer}>
+          <Text style={{ marginBottom: 10 }}>Your currencies: </Text>
+
+          <FlatList
+            ref={flatListRef}
+            data={assets}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <AssetItem
+                id={item.id}
+                item={item}
+                onDelete={() => handleDelete(item.id)}
+                onChangeCurrency={handleChangeCurrency}
+                onChangeAmount={handleChangeAmount}
+              />
+            )}
+          />
+          <View style={styles.textContainer}>
+            <Text>
+              Total: {total} {base}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <RegularButton onPress={handleReset}>Reset</RegularButton>
+          <RegularButton onPress={handleSave}>Save</RegularButton>
         </View>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <RegularButton onPress={handleReset}>Reset</RegularButton>
-        <RegularButton onPress={handleSave}>Save</RegularButton>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 

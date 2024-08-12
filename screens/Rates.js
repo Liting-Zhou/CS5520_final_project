@@ -5,6 +5,7 @@ import {
   FlatList,
   Platform,
   Alert,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -33,6 +34,7 @@ export default function Rates() {
   const [rates, setRates] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   //if the user is logged in, fetch the selected currencies from the database
   useEffect(() => {
@@ -146,37 +148,53 @@ export default function Rates() {
     setModalVisible(false);
   };
 
+  const handleOutsidePress = () => {
+    if (dropdownOpen) {
+      setDropdownOpen(false);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.baseContainer,
-          Platform.OS === "ios" ? { zIndex: 1000 } : {},
-        ]}
-      >
-        <Text>Base currency: </Text>
-        <DropDownMenu onSelect={baseHandler} base={base} />
+    <TouchableWithoutFeedback onPress={handleOutsidePress}>
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.baseContainer,
+            Platform.OS === "ios" ? { zIndex: 1000 } : {},
+          ]}
+        >
+          <Text>Base currency: </Text>
+          <DropDownMenu
+            onSelect={baseHandler}
+            base={base}
+            setOpen={setDropdownOpen}
+            open={dropdownOpen}
+          />
+        </View>
+        <View style={styles.listContainer}>
+          <FlatList
+            data={rates}
+            renderItem={({ item }) => (
+              <RateItem
+                item={item}
+                onPress={() => handleDelete(item.currency)}
+              />
+            )}
+            contentContainerStyle={styles.flatListContent}
+          />
+        </View>
+        <CustomModal
+          isModalVisible={isModalVisible}
+          valuePassed={""}
+          handleValueChange={addCurrencyAfterSelect}
+          handleModalClose={closeModal}
+        ></CustomModal>
+        <View style={styles.buttonContainer}>
+          <RegularButton onPress={handleReset}>Reset</RegularButton>
+          <RegularButton onPress={handleSave}>Save</RegularButton>
+        </View>
       </View>
-      <View style={styles.listContainer}>
-        <FlatList
-          data={rates}
-          renderItem={({ item }) => (
-            <RateItem item={item} onPress={() => handleDelete(item.currency)} />
-          )}
-          contentContainerStyle={styles.flatListContent}
-        />
-      </View>
-      <CustomModal
-        isModalVisible={isModalVisible}
-        valuePassed={""}
-        handleValueChange={addCurrencyAfterSelect}
-        handleModalClose={closeModal}
-      ></CustomModal>
-      <View style={styles.buttonContainer}>
-        <RegularButton onPress={handleReset}>Reset</RegularButton>
-        <RegularButton onPress={handleSave}>Save</RegularButton>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 

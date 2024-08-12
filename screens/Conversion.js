@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View, Platform, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  TouchableWithoutFeedback,
+} from "react-native";
 import React, { useState } from "react";
 
 import DropDownMenu from "../components/DropDownMenu";
@@ -14,6 +20,8 @@ export default function Conversion() {
   const [from, setFrom] = useState("CAD");
   const [to, setTo] = useState("USD");
   const [amount, setAmount] = useState("");
+  const [openFrom, setOpenFrom] = useState(false);
+  const [openTo, setOpenTo] = useState(false);
 
   // select the currency to convert from
   const onSelectFrom = (rate) => {
@@ -42,49 +50,66 @@ export default function Conversion() {
     }
   };
 
+  const handleOutsidePress = () => {
+    if (openFrom) {
+      setOpenFrom(false);
+    }
+    if (openTo) {
+      setOpenTo(false);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.dropdownContainer,
-          Platform.OS === "ios" ? { zIndex: 2000 } : {},
-        ]}
-      >
-        <Text style={styles.label}>From: </Text>
-        <DropDownMenu
-          onSelect={onSelectFrom}
-          base={"CAD"}
-          style={{ width: "100%" }}
-        />
-      </View>
-      <View
-        style={[
-          styles.dropdownContainer,
-          Platform.OS === "ios" ? { zIndex: 1000 } : {},
-        ]}
-      >
-        <Text style={{ marginRight: 25 }}>To: </Text>
-        <DropDownMenu
-          onSelect={onSelectTo}
-          base={"USD"}
-          style={{ width: "100%" }}
-        />
-      </View>
-      <View style={styles.itemContainer}>
-        <Text style={styles.label}>Amount: </Text>
-        <Input onChangeText={handleAmount}></Input>
-      </View>
-      <View style={styles.itemContainer}>
-        <RegularButton onPress={handleSubmit}>Submit</RegularButton>
-      </View>
-      {convertedAmount && (
-        <View style={styles.itemContainer}>
-          <Text>
-            Result: {convertedAmount} {to}
-          </Text>
+    <TouchableWithoutFeedback onPress={handleOutsidePress}>
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.dropdownContainer,
+            Platform.OS === "ios" ? { zIndex: 2000 } : {},
+          ]}
+        >
+          <Text style={styles.label}>From: </Text>
+          <DropDownMenu
+            onSelect={onSelectFrom}
+            base={"CAD"}
+            style={{ width: "100%" }}
+            open={openFrom}
+            setOpen={setOpenFrom}
+            onOpen={() => setOpenTo(false)}
+          />
         </View>
-      )}
-    </View>
+        <View
+          style={[
+            styles.dropdownContainer,
+            Platform.OS === "ios" ? { zIndex: 1000 } : {},
+          ]}
+        >
+          <Text style={{ marginRight: 25 }}>To: </Text>
+          <DropDownMenu
+            onSelect={onSelectTo}
+            base={"USD"}
+            style={{ width: "100%" }}
+            open={openTo}
+            setOpen={setOpenTo}
+            onOpen={() => setOpenFrom(false)}
+          />
+        </View>
+        <View style={styles.itemContainer}>
+          <Text style={styles.label}>Amount: </Text>
+          <Input onChangeText={handleAmount}></Input>
+        </View>
+        <View style={styles.itemContainer}>
+          <RegularButton onPress={handleSubmit}>Submit</RegularButton>
+        </View>
+        {convertedAmount && (
+          <View style={styles.itemContainer}>
+            <Text>
+              Result: {convertedAmount} {to}
+            </Text>
+          </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
