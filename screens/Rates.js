@@ -39,7 +39,7 @@ export default function Rates() {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setCurrentUser(user);
       if (user) {
-        console.log("Rates.js 42, user is logged in");
+        // console.log("Rates.js 42, user is logged in");
         fetchSelectedCurrencies(user.uid);
       }
     });
@@ -70,7 +70,7 @@ export default function Rates() {
       // console.log("Rates.js 70, user id", id);
       const data = await readCurrenciesFromDB(id, "users");
       if (data) {
-        console.log("Rates.js 73, data from DB", data);
+        // console.log("Rates.js 73, data from DB", data);
         setBase(data.base);
         setSelectedCurrencies(data.selectedCurrencies);
       } else {

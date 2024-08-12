@@ -88,10 +88,10 @@ export default function Assets() {
   // fetch base and assets from the database
   const fetchAssets = async (id) => {
     try {
-      console.log("Assets.js 96, user id", id);
+      console.log("Assets.js 91, user id", id);
       const data = await readAssetsFromDB(id, "users");
       if (data) {
-        console.log("Assets.js 99, data from DB", data);
+        console.log("Assets.js 94, data from DB", data);
         setBase(data.base);
         setAssets(data.assets);
       } else {
@@ -123,12 +123,26 @@ export default function Assets() {
   };
 
   const handleSave = async () => {
-    console.log("Assets.js 103, saving assets");
-    try {
-      await writeAssetsToDB({ userId: "User1", base, assets }, "users");
-      Alert.alert("", "Your assets have been saved successfully!");
-    } catch (error) {
-      Alert.alert("", "Failed to save assets. Please try again later.");
+    console.log("Assets.js 126, saving assets");
+    // if not login, alert user and navigate to the profile screen
+    if (currentUser === null) {
+      Alert.alert("", "Please log in to save your currencies.", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Profile"),
+        },
+      ]);
+    } else {
+      //for login user, save the customized assets to database
+      try {
+        await writeAssetsToDB(
+          { userId: currentUser.uid, base, assets },
+          "users"
+        );
+        Alert.alert("", "Your assets have been saved successfully!");
+      } catch (error) {
+        Alert.alert("", "Failed to save assets. Please try again later.");
+      }
     }
   };
 
