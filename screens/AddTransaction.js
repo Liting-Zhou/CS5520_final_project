@@ -6,6 +6,7 @@ import {
   Pressable,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import RegularButton from "../components/RegularButton";
@@ -53,6 +54,9 @@ export default function AddTransaction() {
   const [toAmount, setToAmount] = useState(
     transaction ? transaction.toAmount : ""
   );
+
+  const [openFrom, setOpenFrom] = useState(false);
+  const [openTo, setOpenTo] = useState(false);
 
   // Set the header title and right button based on whether the transaction is new or existing
   useLayoutEffect(() => {
@@ -144,72 +148,96 @@ export default function AddTransaction() {
     );
   };
 
+  // when pressing outside the dropdown, close the dropdown
+  const handleOutsidePress = () => {
+    if (openFrom) {
+      setOpenFrom(false);
+    }
+    if (openTo) {
+      setOpenTo(false);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <View style={styles.descriptionContainer}>
-          <View style={styles.descriptionInputWrapper}>
-            <TextInputBox
-              label="Description"
-              value={description}
-              onChangeText={setDescription}
-              placeholder="Enter description"
+    <TouchableWithoutFeedback onPress={handleOutsidePress}>
+      <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <View style={styles.descriptionContainer}>
+            <View style={styles.descriptionInputWrapper}>
+              <TextInputBox
+                label="Description"
+                value={description}
+                onChangeText={setDescription}
+                placeholder="Enter description"
+              />
+            </View>
+            <Pressable
+              onPress={() => console.log("Camera icon pressed")}
+              style={styles.cameraIcon}
+            >
+              <Entypo name="camera" size={24} color="black" />
+            </Pressable>
+          </View>
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Date</Text>
+          <DateTimePickerComponent date={date} setDate={setDate} />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInputBox
+            label="Location"
+            value={location}
+            onChangeText={setLocation}
+            placeholder="Enter location"
+          />
+        </View>
+        <View style={[styles.rowContainer, { zIndex: 1000 }]}>
+          <View>
+            <Text style={styles.label}>From Currency</Text>
+            <DropDownMenu
+              base={fromCurrency}
+              onSelect={setFromCurrency}
+              open={openFrom}
+              setOpen={setOpenFrom}
+              onOpen={() => setOpenTo(false)}
             />
           </View>
-          <Pressable
-            onPress={() => console.log("Camera icon pressed")}
-            style={styles.cameraIcon}
-          >
-            <Entypo name="camera" size={24} color="black" />
-          </Pressable>
+          <View style={styles.amountInputContainer}>
+            <TextInput
+              value={fromAmount}
+              onChangeText={setFromAmount}
+              placeholder="Enter amount"
+              keyboardType="numeric"
+              style={styles.amountInput}
+            />
+          </View>
         </View>
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Date</Text>
-        <DateTimePickerComponent date={date} setDate={setDate} />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInputBox
-          label="Location"
-          value={location}
-          onChangeText={setLocation}
-          placeholder="Enter location"
-        />
-      </View>
-      <View style={[styles.rowContainer, { zIndex: 1000 }]}>
-        <View>
-          <Text style={styles.label}>From Currency</Text>
-          <DropDownMenu base={fromCurrency} onSelect={setFromCurrency} />
+        <View style={[styles.rowContainer, { zIndex: 900 }]}>
+          <View>
+            <Text style={styles.label}>To Currency</Text>
+            <DropDownMenu
+              base={toCurrency}
+              onSelect={setToCurrency}
+              open={openTo}
+              setOpen={setOpenTo}
+              onOpen={() => setOpenFrom(false)}
+            />
+          </View>
+          <View style={styles.amountInputContainer}>
+            <TextInput
+              value={toAmount}
+              onChangeText={setToAmount}
+              placeholder="Enter amount"
+              keyboardType="numeric"
+              style={styles.amountInput}
+            />
+          </View>
         </View>
-        <View style={styles.amountInputContainer}>
-          <TextInput
-            value={fromAmount}
-            onChangeText={setFromAmount}
-            placeholder="Enter amount"
-            keyboardType="numeric"
-            style={styles.amountInput}
-          />
-        </View>
+        <RegularButton onPress={handleSaveTransaction}>
+          {transactionId ? "Save Changes" : "Add Transaction"}
+        </RegularButton>
       </View>
-      <View style={[styles.rowContainer, { zIndex: 900 }]}>
-        <View>
-          <Text style={styles.label}>To Currency</Text>
-          <DropDownMenu base={toCurrency} onSelect={setToCurrency} />
-        </View>
-        <View style={styles.amountInputContainer}>
-          <TextInput
-            value={toAmount}
-            onChangeText={setToAmount}
-            placeholder="Enter amount"
-            keyboardType="numeric"
-            style={styles.amountInput}
-          />
-        </View>
-      </View>
-      <RegularButton onPress={handleSaveTransaction}>
-        {transactionId ? "Save Changes" : "Add Transaction"}
-      </RegularButton>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
