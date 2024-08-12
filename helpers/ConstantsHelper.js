@@ -27,6 +27,7 @@ export const textSizes = {
   small: 12,
   medium: 16,
   large: 20,
+  iconSize: 28,
 };
 
 // this is copied from Postman, which gets from the external API (not free!)

@@ -126,6 +126,7 @@ export default function App() {
             headerStyle: styles.headerStyle,
             tabBarActiveTintColor: colors.secondTheme,
             tabBarInactiveTintColor: colors.firstTheme,
+            tabBarLabelStyle: { fontSize: textSizes.small },
           }}
         >
           <Tab.Screen
@@ -136,7 +137,7 @@ export default function App() {
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
                   name="finance"
-                  size={24}
+                  size={textSizes.iconSize}
                   color={focused ? colors.secondTheme : colors.firstTheme}
                 />
               ),
@@ -150,7 +151,7 @@ export default function App() {
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="attach-money"
-                  size={24}
+                  size={textSizes.iconSize}
                   color={focused ? colors.secondTheme : colors.firstTheme}
                 />
               ),
@@ -177,7 +178,7 @@ export default function App() {
               tabBarIcon: ({ focused }) => (
                 <MaterialIcons
                   name="location-pin"
-                  size={24}
+                  size={textSizes.iconSize}
                   color={focused ? colors.secondTheme : colors.firstTheme}
                 />
               ),
@@ -192,7 +193,7 @@ export default function App() {
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
                   name="account"
-                  size={24}
+                  size={textSizes.iconSize}
                   color={focused ? colors.secondTheme : colors.firstTheme}
                 />
               ),

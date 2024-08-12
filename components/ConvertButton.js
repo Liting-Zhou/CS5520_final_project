@@ -17,7 +17,11 @@ export default function ConvertButton({ onPress }) {
         pressed ? styles.pressed : null,
       ]}
     >
-      <FontAwesome5 name="exchange-alt" size={24} color={colors.white} />
+      <FontAwesome5
+        name="exchange-alt"
+        size={textSizes.iconSize}
+        color={colors.white}
+      />
       <Text style={styles.textStyle}>Convert</Text>
     </Pressable>
   );
