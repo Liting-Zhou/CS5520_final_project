@@ -21,6 +21,7 @@ import {
   readCurrenciesFromDB,
   writeCurrenciesToDB,
 } from "../firebase/firebaseHelper";
+import { auth } from "../firebase/firebaseSetup";
 
 export default function Rates() {
   const navigation = useNavigation();
@@ -31,25 +32,55 @@ export default function Rates() {
     useState(defaultCurrencies);
   const [rates, setRates] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // todo: fetch selected currencies when the component mounts if loggin
   useEffect(() => {
-    const fetchSelectedCurrencies = async () => {
-      try {
-        const userId = "User1";
-        const data = await readCurrenciesFromDB(userId, "users");
-        if (data) {
-          // console.log("Rates.js 33, data from DB", data);
-          setBase(data.base);
-          setSelectedCurrencies(data.selectedCurrencies);
-          return;
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setCurrentUser(user);
+      if (user) {
+        try {
+          // get current user id
+          console.log("Rates.js 43, user.uid", user.uid);
+          const userId = user.uid;
+          const data = await readCurrenciesFromDB(userId, "users");
+          console.log("Rates.js 46, data from DB", data);
+          if (data) {
+            // console.log("Rates.js 48, data from DB", data);
+            setBase(data.base);
+            setSelectedCurrencies(data.selectedCurrencies);
+          }
+        } catch (error) {
+          console.error("Error fetching selected currencies: ", error);
         }
-      } catch (error) {
-        console.error("Error fetching selected currencies: ", error);
+      } else {
+        setBase(defaultBase);
+        setSelectedCurrencies(defaultCurrencies);
       }
-    };
-    fetchSelectedCurrencies();
+    });
+    return () => unsubscribe();
   }, []);
+
+  // fetch selected currencies when the component mounts if loggin
+  // useEffect(() => {
+  //   const fetchSelectedCurrencies = async () => {
+  //     try {
+  //       // get current user id
+  //       console.log("Rates.js 41, auth.currentUser.uid", auth.currentUser.uid);
+  //       const userId = auth.currentUser?.uid;
+  //       const data = await readCurrenciesFromDB(userId, "users");
+  //       console.log("Rates.js 44, data from DB", data);
+  //       if (data) {
+  //         // console.log("Rates.js 33, data from DB", data);
+  //         setBase(data.base);
+  //         setSelectedCurrencies(data.selectedCurrencies);
+  //         return;
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching selected currencies: ", error);
+  //     }
+  //   };
+  //   fetchSelectedCurrencies();
+  // }, []);
 
   // update whenever the base currency or the selected currencies change
   useEffect(() => {
@@ -100,14 +131,25 @@ export default function Rates() {
   // save the rates to the database
   const handleSave = async () => {
     console.log("Saving rates");
-    try {
-      await writeCurrenciesToDB(
-        { userId: "User1", base, selectedCurrencies },
-        "users"
-      );
-      Alert.alert("", "Your list has been saved successfully!");
-    } catch (error) {
-      Alert.alert("", "Failed to save list. Please try again later.");
+    // if not login, alert user and navigate to the profile screen
+    if (currentUser === null) {
+      Alert.alert("", "Please log in to save your list.", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Profile"),
+        },
+      ]);
+    } else {
+      //for login user, save the customized list to database
+      try {
+        await writeCurrenciesToDB(
+          { userId: currentUser.uid, base, selectedCurrencies },
+          "users"
+        );
+        Alert.alert("", "Your list has been saved successfully!");
+      } catch (error) {
+        Alert.alert("", "Failed to save list. Please try again later.");
+      }
     }
   };
 
