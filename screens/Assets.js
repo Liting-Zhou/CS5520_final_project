@@ -217,6 +217,7 @@ export default function Assets() {
                 onChangeAmount={handleChangeAmount}
               />
             )}
+            scrollEnabled={true}
           />
           <View style={styles.textContainer}>
             <Text>

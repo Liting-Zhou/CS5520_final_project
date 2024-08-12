@@ -180,7 +180,9 @@ export default function Rates() {
                 onPress={() => handleDelete(item.currency)}
               />
             )}
+            keyExtractor={(item) => item.id}
             contentContainerStyle={styles.flatListContent}
+            scrollEnabled={true}
           />
         </View>
         <CustomModal

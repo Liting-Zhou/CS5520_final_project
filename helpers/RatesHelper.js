@@ -60,6 +60,7 @@ export const getSelectedCurrencies = async ({ data }) => {
   const selectedRates = selectedCurrencies.map((currency) => ({
     currency,
     rate: (allCurrencies[currency] / baseRate).toFixed(4),
+    id: Math.random() * 1000,
   }));
   // console.log("CachedLatestRates.js 63, selectedRates", selectedRates);
   return selectedRates;
