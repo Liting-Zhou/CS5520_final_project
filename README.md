@@ -1,5 +1,47 @@
 ### Qianyi Fu, Liting Zhou
 
+### <span style="color: orange;">Iteration 2</span>
+
+### 1. Functions added in this iteration
+
+- Authentication (added by Qianyi Fu)
+- Location use (added by Liting Zhou)
+- External API use (already added in Iteration 1)
+
+### 2. Firebase rules
+
+### 3. Current state of the application
+
+Anonymous user can use these functions:
+
+- customize list of interested currencies, but cannot save
+- customize assets to see the total result, but cannot save
+- convert currencies
+- find nearby places to exchange currency
+
+Login user can use these functions:
+
+- customize list of interested currencies and save
+- customize assets to see the total result, and save
+- retrieve the saved data from DB
+- convert currencies
+- find nearby places to exchange currency
+- edit profile
+- add/edit transaction history
+
+Currency exchange rates are called from 3rd party API (keys already sent to TAs by email):  
+https://rapidapi.com/principalapis/api/currency-conversion-and-exchange-rates
+
+Functions to be implemented:
+
+- Camera use
+- Notification
+- Final styling and coloring
+
+### 4. Screenshots
+
+### <span style="color: orange;">Iteration 1</span>
+
 ### 1. Data model (at least 3 collections)
 
 Collections: users  
