@@ -14,7 +14,6 @@ import TextInputBox from "../components/TextInputBox";
 import DateTimePickerComponent from "../components/DateTimePickerComponent";
 import DropDownMenu from "../components/DropDownMenu";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
-import Entypo from "react-native-vector-icons/Entypo";
 import TrashBinButton from "../components/TrashBinButton";
 import {
   writeTransactionToDB,
@@ -22,6 +21,7 @@ import {
   deleteTransactionFromDB,
 } from "../firebase/firebaseHelper";
 import { getAuth } from "firebase/auth";
+import ImageManager from "../components/ImageManager";
 
 export default function AddTransaction() {
   const navigation = useNavigation();
@@ -171,12 +171,7 @@ export default function AddTransaction() {
                 placeholder="Enter description"
               />
             </View>
-            <Pressable
-              onPress={() => console.log("Camera icon pressed")}
-              style={styles.cameraIcon}
-            >
-              <Entypo name="camera" size={24} color="black" />
-            </Pressable>
+            <ImageManager />
           </View>
         </View>
         <View style={styles.inputContainer}>
