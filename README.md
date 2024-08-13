@@ -1,16 +1,16 @@
 ### Qianyi Fu, Liting Zhou
 
-### <span style="color: orange;">Iteration 2</span>
+### Iteration 2 🚀
 
-### 1. Functions added in this iteration
+#### 1. Functions added in this iteration
 
 - Authentication (added by Qianyi Fu)
 - Location use (added by Liting Zhou)
 - External API use (already added in Iteration 1)
 
-### 2. Firebase rules
+#### 2. Firebase rules
 
-### 3. Current state of the application
+#### 3. Current state of the application
 
 Anonymous user can use these functions:
 
@@ -38,11 +38,11 @@ Functions to be implemented:
 - Notification
 - Final styling and coloring
 
-### 4. Screenshots
+#### 4. Screenshots
 
-### <span style="color: orange;">Iteration 1</span>
+### Iteration 1 🚀
 
-### 1. Data model (at least 3 collections)
+#### 1. Data model (at least 3 collections)
 
 Collections: users  
 Subcollections: transactions, notifications  
@@ -79,7 +79,7 @@ users:
     user2:
 ```
 
-### 2. Which of the CRUD operations are implemented on which collections
+#### 2. Which of the CRUD operations are implemented on which collections
 
 Users Collection:
 
@@ -105,7 +105,7 @@ Notifications Subcollection:
 - Update Notifications in DB
 - Delete Notifications from DB
 
-### 3. Current state of the application
+#### 3. Current state of the application
 
 Anonymous user can use these functions:
 
@@ -133,7 +133,7 @@ Functions to be implemented:
 - Notification
 - Styling and coloring
 
-### 4. Screenshots
+#### 4. Screenshots
 
 - Recent Rates Screen
 - Asset Management Screen
@@ -161,15 +161,15 @@ Functions to be implemented:
   <img src="./documents/iteration1_screenshots/editTransaction.png" alt="" style="width:33%"/>
 </div>
 
-### 5. Contributions
+#### 5. Contributions
 
-#### Qianyi Fu
+##### Qianyi Fu
 
 - screen of profile
 - screen of transaction history
 - components related to profile/transaction history
 
-#### Liting Zhou
+##### Liting Zhou
 
 - screen of list of currencies
 - screen of asset management
