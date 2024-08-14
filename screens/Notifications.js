@@ -1,6 +1,11 @@
 import { StyleSheet, Text, View, FlatList, Modal, Button } from "react-native";
-import React, { useState, useLayoutEffect, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, {
+  useState,
+  useLayoutEffect,
+  useEffect,
+  useCallback,
+} from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { textSizes, colors } from "../helpers/ConstantsHelper";
 import NotificationItem from "../components/NotificationItem";
 import AddButton from "../components/AddButton";
@@ -13,20 +18,28 @@ export default function Notifications() {
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
+  const fetchNotifications = async () => {
+    try {
+      if (userId) {
+        const fetchedNotifications = await readNotificationsFromDB(userId);
+        setNotifications(fetchedNotifications);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications: ", error);
+    }
+  };
+
   // fetch notifications from DB when the component mounts
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        if (userId) {
-          const fetchedNotifications = await readNotificationsFromDB(userId);
-          setNotifications(fetchedNotifications);
-        }
-      } catch (error) {
-        console.error("Error fetching notifications: ", error);
-      }
-    };
     fetchNotifications();
   }, []);
+
+  // fetch notifications when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchNotifications();
+    }, [userId])
+  );
 
   // headerRight button to add a notification
   useLayoutEffect(() => {
@@ -62,44 +75,11 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: textSizes.medium,
+    fontWeight: "bold",
+    marginTop: 30,
     marginBottom: 20,
   },
   list: {
     paddingBottom: 20,
   },
-  //   modalView: {
-  //     margin: 20,
-  //     backgroundColor: colors.white,
-  //     borderRadius: 20,
-  //     padding: 35,
-  //     alignItems: "center",
-  //     shadowColor: "#000",
-  //     shadowOffset: {
-  //       width: 0,
-  //       height: 2,
-  //     },
-  //     shadowOpacity: 0.25,
-  //     shadowRadius: 4,
-  //     elevation: 5,
-  //   },
-  //   modalOverlay: {
-  //     flex: 1,
-  //     justifyContent: "center",
-  //     alignItems: "center",
-  //     backgroundColor: colors.modalOverlay,
-  //   },
-
-  //   modalContent: {
-  //     width: "80%",
-  //     backgroundColor: colors.thirdTheme,
-  //     padding: 20,
-  //     borderRadius: 10,
-  //     // justifyContent: "center",
-  //     alignItems: "center",
-  //   },
-  //   modalTitle: {
-  //     fontSize: textSizes.medium,
-  //     fontWeight: "bold",
-  //     marginBottom: 20,
-  //   },
 });

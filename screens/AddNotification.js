@@ -5,7 +5,7 @@ import {
   TouchableWithoutFeedback,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import Input from "../components/Input";
 import RegularButton from "../components/RegularButton";
@@ -14,8 +14,11 @@ import { colors, textSizes } from "../helpers/ConstantsHelper";
 import { positiveNumberChecker } from "../helpers/Checker";
 import { getAuth } from "firebase/auth";
 import { writeNotificationToDB } from "../firebase/firebaseHelper";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import TrashBinButton from "../components/TrashBinButton";
 
 export default function AddNotification() {
+  const navigation = useNavigation();
   const [from, setFrom] = useState("CAD");
   const [to, setTo] = useState("USD");
   const [openFrom, setOpenFrom] = useState(false);
@@ -23,6 +26,23 @@ export default function AddNotification() {
   const [threshold, setThreshold] = useState("");
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
+  const route = useRoute();
+
+  handleDelete = async (id) => {};
+
+  useLayoutEffect(() => {
+    // if route.params exists, set the title to "Edit" and add a delete button
+    if (route.params) {
+      // console.log("AddNotification.js 36, route.params: ", route.params);
+      navigation.setOptions({
+        title: "Edit",
+        headerRight: () => <TrashBinButton onPress={handleDelete} />,
+      });
+      setFrom(route.params.item.from);
+      setTo(route.params.item.to);
+      setThreshold(route.params.item.threshold.toString());
+    }
+  }, []);
 
   // select the currency from
   const onSelectFrom = (currency) => {
@@ -38,8 +58,12 @@ export default function AddNotification() {
     setThreshold(input);
   };
 
-  const handleSubmit = async () => {
+  const handleSave = async () => {
     //validate the input
+    if (from === to) {
+      Alert.alert("Error", "You should not choose the same currency.");
+      return;
+    }
     if (positiveNumberChecker(threshold)) {
       //save the notification to DB
       try {
@@ -49,6 +73,7 @@ export default function AddNotification() {
           "",
           "Your notification setting has been saved successfully!"
         );
+        navigation.goBack();
       } catch (error) {
         Alert.alert("", "Failed to save, please try again later.");
       }
@@ -62,20 +87,23 @@ export default function AddNotification() {
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
       <View style={styles.container}>
-        <CustomText
-          style={{
-            fontSize: textSizes.large,
-            fontWeight: "bold",
-            marginBottom: 10,
-          }}
-        >
-          Notify Me
-        </CustomText>
+        <View style={{ alignItems: "flex-start", width: "85%" }}>
+          <CustomText
+            style={{
+              fontSize: textSizes.large,
+              fontWeight: "bold",
+              marginBottom: 20,
+            }}
+          >
+            Notify Me:
+          </CustomText>
+        </View>
+
         <View style={[styles.dropdownContainer, { zIndex: 2000 }]}>
           <CustomText style={styles.label}>When: </CustomText>
           <DropDownMenu
             onSelect={onSelectFrom}
-            base={"CAD"}
+            base={from}
             style={{ width: "100%" }}
             open={openFrom}
             setOpen={setOpenFrom}
@@ -86,7 +114,7 @@ export default function AddNotification() {
           <CustomText>Based on: </CustomText>
           <DropDownMenu
             onSelect={onSelectTo}
-            base={"USD"}
+            base={to}
             style={{ width: "100%" }}
             open={openTo}
             setOpen={setOpenTo}
@@ -95,10 +123,10 @@ export default function AddNotification() {
         </View>
         <View style={styles.itemContainer}>
           <CustomText style={{ marginRight: 10 }}>Exceeds: </CustomText>
-          <Input onChangeText={handleInput}></Input>
+          <Input onChangeText={handleInput} defaultValue={threshold}></Input>
         </View>
         <View style={styles.itemContainer}>
-          <RegularButton onPress={handleSubmit}>Submit</RegularButton>
+          <RegularButton onPress={handleSave}>Save</RegularButton>
         </View>
       </View>
     </TouchableWithoutFeedback>
