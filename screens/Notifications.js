@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, Modal, Button } from "react-native";
+import { StyleSheet, Text, View, FlatList } from "react-native";
 import React, {
   useState,
   useLayoutEffect,
@@ -49,10 +49,6 @@ export default function Notifications() {
       ),
     });
   }, [navigation]);
-
-  const addButtonHandler = () => {
-    // setModalVisible(true);
-  };
 
   return (
     <View style={styles.container}>

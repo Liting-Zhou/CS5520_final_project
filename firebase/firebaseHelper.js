@@ -279,10 +279,6 @@ export const updateNotificationToDB = async (userId, notification) => {
       notification.id
     );
     await updateDoc(notificationRef, notification);
-    // console.log(
-    //   "firebaseHelper.js 283, Notification updated with ID: ",
-    //   notification.id
-    // );
   } catch (error) {
     console.error("Error updating notification: ", error);
   }

@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Text,
   View,
   TouchableWithoutFeedback,
   Alert,
@@ -130,7 +129,14 @@ export default function AddNotification() {
     );
   };
 
-  const handleOutsidePress = () => {};
+  const handleOutsidePress = () => {
+    if (openFrom) {
+      setOpenFrom(false);
+    }
+    if (openTo) {
+      setOpenTo(false);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
