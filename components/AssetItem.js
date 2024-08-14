@@ -13,6 +13,7 @@ export default function AssetItem({
   onDelete,
   onChangeCurrency,
   onChangeAmount,
+  filterItems,
 }) {
   const { currency, amount } = item;
   const [isModalVisible, setModalVisible] = useState(false);
@@ -49,6 +50,9 @@ export default function AssetItem({
         handleValueChange={handleChangeCurrency}
         handleModalClose={toggleModal}
         title="Change a currency"
+        filterItems={filterItems.filter(
+          (filterItem) => filterItem !== currency
+        )}
       ></CustomModal>
       <TrashBinButton
         onPress={onDelete}
