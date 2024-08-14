@@ -7,9 +7,10 @@ import { colors, textSizes } from "../helpers/ConstantsHelper";
 export default function NotificationItem({ item }) {
   return (
     <View style={styles.container}>
-      <AntDesign name="tago" size={24} color="black" />
+      <AntDesign name="tago" size={24} color={colors.fourthTheme} />
       <Text>
-        {item.from} to {item.to} exchange rate exceeds {item.rate}
+        {item.from} to {item.to} exchange rate exceeds{" "}
+        <Text style={{ fontWeight: "bold" }}>{item.rate}</Text>
       </Text>
     </View>
   );

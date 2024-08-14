@@ -15,6 +15,7 @@ import ProfileDetail from "./screens/ProfileDetail";
 import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
 import Notifications from "./screens/Notifications";
+import AddNotification from "./screens/AddNotification";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import ConvertButton from "./components/ConvertButton";
@@ -116,6 +117,15 @@ function ProfileStackNavigator() {
             component={Notifications}
             options={{
               title: "Notification Settings",
+              headerBackTitle: "Back",
+              headerStyle: styles.headerStyle,
+            }}
+          />
+          <ProfileStack.Screen
+            name="AddNotification"
+            component={AddNotification}
+            options={{
+              title: "Add Notification",
               headerBackTitle: "Back",
               headerStyle: styles.headerStyle,
             }}

@@ -219,3 +219,16 @@ export const readTransactionsFromDB = async (userId) => {
     return [];
   }
 };
+
+// write a new notification to DB
+export const writeNotificationToDB = async (userId, notification) => {
+  try {
+    const notificationRef = doc(
+      collection(db, `users/${userId}/notifications`)
+    );
+    await setDoc(notificationRef, notification);
+    // return transactionRef.id;
+  } catch (error) {
+    console.error("Error writing notification: ", error);
+  }
+};

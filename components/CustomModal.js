@@ -18,8 +18,8 @@ export default function CustomModal({
 
   // filter out the items that are already selected
   const [items, setItems] = useState(() => {
-    console.log("CustomModal.js 21, filterItems", filterItems);
-    console.log("CustomModal.js 22, valuePassed", valuePassed);
+    // console.log("CustomModal.js 21, filterItems", filterItems);
+    // console.log("CustomModal.js 22, valuePassed", valuePassed);
     const filteredItems = filterItems
       ? currencies.filter((currency) => !filterItems.includes(currency.value))
       : currencies;
