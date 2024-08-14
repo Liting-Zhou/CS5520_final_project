@@ -215,6 +215,7 @@ export default function Assets() {
                 onDelete={() => handleDelete(item.id)}
                 onChangeCurrency={handleChangeCurrency}
                 onChangeAmount={handleChangeAmount}
+                assets={assets}
               />
             )}
             scrollEnabled={true}

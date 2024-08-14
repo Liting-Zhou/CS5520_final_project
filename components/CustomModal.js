@@ -11,10 +11,18 @@ export default function CustomModal({
   handleValueChange,
   handleModalClose,
   title,
+  filterItems,
 }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(valuePassed);
-  const [items, setItems] = useState(currencies);
+
+  // filter out the items that are already selected
+  const [items, setItems] = useState(() => {
+    const filteredItems = filterItems
+      ? currencies.filter((currency) => !filterItems.includes(currency.value))
+      : currencies;
+    return filteredItems;
+  });
 
   const modalCloseHandler = () => {
     setOpen(false);

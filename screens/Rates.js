@@ -36,6 +36,7 @@ export default function Rates() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [modalKey, setModalKey] = useState(0);
 
   //if the user is logged in, fetch the selected currencies from the database
   useEffect(() => {
@@ -86,7 +87,10 @@ export default function Rates() {
   };
 
   // when press the headerRight add button, show the Modal to add a currency
+  // increment the key to force the Modal to re-render,
+  // otherwise the dropdown list will not show the updated list
   const handleAdd = () => {
+    setModalKey((prevKey) => prevKey + 1);
     setModalVisible(true);
   };
 
@@ -144,8 +148,10 @@ export default function Rates() {
   };
 
   // add the currency to the list after select
-  const addCurrencyAfterSelect = (currency) => {
-    setSelectedCurrencies([...selectedCurrencies, currency]);
+  const addCurrencyAfterSelect = (newCurrency) => {
+    if (newCurrency) {
+      setSelectedCurrencies([...selectedCurrencies, newCurrency]);
+    }
     setModalVisible(false);
   };
 
@@ -187,11 +193,13 @@ export default function Rates() {
           />
         </View>
         <CustomModal
+          key={modalKey}
           isModalVisible={isModalVisible}
           valuePassed={""}
           handleValueChange={addCurrencyAfterSelect}
           handleModalClose={closeModal}
           title="Add a currency"
+          filterItems={selectedCurrencies}
         ></CustomModal>
         <View style={styles.buttonContainer}>
           <RegularButton onPress={handleReset}>Reset</RegularButton>
