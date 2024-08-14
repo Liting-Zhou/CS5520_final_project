@@ -13,7 +13,10 @@ import CustomText from "../components/CustomText";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import { positiveNumberChecker } from "../helpers/Checker";
 import { getAuth } from "firebase/auth";
-import { writeNotificationToDB } from "../firebase/firebaseHelper";
+import {
+  writeNotificationToDB,
+  deleteNotificationFromDB,
+} from "../firebase/firebaseHelper";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import TrashBinButton from "../components/TrashBinButton";
 
@@ -27,8 +30,6 @@ export default function AddNotification() {
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
   const route = useRoute();
-
-  handleDelete = async (id) => {};
 
   useLayoutEffect(() => {
     // if route.params exists, set the title to "Edit" and add a delete button
@@ -80,9 +81,32 @@ export default function AddNotification() {
     }
   };
 
-  const handleOutsidePress = () => {
-    // console.log("AddNotification.js 11, handleOutsidePress");
+  handleDelete = async () => {
+    const deleteNotification = async () => {
+      try {
+        await deleteNotificationFromDB(userId, route.params.item.id);
+        Alert.alert("", "Notification has been deleted.");
+        navigation.goBack();
+      } catch (error) {
+        console.error("Error deleting notification: ", error);
+      }
+    };
+
+    // ask the user to confirm the deletion
+    Alert.alert(
+      "Delete Notification",
+      "Are you sure you want to delete this notification?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        { text: "OK", onPress: deleteNotification },
+      ]
+    );
   };
+
+  const handleOutsidePress = () => {};
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>

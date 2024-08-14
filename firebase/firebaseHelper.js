@@ -252,3 +252,17 @@ export const readNotificationsFromDB = async (userId) => {
     return [];
   }
 };
+
+// delete a transaction from DB
+export const deleteNotificationFromDB = async (userId, notificationId) => {
+  try {
+    const notificationRef = doc(
+      db,
+      `users/${userId}/notifications`,
+      notificationId
+    );
+    await deleteDoc(notificationRef);
+  } catch (error) {
+    console.error("Error deleting notification: ", error);
+  }
+};
