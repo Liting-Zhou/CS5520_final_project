@@ -1,15 +1,32 @@
 import { StyleSheet, Text, View, FlatList, Modal, Button } from "react-native";
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { textSizes, colors } from "../helpers/ConstantsHelper";
 import NotificationItem from "../components/NotificationItem";
 import AddButton from "../components/AddButton";
+import { getAuth } from "firebase/auth";
+import { readNotificationsFromDB } from "../firebase/firebaseHelper";
 
 export default function Notifications() {
   const navigation = useNavigation();
-  const [items, setItems] = useState([
-    { from: "USD", to: "CNY", rate: 7.0101 },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const auth = getAuth();
+  const userId = auth.currentUser?.uid;
+
+  // fetch notifications from DB when the component mounts
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        if (userId) {
+          const fetchedNotifications = await readNotificationsFromDB(userId);
+          setNotifications(fetchedNotifications);
+        }
+      } catch (error) {
+        console.error("Error fetching notifications: ", error);
+      }
+    };
+    fetchNotifications();
+  }, []);
 
   // headerRight button to add a notification
   useLayoutEffect(() => {
@@ -28,7 +45,7 @@ export default function Notifications() {
     <View style={styles.container}>
       <Text style={styles.text}>Notify me when:</Text>
       <FlatList
-        data={items}
+        data={notifications}
         renderItem={({ item }) => <NotificationItem item={item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}

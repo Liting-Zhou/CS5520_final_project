@@ -233,3 +233,22 @@ export const writeNotificationToDB = async (userId, notification) => {
     console.error("Error writing notification: ", error);
   }
 };
+
+//  read transactions from DB
+export const readNotificationsFromDB = async (userId) => {
+  try {
+    const notificationsCollection = collection(
+      db,
+      `users/${userId}/notifications`
+    );
+    const notificationsSnapshot = await getDocs(notificationsCollection);
+    const notificationsList = notificationsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return notificationsList;
+  } catch (error) {
+    console.error("Error reading notifications: ", error);
+    return [];
+  }
+};

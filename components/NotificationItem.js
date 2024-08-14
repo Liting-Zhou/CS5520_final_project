@@ -10,7 +10,9 @@ export default function NotificationItem({ item }) {
       <AntDesign name="tago" size={24} color={colors.fourthTheme} />
       <Text>
         {item.from} to {item.to} exchange rate exceeds{" "}
-        <Text style={{ fontWeight: "bold" }}>{item.rate}</Text>
+        <Text style={{ fontWeight: "bold" }}>
+          {Number(item.threshold).toFixed(4)}
+        </Text>
       </Text>
     </View>
   );
