@@ -12,6 +12,8 @@ import RegularButton from "../components/RegularButton";
 import CustomText from "../components/CustomText";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import { positiveNumberChecker } from "../helpers/Checker";
+import { getAuth } from "firebase/auth";
+import { writeNotificationToDB } from "../firebase/firebaseHelper";
 
 export default function AddNotification() {
   const [from, setFrom] = useState("CAD");
@@ -19,6 +21,8 @@ export default function AddNotification() {
   const [openFrom, setOpenFrom] = useState(false);
   const [openTo, setOpenTo] = useState(false);
   const [threshold, setThreshold] = useState("");
+  const auth = getAuth();
+  const userId = auth.currentUser?.uid;
 
   // select the currency from
   const onSelectFrom = (currency) => {
@@ -40,23 +44,19 @@ export default function AddNotification() {
       //save the notification to DB
       try {
         const notification = { from: from, to: to, threshold: threshold };
-        await writeNotificationToDB(
-          { userId: currentUser.uid, notification: notification },
-          "users"
-        );
+        await writeNotificationToDB(userId, notification);
         Alert.alert(
           "",
           "Your notification setting has been saved successfully!"
         );
       } catch (error) {
-        Alert.alert("", "Failed to save. Please try again later.");
+        Alert.alert("", "Failed to save, please try again later.");
       }
     }
-    console.log("AddNotification.js 46, handleSubmit");
   };
 
   const handleOutsidePress = () => {
-    console.log("AddNotification.js 11, handleOutsidePress");
+    // console.log("AddNotification.js 11, handleOutsidePress");
   };
 
   return (

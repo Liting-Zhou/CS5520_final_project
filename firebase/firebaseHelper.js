@@ -222,6 +222,7 @@ export const readTransactionsFromDB = async (userId) => {
 
 // write a new notification to DB
 export const writeNotificationToDB = async (userId, notification) => {
+  console.log("firebaseHelper.js 225, userId", userId);
   try {
     const notificationRef = doc(
       collection(db, `users/${userId}/notifications`)
