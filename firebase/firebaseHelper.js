@@ -234,7 +234,7 @@ export const writeNotificationToDB = async (userId, notification) => {
   }
 };
 
-//  read transactions from DB
+//  read notifications from DB
 export const readNotificationsFromDB = async (userId) => {
   try {
     const notificationsCollection = collection(
@@ -253,7 +253,7 @@ export const readNotificationsFromDB = async (userId) => {
   }
 };
 
-// delete a transaction from DB
+// delete a notification from DB
 export const deleteNotificationFromDB = async (userId, notificationId) => {
   try {
     const notificationRef = doc(
@@ -264,5 +264,26 @@ export const deleteNotificationFromDB = async (userId, notificationId) => {
     await deleteDoc(notificationRef);
   } catch (error) {
     console.error("Error deleting notification: ", error);
+  }
+};
+
+// update a notification to DB
+export const updateNotificationToDB = async (userId, notification) => {
+  try {
+    if (!notification.id) {
+      throw new Error("Notification ID is required for updating");
+    }
+    const notificationRef = doc(
+      db,
+      `users/${userId}/notifications`,
+      notification.id
+    );
+    await updateDoc(notificationRef, notification);
+    // console.log(
+    //   "firebaseHelper.js 283, Notification updated with ID: ",
+    //   notification.id
+    // );
+  } catch (error) {
+    console.error("Error updating notification: ", error);
   }
 };

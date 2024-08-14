@@ -16,6 +16,7 @@ import { getAuth } from "firebase/auth";
 import {
   writeNotificationToDB,
   deleteNotificationFromDB,
+  updateNotificationToDB,
 } from "../firebase/firebaseHelper";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import TrashBinButton from "../components/TrashBinButton";
@@ -34,7 +35,7 @@ export default function AddNotification() {
   useLayoutEffect(() => {
     // if route.params exists, set the title to "Edit" and add a delete button
     if (route.params) {
-      // console.log("AddNotification.js 36, route.params: ", route.params);
+      // console.log("AddNotification.js 38, route.params: ", route.params);
       navigation.setOptions({
         title: "Edit",
         headerRight: () => <TrashBinButton onPress={handleDelete} />,
@@ -66,14 +67,37 @@ export default function AddNotification() {
       return;
     }
     if (positiveNumberChecker(threshold)) {
-      //save the notification to DB
+      // check if we are in edit mode
+      const isEditMode = !!route.params?.item?.id;
+      // console.log("AddNotification.js 72, isEditMode: ", isEditMode);
+
       try {
-        const notification = { from: from, to: to, threshold: threshold };
-        await writeNotificationToDB(userId, notification);
-        Alert.alert(
-          "",
-          "Your notification setting has been saved successfully!"
-        );
+        if (isEditMode) {
+          //update the notification to DB
+          const updatedNotification = {
+            from: from,
+            to: to,
+            threshold: threshold,
+            id: route.params.item.id,
+          };
+          await updateNotificationToDB(userId, updatedNotification);
+          Alert.alert(
+            "",
+            "Your notification setting has been updated successfully!"
+          );
+        } else {
+          //save the notification to DB
+          const newNotification = {
+            from: from,
+            to: to,
+            threshold: threshold,
+          };
+          await writeNotificationToDB(userId, newNotification);
+          Alert.alert(
+            "",
+            "Your notification setting has been saved successfully!"
+          );
+        }
         navigation.goBack();
       } catch (error) {
         Alert.alert("", "Failed to save, please try again later.");
