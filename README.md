@@ -10,6 +10,32 @@
 
 #### 2. Firebase rules
 
+```
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Rules for the 'users' collection
+    match /users/{userId} {
+      
+      // Allow the authenticated user to access their own documents
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Rules for subcollection 'transactions' within 'users'
+      match /transactions/{transactionId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Rules for subcollection 'notifications' collection within 'users'
+      match /notifications/{notificationId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
+```
+
 #### 3. Current state of the application
 
 Anonymous user can use these functions:
@@ -39,6 +65,40 @@ Functions to be implemented:
 - Final styling and coloring
 
 #### 4. Screenshots
+- Locator(added in iteration 2)
+<div style="display: flex; justify-content: space-between;">
+<img src="./documents/iteration2_screenshots/locator.png" alt="Recent Rates Screen" style="width:33%;"/>
+</div>
+
+- Log in and Sign up(added in iteration 2)
+<div style="display: flex;">
+<img src="./documents/iteration2_screenshots/login.png" alt="Recent Rates Screen" style="width:33%;margin-right:3px;"/> 
+<img src="./documents/iteration2_screenshots/signup.png" alt="Recent Rates Screen" style="width:33%;"/>
+</div>
+
+- Recent Rates Screen
+- Asset Management Screen
+- Convert Currency Screen
+<div style="display: flex; justify-content: space-between;">
+  <img src="./documents/iteration2_screenshots/assets.png" alt="Recent Rates Screen" style="width:33%;"/>
+  <img src="./documents/iteration2_screenshots/rates.png" alt="Assets Management Screen" style="width:33%;"/>
+  <img src="./documents/iteration2_screenshots/coverts.png" alt="Convert Currency Screen" style="width:33%;"/>
+</div>
+<br />
+
+- Profile Screen
+<div style="display: flex;">
+  <img src="./documents/iteration2_screenshots/profile.png" alt="" style="width:33%;  margin-right:3px;"/>
+  <img src="./documents/iteration2_screenshots/profileDetail.png" alt="" style="width:33%"/>
+</div>
+<br />
+
+- Transaction Screen
+<div style="display: flex; justify-content: space-between;">
+  <img src="./documents/iteration2_screenshots/addTransaction.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration2_screenshots/editTransaction.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration2_screenshots/transactionHistory.png" alt="" style="width:33%"/>
+</div>
 
 ### Iteration 1 🚀
 

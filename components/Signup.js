@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { writeProfileToDB } from '../firebase/firebaseHelper';
 import RegularButton from "./RegularButton"; 
@@ -11,6 +11,7 @@ const Signup = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordStrength, setPasswordStrength] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // New state for error messages
 
   useEffect(() => {
     if (password.length >= 6 && password.length < 10) {
@@ -25,16 +26,17 @@ const Signup = ({ navigation }) => {
   }, [password]);
 
   const handleSignup = async () => {
+    setErrorMessage(''); 
     if (!email.length) {
-      Alert.alert('Error', 'Email is required');
+      setErrorMessage('Email is required');
       return;
     }
     if (!password.length) {
-      Alert.alert('Error', 'Password is required');
+      setErrorMessage('Password is required');
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      setErrorMessage('Passwords do not match');
       return;
     }
 
@@ -56,15 +58,21 @@ const Signup = ({ navigation }) => {
 
       navigation.navigate('ProfileScreen');
     } catch (e) {
-      if (e.code === 'auth/invalid-email') {
-        Alert.alert('Error', 'Invalid email address');
-      } else if (e.code === 'auth/email-already-in-use') {
-        Alert.alert('Error', 'Email is already in use');
-      } else if (e.code === 'auth/weak-password') {
-        Alert.alert('Error', 'Password should be at least 6 characters');
-      } else {
-        Alert.alert('Error', e.message);
+      let message = 'An error occurred. Please try again.';
+      switch (e.code) {
+        case 'auth/invalid-email':
+          message = 'Invalid email address';
+          break;
+        case 'auth/email-already-in-use':
+          message = 'Email is already in use';
+          break;
+        case 'auth/weak-password':
+          message = 'Password should be at least 6 characters';
+          break;
+        default:
+          message = e.message;
       }
+      setErrorMessage(message);
     }
   };
 
@@ -95,6 +103,8 @@ const Signup = ({ navigation }) => {
         secureTextEntry={true}
       />
 
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
       <RegularButton onPress={handleSignup}>
         Sign Up
       </RegularButton>
@@ -123,6 +133,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 10,
     color: colors.gray,
+    textAlign: "center",
+  },
+  errorText: {
+    marginTop: 10,
+    color: colors.red,
+    marginBottom: 10,
     textAlign: "center",
   },
   signInText: {
