@@ -17,6 +17,7 @@ import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
 import Notifications from "./screens/Notifications";
 import AddNotification from "./screens/AddNotification";
+import Welcome from "./screens/Welcome";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import ConvertButton from "./components/ConvertButton";
@@ -27,6 +28,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
+const MainStack = createStackNavigator();
 
 // Logout function
 const handleLogout = async (navigation) => {
@@ -152,90 +154,105 @@ function ProfileStackNavigator() {
   );
 }
 
+function MainApp() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Rates"
+      screenOptions={{
+        headerStyle: styles.headerStyle,
+        tabBarActiveTintColor: colors.secondTheme,
+        tabBarInactiveTintColor: colors.firstTheme,
+        tabBarLabelStyle: { fontSize: textSizes.small },
+      }}
+    >
+      <Tab.Screen
+        name="Rates"
+        component={Rates}
+        options={{
+          headerTitle: "Exchange Rates",
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons
+              name="finance"
+              size={textSizes.iconSize}
+              color={focused ? colors.secondTheme : colors.firstTheme}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Assets"
+        component={Assets}
+        options={{
+          headerTitle: "Asset Management",
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons
+              name="attach-money"
+              size={textSizes.iconSize}
+              color={focused ? colors.secondTheme : colors.firstTheme}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Conversion"
+        component={Conversion}
+        options={({ navigation }) => ({
+          headerTitle: "Convert Currency",
+          tabBarButton: () => (
+            <ConvertButton onPress={() => navigation.navigate("Conversion")} />
+          ),
+        })}
+      />
+      <Tab.Screen
+        name="Finder"
+        component={LocationFinder}
+        options={{
+          headerTitle: "Nearby places to change currency",
+          headerStyle: { backgroundColor: colors.thirdTheme },
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons
+              name="location-pin"
+              size={textSizes.iconSize}
+              color={focused ? colors.secondTheme : colors.firstTheme}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileStackNavigator}
+        options={{
+          title: "Profile",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons
+              name="account"
+              size={textSizes.iconSize}
+              color={focused ? colors.secondTheme : colors.firstTheme}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <View style={styles.container}>
       <NavigationContainer>
-        <Tab.Navigator
-          initialRouteName="Rates"
-          screenOptions={{
-            headerStyle: styles.headerStyle,
-            tabBarActiveTintColor: colors.secondTheme,
-            tabBarInactiveTintColor: colors.firstTheme,
-            tabBarLabelStyle: { fontSize: textSizes.small },
-          }}
-        >
-          <Tab.Screen
-            name="Rates"
-            component={Rates}
-            options={{
-              headerTitle: "Exchange Rates",
-              tabBarIcon: ({ focused }) => (
-                <MaterialCommunityIcons
-                  name="finance"
-                  size={textSizes.iconSize}
-                  color={focused ? colors.secondTheme : colors.firstTheme}
-                />
-              ),
-            }}
+        <MainStack.Navigator initialRouteName="Welcome">
+          <MainStack.Screen
+            name="Welcome"
+            component={Welcome}
+            options={{ headerShown: false }}
           />
-          <Tab.Screen
-            name="Assets"
-            component={Assets}
-            options={{
-              headerTitle: "Asset Management",
-              tabBarIcon: ({ focused }) => (
-                <MaterialIcons
-                  name="attach-money"
-                  size={textSizes.iconSize}
-                  color={focused ? colors.secondTheme : colors.firstTheme}
-                />
-              ),
-            }}
+          <MainStack.Screen
+            name="MainApp"
+            component={MainApp}
+            options={{ headerShown: false }}
           />
-          <Tab.Screen
-            name="Conversion"
-            component={Conversion}
-            options={({ navigation }) => ({
-              headerTitle: "Convert Currency",
-              tabBarButton: () => (
-                <ConvertButton
-                  onPress={() => navigation.navigate("Conversion")}
-                />
-              ),
-            })}
-          />
-          <Tab.Screen
-            name="Finder"
-            component={LocationFinder}
-            options={{
-              headerTitle: "Nearby places to change currency",
-              headerStyle: { backgroundColor: colors.thirdTheme },
-              tabBarIcon: ({ focused }) => (
-                <MaterialIcons
-                  name="location-pin"
-                  size={textSizes.iconSize}
-                  color={focused ? colors.secondTheme : colors.firstTheme}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Profile"
-            component={ProfileStackNavigator}
-            options={{
-              title: "Profile",
-              headerShown: false,
-              tabBarIcon: ({ focused }) => (
-                <MaterialCommunityIcons
-                  name="account"
-                  size={textSizes.iconSize}
-                  color={focused ? colors.secondTheme : colors.firstTheme}
-                />
-              ),
-            }}
-          />
-        </Tab.Navigator>
+        </MainStack.Navigator>
       </NavigationContainer>
     </View>
   );
