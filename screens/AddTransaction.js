@@ -25,9 +25,10 @@ import {
   readTransactionsFromDB,
 } from "../firebase/firebaseHelper";
 import { auth, storage } from '../firebase/firebaseSetup';
-import {ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import ImageManager from "../components/ImageManager";
 import Entypo from "react-native-vector-icons/Entypo";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 export default function AddTransaction() {
   const navigation = useNavigation();
@@ -68,8 +69,6 @@ export default function AddTransaction() {
           const transactionDetails = transactionsList.find(
             (transaction) => transaction.id === transactionId
           );
-
-          console.log("transactionImage", transactionDetails.imageUri);
 
           if (transactionDetails) {
             setDescription(transactionDetails.description);
@@ -173,6 +172,7 @@ export default function AddTransaction() {
     }
   };
 
+  // Function to delete the transaction
   const handleDeleteTransaction = async () => {
     Alert.alert(
       "Confirm Delete",
@@ -212,6 +212,11 @@ export default function AddTransaction() {
     }
   };
 
+  // Function to delete the selected image
+  const handleDeleteImage = () => {
+    setImageUri(null);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
@@ -232,7 +237,14 @@ export default function AddTransaction() {
                 </Pressable>
               </ImageManager>
             </View>
-            {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+            {imageUri && (
+              <View style={styles.imageContainer}>
+                <Image source={{ uri: imageUri }} style={styles.image} />
+                <Pressable style={styles.deleteButton} onPress={handleDeleteImage}>
+                  <MaterialIcons name="close" size={16} color="white" />
+                </Pressable>
+              </View>
+            )}
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Date</Text>
@@ -341,9 +353,20 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     fontSize: textSizes.medium,
   },
+  imageContainer: {
+    position: "relative",
+    marginTop: 20,
+  },
   image: {
     width: Dimensions.get("window").width - 40,
     height: 200,
-    marginTop: 20,
+  },
+  deleteButton: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: colors.transparentGray,
+    borderRadius: 15,
+    padding: 5,
   },
 });
