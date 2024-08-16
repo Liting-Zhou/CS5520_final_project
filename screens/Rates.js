@@ -129,6 +129,10 @@ export default function Rates() {
     if (currentUser === null) {
       Alert.alert("", "Please log in to save your list.", [
         {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
           text: "OK",
           onPress: () => navigation.navigate("Profile"),
         },

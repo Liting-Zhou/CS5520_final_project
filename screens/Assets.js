@@ -136,6 +136,10 @@ export default function Assets() {
     if (currentUser === null) {
       Alert.alert("", "Please log in to save your currencies.", [
         {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
           text: "OK",
           onPress: () => navigation.navigate("Profile"),
         },

@@ -36,7 +36,7 @@ export default function AddNotification() {
     if (route.params) {
       // console.log("AddNotification.js 38, route.params: ", route.params);
       navigation.setOptions({
-        title: "Edit",
+        title: "Edit Notification",
         headerRight: () => <TrashBinButton onPress={handleDelete} />,
       });
       setFrom(route.params.item.from);

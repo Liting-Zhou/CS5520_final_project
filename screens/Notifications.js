@@ -154,6 +154,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   buttonStyle: {
-    marginBottom: 40,
+    marginBottom: 50,
   },
 });
