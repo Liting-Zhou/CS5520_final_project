@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useRef } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -8,6 +8,8 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Image,
+  ScrollView,
+  Dimensions,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import RegularButton from "../components/RegularButton";
@@ -24,7 +26,6 @@ import {
 import { getAuth } from "firebase/auth";
 import ImageManager from "../components/ImageManager";
 import Entypo from "react-native-vector-icons/Entypo";
-import { Dimensions } from "react-native";
 
 export default function AddTransaction() {
   const navigation = useNavigation();
@@ -74,6 +75,7 @@ export default function AddTransaction() {
   }, [navigation, transactionId]);
 
   // Save the transaction to Firestore
+  // user must fill out all fields except image
   const handleSaveTransaction = async () => {
     if (
       !description ||
@@ -103,7 +105,7 @@ export default function AddTransaction() {
       toCurrency,
       fromAmount,
       toAmount,
-      imageUri, // Add the image URI to the transaction object
+      imageUri, 
     };
 
     try {
@@ -167,88 +169,93 @@ export default function AddTransaction() {
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
-      <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <View style={styles.descriptionContainer}>
-            <View style={styles.descriptionInputWrapper}>
-              <TextInputBox
-                label="Description"
-                value={description}
-                onChangeText={setDescription}
-                placeholder="Enter description"
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <View style={styles.container}>
+          <View style={styles.inputContainer}>
+            <View style={styles.descriptionContainer}>
+              <View style={styles.descriptionInputWrapper}>
+                <TextInputBox
+                  label="Description"
+                  value={description}
+                  onChangeText={setDescription}
+                  placeholder="Enter description"
+                />
+              </View>
+              <ImageManager imageUriHandler={setImageUri}>
+                <Pressable style={styles.cameraIcon}>
+                  <Entypo name="camera" size={24} color="black" />
+                </Pressable>
+              </ImageManager>
+            </View>
+            {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Date</Text>
+            <DateTimePickerComponent date={date} setDate={setDate} />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInputBox
+              label="Location"
+              value={location}
+              onChangeText={setLocation}
+              placeholder="Enter location"
+            />
+          </View>
+          <View style={[styles.rowContainer, { zIndex: 1000 }]}>
+            <View>
+              <Text style={styles.label}>From Currency</Text>
+              <DropDownMenu
+                base={fromCurrency}
+                onSelect={setFromCurrency}
+                open={openFrom}
+                setOpen={setOpenFrom}
+                onOpen={() => setOpenTo(false)}
               />
             </View>
-            <ImageManager imageUriHandler={setImageUri}>
-              <Pressable style={styles.cameraIcon}>
-                <Entypo name="camera" size={24} color="black" />
-              </Pressable>
-            </ImageManager>
+            <View style={styles.amountInputContainer}>
+              <TextInput
+                value={fromAmount}
+                onChangeText={setFromAmount}
+                placeholder="Enter amount"
+                keyboardType="numeric"
+                style={styles.amountInput}
+              />
+            </View>
           </View>
-          {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Date</Text>
-          <DateTimePickerComponent date={date} setDate={setDate} />
-        </View>
-        <View style={styles.inputContainer}>
-          <TextInputBox
-            label="Location"
-            value={location}
-            onChangeText={setLocation}
-            placeholder="Enter location"
-          />
-        </View>
-        <View style={[styles.rowContainer, { zIndex: 1000 }]}>
-          <View>
-            <Text style={styles.label}>From Currency</Text>
-            <DropDownMenu
-              base={fromCurrency}
-              onSelect={setFromCurrency}
-              open={openFrom}
-              setOpen={setOpenFrom}
-              onOpen={() => setOpenTo(false)}
-            />
+          <View style={[styles.rowContainer, { zIndex: 900 }]}>
+            <View>
+              <Text style={styles.label}>To Currency</Text>
+              <DropDownMenu
+                base={toCurrency}
+                onSelect={setToCurrency}
+                open={openTo}
+                setOpen={setOpenTo}
+                onOpen={() => setOpenFrom(false)}
+              />
+            </View>
+            <View style={styles.amountInputContainer}>
+              <TextInput
+                value={toAmount}
+                onChangeText={setToAmount}
+                placeholder="Enter amount"
+                keyboardType="numeric"
+                style={styles.amountInput}
+              />
+            </View>
           </View>
-          <View style={styles.amountInputContainer}>
-            <TextInput
-              value={fromAmount}
-              onChangeText={setFromAmount}
-              placeholder="Enter amount"
-              keyboardType="numeric"
-              style={styles.amountInput}
-            />
-          </View>
+          <RegularButton onPress={handleSaveTransaction}>
+            {transactionId ? "Save Changes" : "Add Transaction"}
+          </RegularButton>
         </View>
-        <View style={[styles.rowContainer, { zIndex: 900 }]}>
-          <View>
-            <Text style={styles.label}>To Currency</Text>
-            <DropDownMenu
-              base={toCurrency}
-              onSelect={setToCurrency}
-              open={openTo}
-              setOpen={setOpenTo}
-              onOpen={() => setOpenFrom(false)}
-            />
-          </View>
-          <View style={styles.amountInputContainer}>
-            <TextInput
-              value={toAmount}
-              onChangeText={setToAmount}
-              placeholder="Enter amount"
-              keyboardType="numeric"
-              style={styles.amountInput}
-            />
-          </View>
-        </View>
-        <RegularButton onPress={handleSaveTransaction}>
-          {transactionId ? "Save Changes" : "Add Transaction"}
-        </RegularButton>
-      </View>
+      </ScrollView>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     padding: 20,
