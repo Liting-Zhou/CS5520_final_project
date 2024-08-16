@@ -23,7 +23,8 @@ import {
   updateTransactionInDB,
   deleteTransactionFromDB,
 } from "../firebase/firebaseHelper";
-import { getAuth } from "firebase/auth";
+import { auth, storage } from '../firebase/firebaseSetup';
+import {ref, uploadBytesResumable } from "firebase/storage";
 import ImageManager from "../components/ImageManager";
 import Entypo from "react-native-vector-icons/Entypo";
 
@@ -33,7 +34,6 @@ export default function AddTransaction() {
   const { transaction } = route.params || {};
   const transactionId = transaction ? transaction.id : undefined;
 
-  const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
   // Initialize the state variables for the transaction information
@@ -74,8 +74,25 @@ export default function AddTransaction() {
     });
   }, [navigation, transactionId]);
 
+  // Function to retrieve and upload the image
+  async function retrieveAndUploadImage(uri) {
+    try {
+      const response = await fetch(uri);
+      if (!response.ok) {
+        throw new Error("The request was not successful");
+      }
+      const blob = await response.blob();
+      const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+      const imageRef = ref(storage, `transactionImages/${imageName}`);
+      const uploadResult = await uploadBytesResumable(imageRef, blob);
+      return uploadResult.metadata.fullPath;
+    } catch (e) {
+      console.error('Error retrieving image:', e);
+      throw e;
+    }
+  }
+
   // Save the transaction to Firestore
-  // user must fill out all fields except image
   const handleSaveTransaction = async () => {
     if (
       !description ||
@@ -97,6 +114,11 @@ export default function AddTransaction() {
 
     const formattedDate = date.toISOString();
 
+    let newImageUri = '';
+    if (imageUri) {
+      newImageUri = await retrieveAndUploadImage(imageUri);
+    }
+
     const newTransaction = {
       description,
       location,
@@ -105,7 +127,7 @@ export default function AddTransaction() {
       toCurrency,
       fromAmount,
       toAmount,
-      imageUri, 
+      imageUri: newImageUri,
     };
 
     try {
