@@ -1,6 +1,108 @@
 ### Qianyi Fu, Liting Zhou
 
-### 1. Data model (at least 3 collections)
+### Iteration 2 🚀
+
+#### 1. Functions added in this iteration
+
+- Authentication (added by Qianyi Fu)
+- Location use (added by Liting Zhou)
+- External API use (already added in Iteration 1)
+
+#### 2. Firebase rules
+
+```
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Rules for the 'users' collection
+    match /users/{userId} {
+      
+      // Allow the authenticated user to access their own documents
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Rules for subcollection 'transactions' within 'users'
+      match /transactions/{transactionId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Rules for subcollection 'notifications' collection within 'users'
+      match /notifications/{notificationId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
+```
+
+#### 3. Current state of the application
+
+Anonymous user can use these functions:
+
+- customize list of interested currencies, but cannot save
+- customize assets to see the total result, but cannot save
+- convert currencies
+- find nearby places to exchange currency
+
+Login user can use these functions:
+
+- customize list of interested currencies and save
+- customize assets to see the total result, and save
+- retrieve the saved data from DB
+- convert currencies
+- find nearby places to exchange currency
+- edit profile
+- add/edit transaction history
+
+Currency exchange rates are called from 3rd party API (keys already sent to TAs by email):  
+https://rapidapi.com/principalapis/api/currency-conversion-and-exchange-rates
+
+Functions to be implemented:
+
+- Camera use
+- Notification
+- Final styling and coloring
+
+#### 4. Screenshots
+- Locator(added in iteration 2)
+<div style="display: flex; justify-content: space-between;">
+<img src="./documents/iteration2_screenshots/locator.png" alt="Recent Rates Screen" style="width:33%;"/>
+</div>
+
+- Log in and Sign up(added in iteration 2)
+<div style="display: flex;">
+<img src="./documents/iteration2_screenshots/login.png" alt="Recent Rates Screen" style="width:33%;margin-right:3px;"/> 
+<img src="./documents/iteration2_screenshots/signup.png" alt="Recent Rates Screen" style="width:33%;"/>
+</div>
+
+- Recent Rates Screen
+- Asset Management Screen
+- Convert Currency Screen
+<div style="display: flex; justify-content: space-between;">
+  <img src="./documents/iteration2_screenshots/assets.png" alt="Recent Rates Screen" style="width:33%;"/>
+  <img src="./documents/iteration2_screenshots/rates.png" alt="Assets Management Screen" style="width:33%;"/>
+  <img src="./documents/iteration2_screenshots/coverts.png" alt="Convert Currency Screen" style="width:33%;"/>
+</div>
+<br />
+
+- Profile Screen
+<div style="display: flex;">
+  <img src="./documents/iteration2_screenshots/profile.png" alt="" style="width:33%;  margin-right:3px;"/>
+  <img src="./documents/iteration2_screenshots/profileDetail.png" alt="" style="width:33%"/>
+</div>
+<br />
+
+- Transaction Screen
+<div style="display: flex; justify-content: space-between;">
+  <img src="./documents/iteration2_screenshots/addTransaction.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration2_screenshots/editTransaction.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration2_screenshots/transactionHistory.png" alt="" style="width:33%"/>
+</div>
+
+### Iteration 1 🚀
+
+#### 1. Data model (at least 3 collections)
 
 Collections: users  
 Subcollections: transactions, notifications  
@@ -37,7 +139,7 @@ users:
     user2:
 ```
 
-### 2. Which of the CRUD operations are implemented on which collections
+#### 2. Which of the CRUD operations are implemented on which collections
 
 Users Collection:
 
@@ -63,7 +165,7 @@ Notifications Subcollection:
 - Update Notifications in DB
 - Delete Notifications from DB
 
-### 3. Current state of the application
+#### 3. Current state of the application
 
 Anonymous user can use these functions:
 
@@ -91,7 +193,7 @@ Functions to be implemented:
 - Notification
 - Styling and coloring
 
-### 4. Screenshots
+#### 4. Screenshots
 
 - Recent Rates Screen
 - Asset Management Screen
@@ -119,15 +221,15 @@ Functions to be implemented:
   <img src="./documents/iteration1_screenshots/editTransaction.png" alt="" style="width:33%"/>
 </div>
 
-### 5. Contributions
+#### 5. Contributions
 
-#### Qianyi Fu
+##### Qianyi Fu
 
 - screen of profile
 - screen of transaction history
 - components related to profile/transaction history
 
-#### Liting Zhou
+##### Liting Zhou
 
 - screen of list of currencies
 - screen of asset management

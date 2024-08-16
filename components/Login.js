@@ -23,7 +23,22 @@ export default function Login({ navigation }) {
       navigation.navigate("ProfileScreen");
     } catch (error) {
       console.error("Login error: ", error);
-      setErrorMessage(error.message);
+      let message = "An error occurred. Please try again.";
+      switch (error.code) {
+        case "auth/wrong-password":
+          message = "Incorrect password. Please try again.";
+          break;
+        case "auth/user-not-found":
+          message = "No user found with this email.";
+          break;
+        case "auth/invalid-email":
+          message = "Invalid email format. Please check and try again.";
+          break;
+        case "auth/too-many-requests":
+          message = "Too many unsuccessful login attempts. Please try again later.";
+          break;
+      }
+      setErrorMessage(message);
     }
   };
 
@@ -39,7 +54,18 @@ export default function Login({ navigation }) {
       })
       .catch((error) => {
         console.error("Password reset error: ", error);
-        setErrorMessage(error.message);
+        let message = "An error occurred. Please try again.";
+        switch (error.code) {
+          case "auth/user-not-found":
+            message = "No user found with this email.";
+            break;
+          case "auth/invalid-email":
+            message = "Invalid email format. Please check and try again.";
+            break;
+          default:
+            message = error.message;
+        }
+        setErrorMessage(message);
       });
   };
 
