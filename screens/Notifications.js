@@ -6,17 +6,70 @@ import React, {
   useCallback,
 } from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import * as ExpoNotifications from "expo-notifications";
 import { textSizes, colors } from "../helpers/ConstantsHelper";
 import NotificationItem from "../components/NotificationItem";
 import AddButton from "../components/AddButton";
+import RegularButton from "../components/RegularButton";
 import { getAuth } from "firebase/auth";
 import { readNotificationsFromDB } from "../firebase/firebaseHelper";
+import { getExchangeRate } from "../helpers/RatesHelper";
 
 export default function Notifications() {
   const navigation = useNavigation();
   const [notifications, setNotifications] = useState([]);
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
+
+  const verifyPermission = async () => {
+    try {
+      const response = await ExpoNotifications.getPermissionsAsync();
+      console.log("Notifications.js 27, response: ", response);
+      if (response.granted) {
+        return true;
+      }
+      const newResponse = await ExpoNotifications.requestPermissionsAsync();
+      return newResponse.granted;
+    } catch (err) {
+      console.error("permission error: ", err);
+    }
+  };
+
+  const scheduleNotificationHandler = async () => {
+    try {
+      const hasPermission = await verifyPermission();
+      console.log("Notifications.js 41, hasPermission: ", hasPermission);
+      if (hasPermission) {
+        for (const notification of notifications) {
+          console.log("Notifications.js 44, notification: ", notification);
+
+          const exchangeRate = await getExchangeRate({
+            from: notification.from,
+            to: notification.to,
+          });
+          const exchangeRateNumber = parseFloat(exchangeRate);
+          const thresholdNumber = parseFloat(notification.threshold);
+          if (exchangeRateNumber > thresholdNumber) {
+            await ExpoNotifications.scheduleNotificationAsync({
+              content: {
+                title: "Exchange Rate Alert",
+                body: `${notification.from} based on ${
+                  notification.to
+                } is now ${exchangeRateNumber.toFixed(
+                  4
+                )}, exceeding ${thresholdNumber.toFixed(4)}.`,
+              },
+              trigger: {
+                seconds: 3,
+              },
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.error("notification error: ", err);
+    }
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -59,6 +112,12 @@ export default function Notifications() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
       />
+      <RegularButton
+        onPress={scheduleNotificationHandler}
+        buttonStyle={styles.buttonStyle}
+      >
+        Activate Notifications
+      </RegularButton>
     </View>
   );
 }
@@ -77,5 +136,8 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 20,
+  },
+  buttonStyle: {
+    marginBottom: 40,
   },
 });

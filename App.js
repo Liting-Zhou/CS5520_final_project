@@ -5,7 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Ionicons from '@expo/vector-icons/Ionicons';
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import Rates from "./screens/Rates";
 import Conversion from "./screens/Conversion";
@@ -93,7 +93,7 @@ function ProfileStackNavigator() {
               title: "Edit Profile",
               headerBackImage: () => (
                 <View style={{ marginLeft: 10 }}>
-                <Ionicons name="chevron-back" size={24} color="black" />
+                  <Ionicons name="chevron-back" size={24} color="black" />
                 </View>
               ),
               headerBackTitleVisible: false,
@@ -106,8 +106,8 @@ function ProfileStackNavigator() {
             options={{
               title: "Transaction History",
               headerBackImage: () => (
-                <View style={{ marginLeft: 10  }}>
-                <Ionicons name="chevron-back" size={24} color="black" />
+                <View style={{ marginLeft: 10 }}>
+                  <Ionicons name="chevron-back" size={24} color="black" />
                 </View>
               ),
               headerBackTitleVisible: false,
@@ -121,7 +121,7 @@ function ProfileStackNavigator() {
               title: "Add Transaction",
               headerBackImage: () => (
                 <View style={{ marginLeft: 10 }}>
-                <Ionicons name="chevron-back" size={24} color="black" />
+                  <Ionicons name="chevron-back" size={24} color="black" />
                 </View>
               ),
               headerBackTitleVisible: false,
