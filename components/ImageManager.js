@@ -1,10 +1,9 @@
 import React, { useRef, useState } from "react";
-import { View, Pressable, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import Entypo from "react-native-vector-icons/Entypo";
 import ActionSheet from "react-native-actionsheet";
 
-const ImageManager = ({ imageUriHandler }) => {
+const ImageManager = ({ imageUriHandler, children }) => {
   const [imageUri, setImageUri] = useState(null);
   const actionSheetRef = useRef(null);
 
@@ -40,13 +39,9 @@ const ImageManager = ({ imageUriHandler }) => {
 
   return (
     <View style={styles.container}>
-      <Pressable
-        onPress={() => actionSheetRef.current.show()}
-        style={styles.cameraIcon}
-      >
-        <Entypo name="camera" size={24} color="black" />
-      </Pressable>
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+      <View onTouchStart={() => actionSheetRef.current.show()}>
+        {children}
+      </View>
       <ActionSheet
         ref={actionSheetRef}
         title={"Choose an option"}
@@ -62,10 +57,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-  },
-  cameraIcon: {
-    alignItems: "center",
-    marginHorizontal: 10,
   },
   image: {
     width: 200,

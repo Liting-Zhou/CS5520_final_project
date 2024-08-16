@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -7,6 +7,7 @@ import {
   Text,
   TextInput,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import RegularButton from "../components/RegularButton";
@@ -22,6 +23,8 @@ import {
 } from "../firebase/firebaseHelper";
 import { getAuth } from "firebase/auth";
 import ImageManager from "../components/ImageManager";
+import Entypo from "react-native-vector-icons/Entypo";
+import { Dimensions } from "react-native";
 
 export default function AddTransaction() {
   const navigation = useNavigation();
@@ -53,6 +56,9 @@ export default function AddTransaction() {
   );
   const [toAmount, setToAmount] = useState(
     transaction ? transaction.toAmount : ""
+  );
+  const [imageUri, setImageUri] = useState(
+    transaction ? transaction.imageUri : null
   );
 
   const [openFrom, setOpenFrom] = useState(false);
@@ -97,6 +103,7 @@ export default function AddTransaction() {
       toCurrency,
       fromAmount,
       toAmount,
+      imageUri, // Add the image URI to the transaction object
     };
 
     try {
@@ -171,8 +178,13 @@ export default function AddTransaction() {
                 placeholder="Enter description"
               />
             </View>
-            <ImageManager />
+            <ImageManager imageUriHandler={setImageUri}>
+              <Pressable style={styles.cameraIcon}>
+                <Entypo name="camera" size={24} color="black" />
+              </Pressable>
+            </ImageManager>
           </View>
+          {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Date</Text>
@@ -276,5 +288,10 @@ const styles = StyleSheet.create({
     borderColor: colors.gray,
     paddingVertical: 15,
     fontSize: textSizes.medium,
+  },
+  image: {
+    width: Dimensions.get("window").width - 40,
+    height: 200,
+    marginTop: 20,
   },
 });
