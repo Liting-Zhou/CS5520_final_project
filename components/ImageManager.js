@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Alert, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import ActionSheet from "react-native-actionsheet";
 
@@ -7,19 +7,24 @@ const ImageManager = ({ imageUriHandler, children }) => {
   const [imageUri, setImageUri] = useState(null);
   const actionSheetRef = useRef(null);
 
+  const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
+  const [mediaLibraryPermission, requestMediaLibraryPermission] = ImagePicker.useMediaLibraryPermissions();
+
   const options = ["Cancel", "Take Photo", "Choose from Gallery"];
   const cancelButtonIndex = 0;
 
   const handleImageSelection = async (index) => {
     if (index === 1) {
       // Take Photo
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== "granted") {
-        alert("Camera permission is required to take a photo.");
-        return;
+      if (cameraPermission?.status !== "granted") {
+        const { status } = await requestCameraPermission();
+        if (status !== "granted") {
+          Alert.alert("Permission Denied", "Camera permission is required to take a photo.");
+          return;
+        }
       }
       const result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
+        allowsEditing: false,
       });
       if (!result.canceled) {
         setImageUri(result.assets[0].uri);
@@ -27,6 +32,13 @@ const ImageManager = ({ imageUriHandler, children }) => {
       }
     } else if (index === 2) {
       // Choose from Gallery
+      if (mediaLibraryPermission?.status !== "granted") {
+        const { status } = await requestMediaLibraryPermission();
+        if (status !== "granted") {
+          Alert.alert("Permission Denied", "Media library permission is required to select a photo.");
+          return;
+        }
+      }
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
       });
@@ -57,11 +69,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-  },
-  image: {
-    width: 200,
-    height: 200,
-    marginTop: 20,
   },
 });
 

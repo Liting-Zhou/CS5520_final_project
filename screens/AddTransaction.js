@@ -8,8 +8,8 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Image,
-  ScrollView,
   Dimensions,
+  Modal,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import RegularButton from "../components/RegularButton";
@@ -47,7 +47,7 @@ export default function AddTransaction() {
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
   const [imageUri, setImageUri] = useState(null);
-
+  const [modalVisible, setModalVisible] = useState(false); 
   const [openFrom, setOpenFrom] = useState(false);
   const [openTo, setOpenTo] = useState(false);
 
@@ -60,7 +60,7 @@ export default function AddTransaction() {
     });
   }, [navigation, transactionId]);
 
-   // Fetch transaction details if editing an existing transaction
+  // Fetch transaction details if editing an existing transaction
   useEffect(() => {
     if (transactionId) {
       const fetchTransaction = async () => {
@@ -172,7 +172,6 @@ export default function AddTransaction() {
     }
   };
 
-  // Function to delete the transaction
   const handleDeleteTransaction = async () => {
     Alert.alert(
       "Confirm Delete",
@@ -219,7 +218,6 @@ export default function AddTransaction() {
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
-      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.container}>
           <View style={styles.inputContainer}>
             <View style={styles.descriptionContainer}>
@@ -239,7 +237,9 @@ export default function AddTransaction() {
             </View>
             {imageUri && (
               <View style={styles.imageContainer}>
-                <Image source={{ uri: imageUri }} style={styles.image} />
+                <Pressable onPress={() => setModalVisible(true)}>
+                  <Image source={{ uri: imageUri }} style={styles.image} />
+                </Pressable>
                 <Pressable style={styles.deleteButton} onPress={handleDeleteImage}>
                   <MaterialIcons name="close" size={16} color="white" />
                 </Pressable>
@@ -303,16 +303,24 @@ export default function AddTransaction() {
           <RegularButton onPress={handleSaveTransaction}>
             {transactionId ? "Save Changes" : "Add Transaction"}
           </RegularButton>
+
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+              <View style={styles.modalContainer}>
+                <Image source={{ uri: imageUri }} style={styles.fullImage} />
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
         </View>
-      </ScrollView>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollViewContainer: {
-    flexGrow: 1,
-  },
   container: {
     flex: 1,
     padding: 20,
@@ -359,7 +367,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: Dimensions.get("window").width - 40,
-    height: 200,
+    height: 100,
   },
   deleteButton: {
     position: "absolute",
@@ -368,5 +376,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.transparentGray,
     borderRadius: 15,
     padding: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: colors.modalOverlay,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullImage: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height * 0.75,
+    resizeMode: "contain",
   },
 });
