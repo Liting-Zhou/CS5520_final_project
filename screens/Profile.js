@@ -45,9 +45,7 @@ export default function Profile() {
 
   return (
     <View style={styles.container}>
-      <ProfilePressable
-        onPress={() => navigation.navigate("ProfileDetail")}
-      >
+      <ProfilePressable onPress={() => navigation.navigate("ProfileDetail")}>
         <Image
           source={photo ? { uri: photo } : defaultUserPhoto}
           style={styles.photo}
@@ -67,6 +65,16 @@ export default function Profile() {
             color={colors.buttonBackground}
           />
           <Text style={styles.historyText}>Exchange Transaction History</Text>
+        </View>
+      </ProfilePressable>
+      <ProfilePressable onPress={() => navigation.navigate("Notifications")}>
+        <View style={styles.transactionContainer}>
+          <MaterialIcons
+            name="notifications-none"
+            size={24}
+            color={colors.buttonBackground}
+          />
+          <Text style={styles.historyText}>Notification Settings</Text>
         </View>
       </ProfilePressable>
     </View>

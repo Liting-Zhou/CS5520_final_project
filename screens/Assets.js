@@ -136,6 +136,10 @@ export default function Assets() {
     if (currentUser === null) {
       Alert.alert("", "Please log in to save your currencies.", [
         {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
           text: "OK",
           onPress: () => navigation.navigate("Profile"),
         },
@@ -215,6 +219,7 @@ export default function Assets() {
                 onDelete={() => handleDelete(item.id)}
                 onChangeCurrency={handleChangeCurrency}
                 onChangeAmount={handleChangeAmount}
+                filterItems={assets.map((asset) => asset.currency)}
               />
             )}
             scrollEnabled={true}

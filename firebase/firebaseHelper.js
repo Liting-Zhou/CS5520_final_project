@@ -219,3 +219,67 @@ export const readTransactionsFromDB = async (userId) => {
     return [];
   }
 };
+
+// write a new notification to DB
+export const writeNotificationToDB = async (userId, notification) => {
+  console.log("firebaseHelper.js 225, userId", userId);
+  try {
+    const notificationRef = doc(
+      collection(db, `users/${userId}/notifications`)
+    );
+    await setDoc(notificationRef, notification);
+    // return transactionRef.id;
+  } catch (error) {
+    console.error("Error writing notification: ", error);
+  }
+};
+
+//  read notifications from DB
+export const readNotificationsFromDB = async (userId) => {
+  try {
+    const notificationsCollection = collection(
+      db,
+      `users/${userId}/notifications`
+    );
+    const notificationsSnapshot = await getDocs(notificationsCollection);
+    const notificationsList = notificationsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return notificationsList;
+  } catch (error) {
+    console.error("Error reading notifications: ", error);
+    return [];
+  }
+};
+
+// delete a notification from DB
+export const deleteNotificationFromDB = async (userId, notificationId) => {
+  try {
+    const notificationRef = doc(
+      db,
+      `users/${userId}/notifications`,
+      notificationId
+    );
+    await deleteDoc(notificationRef);
+  } catch (error) {
+    console.error("Error deleting notification: ", error);
+  }
+};
+
+// update a notification to DB
+export const updateNotificationToDB = async (userId, notification) => {
+  try {
+    if (!notification.id) {
+      throw new Error("Notification ID is required for updating");
+    }
+    const notificationRef = doc(
+      db,
+      `users/${userId}/notifications`,
+      notification.id
+    );
+    await updateDoc(notificationRef, notification);
+  } catch (error) {
+    console.error("Error updating notification: ", error);
+  }
+};
