@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -22,9 +22,10 @@ import {
   writeTransactionToDB,
   updateTransactionInDB,
   deleteTransactionFromDB,
+  readTransactionsFromDB,
 } from "../firebase/firebaseHelper";
 import { auth, storage } from '../firebase/firebaseSetup';
-import {ref, uploadBytesResumable } from "firebase/storage";
+import {ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import ImageManager from "../components/ImageManager";
 import Entypo from "react-native-vector-icons/Entypo";
 
@@ -37,30 +38,14 @@ export default function AddTransaction() {
   const userId = auth.currentUser?.uid;
 
   // Initialize the state variables for the transaction information
-  const [description, setDescription] = useState(
-    transaction ? transaction.description : ""
-  );
-  const [location, setLocation] = useState(
-    transaction ? transaction.location : ""
-  );
-  const [date, setDate] = useState(
-    transaction ? new Date(transaction.date) : null
-  );
-  const [fromCurrency, setFromCurrency] = useState(
-    transaction ? transaction.fromCurrency : ""
-  );
-  const [toCurrency, setToCurrency] = useState(
-    transaction ? transaction.toCurrency : ""
-  );
-  const [fromAmount, setFromAmount] = useState(
-    transaction ? transaction.fromAmount : ""
-  );
-  const [toAmount, setToAmount] = useState(
-    transaction ? transaction.toAmount : ""
-  );
-  const [imageUri, setImageUri] = useState(
-    transaction ? transaction.imageUri : null
-  );
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [date, setDate] = useState(null);
+  const [fromCurrency, setFromCurrency] = useState("");
+  const [toCurrency, setToCurrency] = useState("");
+  const [fromAmount, setFromAmount] = useState("");
+  const [toAmount, setToAmount] = useState("");
+  const [imageUri, setImageUri] = useState(null);
 
   const [openFrom, setOpenFrom] = useState(false);
   const [openTo, setOpenTo] = useState(false);
@@ -73,6 +58,44 @@ export default function AddTransaction() {
         transactionId && <TrashBinButton onPress={handleDeleteTransaction} />,
     });
   }, [navigation, transactionId]);
+
+   // Fetch transaction details if editing an existing transaction
+  useEffect(() => {
+    if (transactionId) {
+      const fetchTransaction = async () => {
+        try {
+          const transactionsList = await readTransactionsFromDB(userId);
+          const transactionDetails = transactionsList.find(
+            (transaction) => transaction.id === transactionId
+          );
+
+          console.log("transactionImage", transactionDetails.imageUri);
+
+          if (transactionDetails) {
+            setDescription(transactionDetails.description);
+            setLocation(transactionDetails.location);
+            setDate(new Date(transactionDetails.date));
+            setFromCurrency(transactionDetails.fromCurrency);
+            setToCurrency(transactionDetails.toCurrency);
+            setFromAmount(transactionDetails.fromAmount);
+            setToAmount(transactionDetails.toAmount);
+            if (transactionDetails.imageUri) {
+              const imageRef = ref(storage, transactionDetails.imageUri);
+              const imageUrl = await getDownloadURL(imageRef);
+              setImageUri(imageUrl); 
+            }
+          } else {
+            Alert.alert("Error", "Transaction not found.");
+            navigation.goBack();
+          }
+        } catch (error) {
+          console.error("Error fetching transaction: ", error);
+        }
+      };
+
+      fetchTransaction();
+    }
+  }, [transactionId, userId]);
 
   // Function to retrieve and upload the image
   async function retrieveAndUploadImage(uri) {
