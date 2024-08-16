@@ -4,10 +4,22 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import { useNavigation } from "@react-navigation/native";
 
-export default function NotificationItem({ item }) {
+export default function NotificationItem({ item, status }) {
   const navigation = useNavigation();
   const handlePress = () => {
     navigation.navigate("AddNotification", { item });
+  };
+
+  // function to determine the background color of the notification item
+  // based on the status of whether the notification is turned on or off
+  const getBackgroundColor = (pressed) => {
+    if (pressed) {
+      return colors.lightGray;
+    }
+    if (status) {
+      return colors.white;
+    }
+    return colors.transparentGray;
   };
 
   return (
@@ -15,12 +27,12 @@ export default function NotificationItem({ item }) {
       onPress={handlePress}
       style={({ pressed }) => [
         styles.container,
-        { backgroundColor: pressed ? colors.lightGray : colors.white },
+        { backgroundColor: getBackgroundColor(pressed) },
       ]}
       android_ripple={{ color: colors.lightGray }}
     >
       <AntDesign name="edit" size={24} color={colors.fourthTheme} />
-      <Text>
+      <Text style={status ? styles.activeText : styles.deactivatedText}>
         {item.from} to {item.to} exchange rate exceeds{" "}
         <Text style={{ fontWeight: "bold" }}>
           {Number(item.threshold).toFixed(4)}
@@ -41,5 +53,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  activeText: {},
+  deactivatedText: {
+    color: colors.gray,
   },
 });

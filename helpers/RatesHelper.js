@@ -92,7 +92,7 @@ export const calculateTotal = async ({ data }) => {
 
 // return the exchange rate between two currencies
 export const getExchangeRate = async ({ from, to }) => {
-  console.log("RatesHelper.js 95 getExchangeRate, from", from);
+  // console.log("RatesHelper.js 95 getExchangeRate, from", from);
   const allCurrencies = await getLatestRates();
   const exchangeRate = (allCurrencies[to] / allCurrencies[from]).toFixed(4);
   return exchangeRate;

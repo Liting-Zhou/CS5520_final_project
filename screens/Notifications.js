@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, Text, View, FlatList, Alert } from "react-native";
 import React, {
   useState,
   useLayoutEffect,
@@ -7,48 +7,60 @@ import React, {
 } from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import * as ExpoNotifications from "expo-notifications";
-import { textSizes, colors } from "../helpers/ConstantsHelper";
+
 import NotificationItem from "../components/NotificationItem";
 import AddButton from "../components/AddButton";
 import RegularButton from "../components/RegularButton";
+
 import { getAuth } from "firebase/auth";
 import { readNotificationsFromDB } from "../firebase/firebaseHelper";
 import { getExchangeRate } from "../helpers/RatesHelper";
+import { textSizes, colors } from "../helpers/ConstantsHelper";
 
 export default function Notifications() {
   const navigation = useNavigation();
   const [notifications, setNotifications] = useState([]);
+  const [isActive, setIsActive] = useState(false); // denotes whether the notifications are active
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
   const verifyPermission = async () => {
     try {
       const response = await ExpoNotifications.getPermissionsAsync();
-      console.log("Notifications.js 27, response: ", response);
+      // console.log("Notifications.js 30, response: ", response);
       if (response.granted) {
         return true;
       }
       const newResponse = await ExpoNotifications.requestPermissionsAsync();
       return newResponse.granted;
     } catch (err) {
-      console.error("permission error: ", err);
+      console.error("notification permission error: ", err);
     }
   };
 
   const scheduleNotificationHandler = async () => {
+    // if notifications are active, turn them off
+    if (isActive) {
+      setIsActive(false);
+      await ExpoNotifications.cancelAllScheduledNotificationsAsync();
+      Alert.alert("", "You have turned off the notifications.");
+      return;
+    }
+    // if notifications are not active, turn them on
+    setIsActive(true);
     try {
       const hasPermission = await verifyPermission();
-      console.log("Notifications.js 41, hasPermission: ", hasPermission);
+      // console.log("Notifications.js 53, hasPermission: ", hasPermission);
       if (hasPermission) {
         for (const notification of notifications) {
-          console.log("Notifications.js 44, notification: ", notification);
-
+          // get the current exchange rate
           const exchangeRate = await getExchangeRate({
             from: notification.from,
             to: notification.to,
           });
           const exchangeRateNumber = parseFloat(exchangeRate);
           const thresholdNumber = parseFloat(notification.threshold);
+          // if the exchange rate exceeds the threshold, schedule a notification
           if (exchangeRateNumber > thresholdNumber) {
             await ExpoNotifications.scheduleNotificationAsync({
               content: {
@@ -60,17 +72,19 @@ export default function Notifications() {
                 )}, exceeding ${thresholdNumber.toFixed(4)}.`,
               },
               trigger: {
-                seconds: 3,
+                seconds: 60,
+                repeats: true,
               },
             });
           }
         }
       }
     } catch (err) {
-      console.error("notification error: ", err);
+      console.error("schedule notification error: ", err);
     }
   };
 
+  // fetch notifications from the database
   const fetchNotifications = async () => {
     try {
       if (userId) {
@@ -108,7 +122,9 @@ export default function Notifications() {
       <Text style={styles.text}>Notify me when:</Text>
       <FlatList
         data={notifications}
-        renderItem={({ item }) => <NotificationItem item={item} />}
+        renderItem={({ item }) => (
+          <NotificationItem item={item} status={isActive} />
+        )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
       />
@@ -116,7 +132,7 @@ export default function Notifications() {
         onPress={scheduleNotificationHandler}
         buttonStyle={styles.buttonStyle}
       >
-        Activate Notifications
+        {isActive ? "Turn off Notifications" : "Turn on Notifications"}
       </RegularButton>
     </View>
   );
