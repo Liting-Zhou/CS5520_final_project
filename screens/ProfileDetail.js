@@ -14,7 +14,7 @@ import RegularButton from "../components/RegularButton";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import { updateProfileInDB, readProfileFromDB } from "../firebase/firebaseHelper";
 import { getAuth } from "firebase/auth";
-import { ref, uploadBytesResumable } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase/firebaseSetup"; 
 import ImageManager from "../components/ImageManager";
 
@@ -35,7 +35,12 @@ export default function ProfileDetail() {
         if (userProfile) {
           setNewName(userProfile.name);
           setNewEmail(userProfile.email);
-          setNewPhoto(userProfile.photo);
+          if (userProfile.photo) {
+            // Fetch the full URL of the photo from Firebase Storage
+            const photoRef = ref(storage, userProfile.photo);
+            const photoURL = await getDownloadURL(photoRef);
+            setNewPhoto(photoURL);
+          }
         }
       }
     };
