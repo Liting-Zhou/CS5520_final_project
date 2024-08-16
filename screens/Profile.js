@@ -7,6 +7,8 @@ import { colors, textSizes } from "../helpers/ConstantsHelper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { getAuth } from "firebase/auth";
 import { readProfileFromDB } from "../firebase/firebaseHelper";
+import { ref, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase/firebaseSetup"; 
 
 export default function Profile() {
   const [photo, setPhoto] = useState(null);
@@ -24,7 +26,12 @@ export default function Profile() {
       if (userProfile) {
         setName(userProfile.name);
         setEmail(userProfile.email);
-        setPhoto(userProfile.photo);
+        
+        if (userProfile.photo) {
+          const photoRef = ref(storage, userProfile.photo);
+          const photoURL = await getDownloadURL(photoRef);
+          setPhoto(photoURL); 
+        }
       }
     }
   }, [userId]);
@@ -47,7 +54,7 @@ export default function Profile() {
     <View style={styles.container}>
       <ProfilePressable onPress={() => navigation.navigate("ProfileDetail")}>
         <Image
-          source={photo ? { uri: photo } : defaultUserPhoto}
+          source={photo ? { uri: photo } : defaultUserPhoto} 
           style={styles.photo}
         />
         <View style={styles.textContainer}>
