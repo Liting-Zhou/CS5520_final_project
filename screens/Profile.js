@@ -5,6 +5,7 @@ import ProfilePressable from "../components/ProfilePressable";
 import defaultUserPhoto from "../assets/default_user_photo.jpg";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { getAuth } from "firebase/auth";
 import { readProfileFromDB } from "../firebase/firebaseHelper";
 
@@ -58,23 +59,23 @@ export default function Profile() {
       <ProfilePressable
         onPress={() => navigation.navigate("TransactionHistory")}
       >
-        <View style={styles.transactionContainer}>
+        <View style={styles.itemContainer}>
           <MaterialIcons
             name="currency-exchange"
-            size={20}
-            color={colors.buttonBackground}
-          />
-          <Text style={styles.historyText}>Exchange Transaction History</Text>
-        </View>
-      </ProfilePressable>
-      <ProfilePressable onPress={() => navigation.navigate("Notifications")}>
-        <View style={styles.transactionContainer}>
-          <MaterialIcons
-            name="notifications-none"
             size={24}
             color={colors.buttonBackground}
           />
-          <Text style={styles.historyText}>Notification Settings</Text>
+          <Text style={styles.itemText}>Exchange Transaction History</Text>
+        </View>
+      </ProfilePressable>
+      <ProfilePressable onPress={() => navigation.navigate("Notifications")}>
+        <View style={styles.itemContainer}>
+          <AntDesign
+            name="notification"
+            size={24}
+            color={colors.buttonBackground}
+          />
+          <Text style={styles.itemText}>Notification Settings</Text>
         </View>
       </ProfilePressable>
     </View>
@@ -105,13 +106,12 @@ const styles = StyleSheet.create({
     fontSize: textSizes.medium,
     color: colors.gray,
   },
-  transactionContainer: {
+  itemContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-  historyText: {
+  itemText: {
     fontSize: textSizes.medium,
-    color: colors.primary,
     marginLeft: 10,
   },
   errorText: {

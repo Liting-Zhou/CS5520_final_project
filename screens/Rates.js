@@ -113,7 +113,6 @@ export default function Rates() {
   // reset the rates to the default rates
   // when loggin, fetch rates from the database
   const handleReset = () => {
-    console.log("Resetting rates");
     if (currentUser === null) {
       setBase(defaultBase);
       setSelectedCurrencies(defaultCurrencies);
