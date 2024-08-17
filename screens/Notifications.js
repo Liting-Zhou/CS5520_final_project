@@ -13,7 +13,11 @@ import AddButton from "../components/AddButton";
 import RegularButton from "../components/RegularButton";
 
 import { getAuth } from "firebase/auth";
-import { readNotificationsFromDB } from "../firebase/firebaseHelper";
+import {
+  readNotificationsFromDB,
+  readProfileFromDB,
+  updateNotificationStatustoDB,
+} from "../firebase/firebaseHelper";
 import { getExchangeRate } from "../helpers/RatesHelper";
 import { textSizes, colors } from "../helpers/ConstantsHelper";
 
@@ -23,6 +27,8 @@ export default function Notifications() {
   const [isActive, setIsActive] = useState(false); // denotes whether the notifications are active
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
+
+  console.log("Notifications.js 31, isActive: ", isActive);
 
   const verifyPermission = async () => {
     try {
@@ -42,12 +48,25 @@ export default function Notifications() {
     // if notifications are active, turn them off
     if (isActive) {
       setIsActive(false);
+      await updateNotificationStatustoDB(
+        userId,
+        { notificationStatus: false },
+        "users"
+      );
       await ExpoNotifications.cancelAllScheduledNotificationsAsync();
       Alert.alert("", "You have turned off the notifications.");
       return;
     }
+
     // if notifications are not active, turn them on
     setIsActive(true);
+    // set notificationStatus to true in the profile
+    await updateNotificationStatustoDB(
+      userId,
+      { notificationStatus: true },
+      "users"
+    );
+
     try {
       const hasPermission = await verifyPermission();
       // console.log("Notifications.js 53, hasPermission: ", hasPermission);
@@ -88,8 +107,12 @@ export default function Notifications() {
   const fetchNotifications = async () => {
     try {
       if (userId) {
+        // get notifications list from the database
         const fetchedNotifications = await readNotificationsFromDB(userId);
         setNotifications(fetchedNotifications);
+        // get the notification status from profile
+        const results = await readProfileFromDB(userId, "users");
+        setIsActive(results.notificationStatus);
       }
     } catch (error) {
       console.error("Error fetching notifications: ", error);
