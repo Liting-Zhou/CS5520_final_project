@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -7,6 +7,9 @@ import {
   Text,
   TextInput,
   TouchableWithoutFeedback,
+  Image,
+  Dimensions,
+  Modal,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import RegularButton from "../components/RegularButton";
@@ -14,14 +17,18 @@ import TextInputBox from "../components/TextInputBox";
 import DateTimePickerComponent from "../components/DateTimePickerComponent";
 import DropDownMenu from "../components/DropDownMenu";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
-import Entypo from "react-native-vector-icons/Entypo";
 import TrashBinButton from "../components/TrashBinButton";
 import {
   writeTransactionToDB,
   updateTransactionInDB,
   deleteTransactionFromDB,
+  readTransactionsFromDB,
 } from "../firebase/firebaseHelper";
-import { getAuth } from "firebase/auth";
+import { auth, storage } from '../firebase/firebaseSetup';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import ImageManager from "../components/ImageManager";
+import Entypo from "react-native-vector-icons/Entypo";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 export default function AddTransaction() {
   const navigation = useNavigation();
@@ -29,32 +36,18 @@ export default function AddTransaction() {
   const { transaction } = route.params || {};
   const transactionId = transaction ? transaction.id : undefined;
 
-  const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
   // Initialize the state variables for the transaction information
-  const [description, setDescription] = useState(
-    transaction ? transaction.description : ""
-  );
-  const [location, setLocation] = useState(
-    transaction ? transaction.location : ""
-  );
-  const [date, setDate] = useState(
-    transaction ? new Date(transaction.date) : null
-  );
-  const [fromCurrency, setFromCurrency] = useState(
-    transaction ? transaction.fromCurrency : ""
-  );
-  const [toCurrency, setToCurrency] = useState(
-    transaction ? transaction.toCurrency : ""
-  );
-  const [fromAmount, setFromAmount] = useState(
-    transaction ? transaction.fromAmount : ""
-  );
-  const [toAmount, setToAmount] = useState(
-    transaction ? transaction.toAmount : ""
-  );
-
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [date, setDate] = useState(null);
+  const [fromCurrency, setFromCurrency] = useState("");
+  const [toCurrency, setToCurrency] = useState("");
+  const [fromAmount, setFromAmount] = useState("");
+  const [toAmount, setToAmount] = useState("");
+  const [imageUri, setImageUri] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false); 
   const [openFrom, setOpenFrom] = useState(false);
   const [openTo, setOpenTo] = useState(false);
 
@@ -66,6 +59,60 @@ export default function AddTransaction() {
         transactionId && <TrashBinButton onPress={handleDeleteTransaction} />,
     });
   }, [navigation, transactionId]);
+
+  // Fetch transaction details if editing an existing transaction
+  useEffect(() => {
+    if (transactionId) {
+      const fetchTransaction = async () => {
+        try {
+          const transactionsList = await readTransactionsFromDB(userId);
+          const transactionDetails = transactionsList.find(
+            (transaction) => transaction.id === transactionId
+          );
+
+          if (transactionDetails) {
+            setDescription(transactionDetails.description);
+            setLocation(transactionDetails.location);
+            setDate(new Date(transactionDetails.date));
+            setFromCurrency(transactionDetails.fromCurrency);
+            setToCurrency(transactionDetails.toCurrency);
+            setFromAmount(transactionDetails.fromAmount);
+            setToAmount(transactionDetails.toAmount);
+            if (transactionDetails.imageUri) {
+              const imageRef = ref(storage, transactionDetails.imageUri);
+              const imageUrl = await getDownloadURL(imageRef);
+              setImageUri(imageUrl); 
+            }
+          } else {
+            Alert.alert("Error", "Transaction not found.");
+            navigation.goBack();
+          }
+        } catch (error) {
+          console.error("Error fetching transaction: ", error);
+        }
+      };
+
+      fetchTransaction();
+    }
+  }, [transactionId, userId]);
+
+  // Function to retrieve and upload the image
+  async function retrieveAndUploadImage(uri) {
+    try {
+      const response = await fetch(uri);
+      if (!response.ok) {
+        throw new Error("The request was not successful");
+      }
+      const blob = await response.blob();
+      const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+      const imageRef = ref(storage, `transactionImages/${imageName}`);
+      const uploadResult = await uploadBytesResumable(imageRef, blob);
+      return uploadResult.metadata.fullPath;
+    } catch (e) {
+      console.error('Error retrieving image:', e);
+      throw e;
+    }
+  }
 
   // Save the transaction to Firestore
   const handleSaveTransaction = async () => {
@@ -89,6 +136,11 @@ export default function AddTransaction() {
 
     const formattedDate = date.toISOString();
 
+    let newImageUri = '';
+    if (imageUri) {
+      newImageUri = await retrieveAndUploadImage(imageUri);
+    }
+
     const newTransaction = {
       description,
       location,
@@ -97,6 +149,7 @@ export default function AddTransaction() {
       toCurrency,
       fromAmount,
       toAmount,
+      imageUri: newImageUri,
     };
 
     try {
@@ -158,85 +211,111 @@ export default function AddTransaction() {
     }
   };
 
+  // Function to delete the selected image
+  const handleDeleteImage = () => {
+    setImageUri(null);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
-      <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <View style={styles.descriptionContainer}>
-            <View style={styles.descriptionInputWrapper}>
-              <TextInputBox
-                label="Description"
-                value={description}
-                onChangeText={setDescription}
-                placeholder="Enter description"
+        <View style={styles.container}>
+          <View style={styles.inputContainer}>
+            <View style={styles.descriptionContainer}>
+              <View style={styles.descriptionInputWrapper}>
+                <TextInputBox
+                  label="Description"
+                  value={description}
+                  onChangeText={setDescription}
+                  placeholder="Enter description"
+                />
+              </View>
+              <ImageManager imageUriHandler={setImageUri}>
+                <Pressable style={styles.cameraIcon}>
+                  <Entypo name="camera" size={24} color="black" />
+                </Pressable>
+              </ImageManager>
+            </View>
+            {imageUri && (
+              <View style={styles.imageContainer}>
+                <Pressable onPress={() => setModalVisible(true)}>
+                  <Image source={{ uri: imageUri }} style={styles.image} />
+                </Pressable>
+                <Pressable style={styles.deleteButton} onPress={handleDeleteImage}>
+                  <MaterialIcons name="close" size={16} color="white" />
+                </Pressable>
+              </View>
+            )}
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Date</Text>
+            <DateTimePickerComponent date={date} setDate={setDate} />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInputBox
+              label="Location"
+              value={location}
+              onChangeText={setLocation}
+              placeholder="Enter location"
+            />
+          </View>
+          <View style={[styles.rowContainer, { zIndex: 1000 }]}>
+            <View>
+              <Text style={styles.label}>From Currency</Text>
+              <DropDownMenu
+                base={fromCurrency}
+                onSelect={setFromCurrency}
+                open={openFrom}
+                setOpen={setOpenFrom}
+                onOpen={() => setOpenTo(false)}
               />
             </View>
-            <Pressable
-              onPress={() => console.log("Camera icon pressed")}
-              style={styles.cameraIcon}
-            >
-              <Entypo name="camera" size={24} color="black" />
-            </Pressable>
+            <View style={styles.amountInputContainer}>
+              <TextInput
+                value={fromAmount}
+                onChangeText={setFromAmount}
+                placeholder="Enter amount"
+                keyboardType="numeric"
+                style={styles.amountInput}
+              />
+            </View>
           </View>
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Date</Text>
-          <DateTimePickerComponent date={date} setDate={setDate} />
-        </View>
-        <View style={styles.inputContainer}>
-          <TextInputBox
-            label="Location"
-            value={location}
-            onChangeText={setLocation}
-            placeholder="Enter location"
-          />
-        </View>
-        <View style={[styles.rowContainer, { zIndex: 1000 }]}>
-          <View>
-            <Text style={styles.label}>From Currency</Text>
-            <DropDownMenu
-              base={fromCurrency}
-              onSelect={setFromCurrency}
-              open={openFrom}
-              setOpen={setOpenFrom}
-              onOpen={() => setOpenTo(false)}
-            />
+          <View style={[styles.rowContainer, { zIndex: 900 }]}>
+            <View>
+              <Text style={styles.label}>To Currency</Text>
+              <DropDownMenu
+                base={toCurrency}
+                onSelect={setToCurrency}
+                open={openTo}
+                setOpen={setOpenTo}
+                onOpen={() => setOpenFrom(false)}
+              />
+            </View>
+            <View style={styles.amountInputContainer}>
+              <TextInput
+                value={toAmount}
+                onChangeText={setToAmount}
+                placeholder="Enter amount"
+                keyboardType="numeric"
+                style={styles.amountInput}
+              />
+            </View>
           </View>
-          <View style={styles.amountInputContainer}>
-            <TextInput
-              value={fromAmount}
-              onChangeText={setFromAmount}
-              placeholder="Enter amount"
-              keyboardType="numeric"
-              style={styles.amountInput}
-            />
-          </View>
+          <RegularButton onPress={handleSaveTransaction}>
+            {transactionId ? "Save Changes" : "Add Transaction"}
+          </RegularButton>
+
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+              <View style={styles.modalContainer}>
+                <Image source={{ uri: imageUri }} style={styles.fullImage} />
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
         </View>
-        <View style={[styles.rowContainer, { zIndex: 900 }]}>
-          <View>
-            <Text style={styles.label}>To Currency</Text>
-            <DropDownMenu
-              base={toCurrency}
-              onSelect={setToCurrency}
-              open={openTo}
-              setOpen={setOpenTo}
-              onOpen={() => setOpenFrom(false)}
-            />
-          </View>
-          <View style={styles.amountInputContainer}>
-            <TextInput
-              value={toAmount}
-              onChangeText={setToAmount}
-              placeholder="Enter amount"
-              keyboardType="numeric"
-              style={styles.amountInput}
-            />
-          </View>
-        </View>
-        <RegularButton onPress={handleSaveTransaction}>
-          {transactionId ? "Save Changes" : "Add Transaction"}
-        </RegularButton>
-      </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -281,5 +360,32 @@ const styles = StyleSheet.create({
     borderColor: colors.gray,
     paddingVertical: 15,
     fontSize: textSizes.medium,
+  },
+  imageContainer: {
+    position: "relative",
+    marginTop: 20,
+  },
+  image: {
+    width: Dimensions.get("window").width - 40,
+    height: 100,
+  },
+  deleteButton: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: colors.transparentGray,
+    borderRadius: 15,
+    padding: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: colors.modalOverlay,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullImage: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height * 0.75,
+    resizeMode: "contain",
   },
 });
