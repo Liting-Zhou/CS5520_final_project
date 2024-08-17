@@ -9,12 +9,14 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from "expo-image-picker";
 import { FontAwesome } from "@expo/vector-icons";
 import RegularButton from "../components/RegularButton";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import { updateProfileInDB, readProfileFromDB } from "../firebase/firebaseHelper";
 import { getAuth } from "firebase/auth";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase/firebaseSetup"; 
+import ImageManager from "../components/ImageManager";
 
 export default function ProfileDetail() {
   const navigation = useNavigation();
@@ -33,7 +35,12 @@ export default function ProfileDetail() {
         if (userProfile) {
           setNewName(userProfile.name);
           setNewEmail(userProfile.email);
-          setNewPhoto(userProfile.photo);
+          if (userProfile.photo) {
+            // Fetch the full URL of the photo from Firebase Storage
+            const photoRef = ref(storage, userProfile.photo);
+            const photoURL = await getDownloadURL(photoRef);
+            setNewPhoto(photoURL);
+          }
         }
       }
     };
@@ -41,19 +48,23 @@ export default function ProfileDetail() {
     fetchProfile();
   }, [userId]);
 
-  // Let the user pick an image from the gallery
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setNewPhoto(result.assets[0].uri);
+  // Function to retrieve and upload the image to Firebase Storage
+  async function retrieveAndUploadImage(uri) {
+    try {
+      const response = await fetch(uri);
+      if (!response.ok) {
+        throw new Error("The request was not successful");
+      }
+      const blob = await response.blob();
+      const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+      const imageRef = ref(storage, `profileImages/${imageName}`);
+      const uploadResult = await uploadBytesResumable(imageRef, blob);
+      return uploadResult.metadata.fullPath;
+    } catch (e) {
+      console.error('Error retrieving image:', e);
+      throw e;
     }
-  };
+  }
 
   // Save the new profile information using the updateProfileInDB function
   const handleSave = async () => {
@@ -67,11 +78,22 @@ export default function ProfileDetail() {
       return;
     }
 
-    console.log("Saving profile...");
+    let uploadedPhotoPath = newPhoto;
+
+    // Upload the image if a new photo is selected
+    if (newPhoto) {
+      try {
+        uploadedPhotoPath = await retrieveAndUploadImage(newPhoto);
+      } catch (error) {
+        Alert.alert("Error", "There was a problem uploading your profile photo.");
+        return;
+      }
+    }
+
     try {
       await updateProfileInDB(
         userId,
-        { name: newName, email: newEmail, photo: newPhoto },
+        { name: newName, email: newEmail, photo: uploadedPhotoPath },
         "users"
       );
       navigation.goBack();
@@ -83,30 +105,31 @@ export default function ProfileDetail() {
 
   return (
     <View style={styles.container}>
-      <Pressable
-        onPress={pickImage}
-        style={({ pressed }) => [
-          styles.photoContainer,
-          pressed && styles.pressed,
-        ]}
-      >
-        <Image
-          source={
-            newPhoto
-              ? { uri: newPhoto }
-              : require("../assets/default_user_photo.jpg")
-          }
-          style={styles.photo}
-        />
-        <View style={styles.cameraIconContainer}>
-          <FontAwesome
-            name="camera"
-            size={textSizes.small}
-            color={colors.white}
-            style={styles.cameraIcon}
+      <ImageManager imageUriHandler={setNewPhoto}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.photoContainer,
+            pressed && styles.pressed,
+          ]}
+        >
+          <Image
+            source={
+              newPhoto
+                ? { uri: newPhoto }
+                : require("../assets/default_user_photo.jpg")
+            }
+            style={styles.photo}
           />
-        </View>
-      </Pressable>
+          <View style={styles.cameraIconContainer}>
+            <FontAwesome
+              name="camera"
+              size={textSizes.small}
+              color={colors.white}
+              style={styles.cameraIcon}
+            />
+          </View>
+        </Pressable>
+      </ImageManager>
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Username:</Text>
       </View>
