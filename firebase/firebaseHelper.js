@@ -302,7 +302,7 @@ export const updateNotificationStatustoDB = async (
     // Update the notification status in the profile
     await updateDoc(userDocRef, { notificationStatus });
     console.log(
-      "Notifications.js 304, Notification status updated to:",
+      "firebaseHelper.js 304, Notification status updated to:",
       notificationStatus
     );
   } catch (error) {

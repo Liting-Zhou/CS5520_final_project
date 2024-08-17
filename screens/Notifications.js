@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ExpoNotifications from "expo-notifications";
 
 import NotificationItem from "../components/NotificationItem";
@@ -28,12 +29,20 @@ export default function Notifications() {
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
-  console.log("Notifications.js 31, isActive: ", isActive);
+  const clearIntervals = async () => {
+    const storedIds = await AsyncStorage.getItem("intervalIds");
+    if (storedIds) {
+      const ids = JSON.parse(storedIds);
+      ids.forEach((id) => clearInterval(id));
+      console.log("Notifications.js 37, intervals cleared", ids);
+      await AsyncStorage.removeItem("intervalIds");
+    }
+  };
 
+  // verify permission for notifications
   const verifyPermission = async () => {
     try {
       const response = await ExpoNotifications.getPermissionsAsync();
-      // console.log("Notifications.js 36, response: ", response);
       if (response.granted) {
         return true;
       }
@@ -44,79 +53,79 @@ export default function Notifications() {
     }
   };
 
-  const scheduleNotification = async (notificationsItems) => {
-    console.log("Notifications.js 48, scheduling notifications");
+  // schedule notifications
+  const scheduleNotifications = async (notificationsItems) => {
+    console.log("Notifications.js 58, scheduling notifications");
     try {
       const hasPermission = await verifyPermission();
       if (hasPermission) {
-        for (const notification of notificationsItems) {
-          // get the current exchange rate
-          const exchangeRate = await getExchangeRate({
-            from: notification.from,
-            to: notification.to,
-          });
-          const exchangeRateNumber = parseFloat(exchangeRate);
-          const thresholdNumber = parseFloat(notification.threshold);
-          // if the exchange rate exceeds the threshold, schedule a notification
-          if (exchangeRateNumber > thresholdNumber) {
-            await ExpoNotifications.scheduleNotificationAsync({
-              content: {
-                title: "Exchange Rate Alert",
-                body: `${notification.from} based on ${
-                  notification.to
-                } is now ${exchangeRateNumber.toFixed(
-                  4
-                )}, exceeding ${thresholdNumber.toFixed(4)}.`,
-              },
-              trigger: {
-                seconds: 60,
-                repeats: true,
-              },
-            });
-            console.log("Notifications.js 76, notifications scheduled");
-          }
-        }
+        //first clear all intervals
+        await clearIntervals();
+        //then schedule new intervals
+        const ids = notificationsItems.map((notification) => {
+          const id = setInterval(() => checkAndNotify(notification), 30000);
+          return id;
+        });
+        console.log("Notifications.js 69, ids: ", ids);
+        await AsyncStorage.setItem("intervalIds", JSON.stringify(ids));
       }
     } catch (err) {
       console.error("schedule notification error: ", err);
     }
   };
 
+  // helper function to schedule notifications
+  const checkAndNotify = async (notification) => {
+    try {
+      const exchangeRate = await getExchangeRate({
+        from: notification.from,
+        to: notification.to,
+      });
+      const exchangeRateNumber = parseFloat(exchangeRate);
+      const thresholdNumber = parseFloat(notification.threshold);
+
+      if (exchangeRateNumber > thresholdNumber) {
+        await ExpoNotifications.scheduleNotificationAsync({
+          content: {
+            title: "Exchange Rate Alert",
+            body: `${notification.from} based on ${
+              notification.to
+            } is now ${exchangeRateNumber.toFixed(
+              4
+            )}, exceeding ${thresholdNumber.toFixed(4)}.`,
+          },
+          trigger: null,
+        });
+        console.log("Notifications.js 99, notification scheduled");
+      }
+    } catch (error) {
+      console.error("Error checking and notify: ", error);
+    }
+  };
+
   const switchNotificationHandler = async () => {
-    // if notifications are active, turn them off
+    console.log("Notifications.js 107, isActive: ", isActive);
     if (isActive) {
       setIsActive(false);
-      // set notificationStatus to false in the profile
       await updateNotificationStatustoDB(
         userId,
         { notificationStatus: false },
         "users"
       );
-      // cancel all scheduled notifications
-      await ExpoNotifications.cancelAllScheduledNotificationsAsync();
+      await clearIntervals();
+      console.log("Notifications.js 115, intervals cleared when switching off");
       Alert.alert("", "You have turned off the notifications.");
     } else {
-      // if notifications are inactive, turn them on
       setIsActive(true);
-      // set notificationStatus to true in the profile
       await updateNotificationStatustoDB(
         userId,
         { notificationStatus: true },
         "users"
       );
-      // schedule notifications
-      await scheduleNotification(notifications);
+      await scheduleNotifications(notifications);
     }
   };
 
-  // check if there are any scheduled notifications
-  const checkScheduledNotifications = async () => {
-    const scheduledNotifications =
-      await ExpoNotifications.getAllScheduledNotificationsAsync();
-    return scheduledNotifications.length > 0;
-  };
-
-  // fetch notifications from the database
   const fetchNotifications = async () => {
     try {
       if (userId) {
@@ -130,36 +139,24 @@ export default function Notifications() {
     }
   };
 
-  // configure the component
   const configuration = async () => {
     const fetchedNotifications = await fetchNotifications();
     try {
       if (userId) {
-        // get the notification status from profile
         const results = await readProfileFromDB(userId, "users");
         const notificationStatusInDB = results.notificationStatus;
         console.log(
-          "Notifications.js 142, notificationStatus in DB: ",
+          "Notifications.js 148, notificationStatus in DB: ",
           notificationStatusInDB
         );
         if (notificationStatusInDB) {
-          setIsActive(notificationStatusInDB);
-        }
-
-        // check if there are any scheduled notifications
-        const hasScheduledNotifications = await checkScheduledNotifications();
-        console.log(
-          "Notifications.js 152, hasScheduledNotifications: ",
-          hasScheduledNotifications
-        );
-
-        // if notification status is active but there are no scheduled notifications, schedule them
-        if (notificationStatusInDB && !hasScheduledNotifications) {
-          await scheduleNotification(fetchedNotifications);
-        }
-        // if notification status is inactive but there are scheduled notifications, cancel them
-        if (!notificationStatusInDB && hasScheduledNotifications) {
-          await ExpoNotifications.cancelAllScheduledNotificationsAsync();
+          setIsActive(() => true);
+          const storedIds = await AsyncStorage.getItem("intervalIds");
+          console.log("Notifications.js 155, storedIds: ", storedIds);
+          if (storedIds) {
+            clearIntervals();
+          }
+          await scheduleNotifications(fetchedNotifications);
         }
       }
     } catch (error) {
@@ -167,19 +164,25 @@ export default function Notifications() {
     }
   };
 
-  // fetch notifications from DB when the component mounts
+  // configure the component
   useEffect(() => {
     configuration();
   }, []);
 
-  // fetch notifications when the screen comes into focus
+  // when notifications change, update them
   useFocusEffect(
     useCallback(() => {
       fetchNotifications();
     }, [userId])
   );
 
-  // headerRight button to add a notification
+  // when notifications change, reschedule them
+  useEffect(() => {
+    if (isActive) {
+      scheduleNotifications(notifications);
+    }
+  }, [notifications]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

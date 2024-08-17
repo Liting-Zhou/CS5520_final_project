@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ExpoNotifications from "expo-notifications";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -39,14 +40,26 @@ ExpoNotifications.setNotificationHandler({
   }),
 });
 
+//  clear intervals when logged out
+const clearIntervals = async () => {
+  const storedIds = await AsyncStorage.getItem("intervalIds");
+  if (storedIds) {
+    const ids = JSON.parse(storedIds);
+    ids.forEach((id) => clearInterval(id));
+    console.log("App.js 49, Intervals cleared when logged out: ", ids);
+    await AsyncStorage.removeItem("intervalIds");
+  }
+};
+
 // Logout function
 const handleLogout = async (navigation) => {
   try {
+    // clear intervals before logging out
+    await clearIntervals();
+
     await signOut(auth);
     console.log("user logged out: ", auth.currentUser);
     navigation.navigate("LogInScreen");
-    // cancel all scheduled notifications
-    await ExpoNotifications.cancelAllScheduledNotificationsAsync();
   } catch (error) {
     console.error("Error logging out: ", error);
   }
