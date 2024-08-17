@@ -33,7 +33,7 @@ export default function Notifications() {
   const verifyPermission = async () => {
     try {
       const response = await ExpoNotifications.getPermissionsAsync();
-      // console.log("Notifications.js 30, response: ", response);
+      // console.log("Notifications.js 36, response: ", response);
       if (response.granted) {
         return true;
       }
@@ -44,34 +44,12 @@ export default function Notifications() {
     }
   };
 
-  const scheduleNotificationHandler = async () => {
-    // if notifications are active, turn them off
-    if (isActive) {
-      setIsActive(false);
-      await updateNotificationStatustoDB(
-        userId,
-        { notificationStatus: false },
-        "users"
-      );
-      await ExpoNotifications.cancelAllScheduledNotificationsAsync();
-      Alert.alert("", "You have turned off the notifications.");
-      return;
-    }
-
-    // if notifications are not active, turn them on
-    setIsActive(true);
-    // set notificationStatus to true in the profile
-    await updateNotificationStatustoDB(
-      userId,
-      { notificationStatus: true },
-      "users"
-    );
-
+  const scheduleNotification = async (notificationsItems) => {
+    console.log("Notifications.js 48, scheduling notifications");
     try {
       const hasPermission = await verifyPermission();
-      // console.log("Notifications.js 53, hasPermission: ", hasPermission);
       if (hasPermission) {
-        for (const notification of notifications) {
+        for (const notification of notificationsItems) {
           // get the current exchange rate
           const exchangeRate = await getExchangeRate({
             from: notification.from,
@@ -95,6 +73,7 @@ export default function Notifications() {
                 repeats: true,
               },
             });
+            console.log("Notifications.js 76, notifications scheduled");
           }
         }
       }
@@ -103,25 +82,94 @@ export default function Notifications() {
     }
   };
 
+  const switchNotificationHandler = async () => {
+    // if notifications are active, turn them off
+    if (isActive) {
+      setIsActive(false);
+      // set notificationStatus to false in the profile
+      await updateNotificationStatustoDB(
+        userId,
+        { notificationStatus: false },
+        "users"
+      );
+      // cancel all scheduled notifications
+      await ExpoNotifications.cancelAllScheduledNotificationsAsync();
+      Alert.alert("", "You have turned off the notifications.");
+    } else {
+      // if notifications are inactive, turn them on
+      setIsActive(true);
+      // set notificationStatus to true in the profile
+      await updateNotificationStatustoDB(
+        userId,
+        { notificationStatus: true },
+        "users"
+      );
+      // schedule notifications
+      await scheduleNotification(notifications);
+    }
+  };
+
+  // check if there are any scheduled notifications
+  const checkScheduledNotifications = async () => {
+    const scheduledNotifications =
+      await ExpoNotifications.getAllScheduledNotificationsAsync();
+    return scheduledNotifications.length > 0;
+  };
+
   // fetch notifications from the database
   const fetchNotifications = async () => {
     try {
       if (userId) {
-        // get notifications list from the database
         const fetchedNotifications = await readNotificationsFromDB(userId);
         setNotifications(fetchedNotifications);
-        // get the notification status from profile
-        const results = await readProfileFromDB(userId, "users");
-        setIsActive(results.notificationStatus);
+        return fetchedNotifications;
       }
     } catch (error) {
-      console.error("Error fetching notifications: ", error);
+      console.error("Error fetching notification items: ", error);
+      return [];
+    }
+  };
+
+  // configure the component
+  const configuration = async () => {
+    const fetchedNotifications = await fetchNotifications();
+    try {
+      if (userId) {
+        // get the notification status from profile
+        const results = await readProfileFromDB(userId, "users");
+        const notificationStatusInDB = results.notificationStatus;
+        console.log(
+          "Notifications.js 142, notificationStatus in DB: ",
+          notificationStatusInDB
+        );
+        if (notificationStatusInDB) {
+          setIsActive(notificationStatusInDB);
+        }
+
+        // check if there are any scheduled notifications
+        const hasScheduledNotifications = await checkScheduledNotifications();
+        console.log(
+          "Notifications.js 152, hasScheduledNotifications: ",
+          hasScheduledNotifications
+        );
+
+        // if notification status is active but there are no scheduled notifications, schedule them
+        if (notificationStatusInDB && !hasScheduledNotifications) {
+          await scheduleNotification(fetchedNotifications);
+        }
+        // if notification status is inactive but there are scheduled notifications, cancel them
+        if (!notificationStatusInDB && hasScheduledNotifications) {
+          await ExpoNotifications.cancelAllScheduledNotificationsAsync();
+        }
+      }
+    } catch (error) {
+      console.error("Error configuring component: ", error);
     }
   };
 
   // fetch notifications from DB when the component mounts
   useEffect(() => {
-    fetchNotifications();
+    configuration();
   }, []);
 
   // fetch notifications when the screen comes into focus
@@ -152,7 +200,7 @@ export default function Notifications() {
         contentContainerStyle={styles.list}
       />
       <RegularButton
-        onPress={scheduleNotificationHandler}
+        onPress={switchNotificationHandler}
         buttonStyle={styles.buttonStyle}
       >
         {isActive ? "Turn off Notifications" : "Turn on Notifications"}

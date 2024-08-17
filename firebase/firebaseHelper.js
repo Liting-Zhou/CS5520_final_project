@@ -301,8 +301,10 @@ export const updateNotificationStatustoDB = async (
 
     // Update the notification status in the profile
     await updateDoc(userDocRef, { notificationStatus });
-
-    console.log("Notification status updated successfully");
+    console.log(
+      "Notifications.js 304, Notification status updated to:",
+      notificationStatus
+    );
   } catch (error) {
     console.error("Error updating notification status: ", error);
   }

@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import * as ExpoNotifications from "expo-notifications";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -30,12 +31,22 @@ const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
 const MainStack = createStackNavigator();
 
+ExpoNotifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 // Logout function
 const handleLogout = async (navigation) => {
   try {
     await signOut(auth);
-    console.log(auth.currentUser);
+    console.log("user logged out: ", auth.currentUser);
     navigation.navigate("LogInScreen");
+    // cancel all scheduled notifications
+    await ExpoNotifications.cancelAllScheduledNotificationsAsync();
   } catch (error) {
     console.error("Error logging out: ", error);
   }
