@@ -78,6 +78,7 @@ function ProfileStackNavigator() {
             options={({ navigation }) => ({
               headerStyle: styles.headerStyle,
               title: "Profile",
+              headerLeft: () => null,
               headerShown: true,
               headerRight: () => (
                 <View style={{ paddingRight: 16 }}>
@@ -135,7 +136,12 @@ function ProfileStackNavigator() {
             component={Notifications}
             options={{
               title: "Notification Settings",
-              headerBackTitle: "Back",
+              headerBackImage: () => (
+                <View style={{ marginLeft: 10 }}>
+                  <Ionicons name="chevron-back" size={24} color="black" />
+                </View>
+              ),
+              headerBackTitleVisible: false,
               headerStyle: styles.headerStyle,
             }}
           />
@@ -144,7 +150,12 @@ function ProfileStackNavigator() {
             component={AddNotification}
             options={{
               title: "Add Notification",
-              headerBackTitle: "Back",
+              headerBackImage: () => (
+                <View style={{ marginLeft: 10 }}>
+                  <Ionicons name="chevron-back" size={24} color="black" />
+                </View>
+              ),
+              headerBackTitleVisible: false,
               headerStyle: styles.headerStyle,
             }}
           />

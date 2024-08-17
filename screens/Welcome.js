@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Welcome({ navigation }) {
   // show the welcome screen for 2 seconds before navigating to the Rates screen
@@ -13,10 +14,15 @@ export default function Welcome({ navigation }) {
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to</Text>
-      <Text style={styles.title}>Currency Manager!</Text>
-    </View>
+    <LinearGradient
+      colors={[colors.firstTheme, colors.secondTheme]}
+      style={styles.container}
+    >
+      <View style={styles.content}>
+        <Text style={styles.title}>Welcome to</Text>
+        <Text style={styles.title}>Currency Manager!</Text>
+      </View>
+    </LinearGradient>
   );
 }
 
@@ -25,7 +31,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.firstTheme,
+  },
+  content: {
+    alignItems: "center",
   },
   title: {
     fontSize: textSizes.large,
