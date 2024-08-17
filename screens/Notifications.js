@@ -193,7 +193,16 @@ export default function Notifications() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Notify me when:</Text>
+      {notifications.length === 0 && (
+        <View style={styles.subContainer}>
+          <RegularButton onPress={() => navigation.navigate("AddNotification")}>
+            Add some notifications!
+          </RegularButton>
+        </View>
+      )}
+      {notifications.length > 0 && (
+        <Text style={styles.text}>Notify me when:</Text>
+      )}
       <FlatList
         data={notifications}
         renderItem={({ item }) => (
@@ -202,12 +211,14 @@ export default function Notifications() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
       />
-      <RegularButton
-        onPress={switchNotificationHandler}
-        buttonStyle={styles.buttonStyle}
-      >
-        {isActive ? "Turn off Notifications" : "Turn on Notifications"}
-      </RegularButton>
+      {notifications.length > 0 && (
+        <RegularButton
+          onPress={switchNotificationHandler}
+          buttonStyle={styles.buttonStyle}
+        >
+          {isActive ? "Turn off Notifications" : "Turn on Notifications"}
+        </RegularButton>
+      )}
     </View>
   );
 }
@@ -217,6 +228,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: colors.thirdTheme,
+  },
+  subContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   text: {
     fontSize: textSizes.medium,
