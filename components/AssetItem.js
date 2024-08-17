@@ -38,8 +38,14 @@ export default function AssetItem({
         style={styles.input}
         onChangeText={handleChangeAmount}
       />
-      <Pressable onPress={toggleModal}>
-        <View style={styles.currencyButton}>
+      <Pressable
+        onPress={toggleModal}
+        style={({ pressed }) => [
+          styles.button,
+          pressed && styles.pressedButton,
+        ]}
+      >
+        <View style={styles.buttonContent}>
           <Text>{currency}</Text>
           <MaterialIcons name="mode-edit" size={24} color="black" />
         </View>
@@ -71,8 +77,10 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingVertical: 10,
   },
+  button: {},
+  pressedButton: { opacity: 0.5 },
 
-  currencyButton: {
+  buttonContent: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.buttonBackground,
