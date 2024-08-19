@@ -6,7 +6,6 @@
 
 - Camera use (added by Qianyi Fu)
 - Notification (added by Liting Zhou)
-- Final styling and coloring (both)
 
 #### 2. Current state of the application
 
@@ -28,6 +27,16 @@ Login user can use these functions:
 - add/edit transaction history
 - add/edit notifications
 
+All required functionalities are implemented.
+
+#### 3. Use case of Notification
+
+For example, a user wants to get notified when USD to CNY exchange rate exceeds 7.2. After the user sets up and turns on notifications, our app will check the currency exchange rates every 20 seconds (for demonstration, in production the checking interval would be longer) and send a local notification if the rate exceeds the threshold.
+
+#### 4. Demo
+
+#### 5. Screenshots
+
 ### Iteration 2 🚀
 
 #### 1. Functions added in this iteration
@@ -37,8 +46,6 @@ Login user can use these functions:
 - External API use (already added in Iteration 1)
 
 #### 2. Firebase rules
-
-#### 3. Screenshots
 
 ```
 rules_version = '2';
