@@ -63,7 +63,7 @@ export default function Notifications() {
         await clearIntervals();
         //then schedule new intervals
         const ids = notificationsItems.map((notification) => {
-          const id = setInterval(() => checkAndNotify(notification), 30000);
+          const id = setInterval(() => checkAndNotify(notification), 20000); //20 seconds
           return id;
         });
         console.log("Notifications.js 69, ids: ", ids);

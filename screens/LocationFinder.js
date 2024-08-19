@@ -7,6 +7,7 @@ import {
   Alert,
   Button,
   Linking,
+  Platform,
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
@@ -72,8 +73,11 @@ export default function LocationFinder() {
 
   // open google maps and locate accordingly, when a marker is clicked
   const openGoogleMaps = (lat, lng) => {
+    console.log("LocationFinder.js 75, open google maps");
     const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-    Linking.openURL(url);
+    Linking.openURL(url).catch((err) =>
+      console.error("An error occurred when opening google maps", err)
+    );
   };
 
   // show loading indicator
@@ -120,15 +124,17 @@ export default function LocationFinder() {
                       {place.name}
                     </CustomText>
                     <Text>{place.vicinity}</Text>
-                    <Button
-                      title="Open in Google Maps"
-                      onPress={() =>
-                        openGoogleMaps(
-                          place.geometry.location.lat,
-                          place.geometry.location.lng
-                        )
-                      }
-                    />
+                    {Platform.OS === "ios" && (
+                      <Button
+                        title="Open in Google Maps"
+                        onPress={() =>
+                          openGoogleMaps(
+                            place.geometry.location.lat,
+                            place.geometry.location.lng
+                          )
+                        }
+                      />
+                    )}
                   </View>
                 </Callout>
               </Marker>
