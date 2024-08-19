@@ -1,5 +1,33 @@
 ### Qianyi Fu, Liting Zhou
 
+### Iteration 3 🚀
+
+#### 1. Functions added in this iteration
+
+- Camera use (added by Qianyi Fu)
+- Notification (added by Liting Zhou)
+- Final styling and coloring (both)
+
+#### 2. Current state of the application
+
+Anonymous user can use these functions:
+
+- customize list of interested currencies, but cannot save
+- customize assets to see the total value, but cannot save
+- convert currencies
+- find nearby places to exchange currency
+
+Login user can use these functions:
+
+- customize list of interested currencies and save
+- customize assets to see the total value, and save
+- retrieve the saved data from DB
+- convert currencies
+- find nearby places to exchange currency
+- edit profile
+- add/edit transaction history
+- add/edit notifications
+
 ### Iteration 2 🚀
 
 #### 1. Functions added in this iteration
@@ -10,6 +38,8 @@
 
 #### 2. Firebase rules
 
+#### 3. Screenshots
+
 ```
 rules_version = '2';
 
@@ -18,7 +48,7 @@ service cloud.firestore {
 
     // Rules for the 'users' collection
     match /users/{userId} {
-      
+
       // Allow the authenticated user to access their own documents
       allow read, write: if request.auth != null && request.auth.uid == userId;
 
@@ -26,7 +56,7 @@ service cloud.firestore {
       match /transactions/{transactionId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
-      
+
       // Rules for subcollection 'notifications' collection within 'users'
       match /notifications/{notificationId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
@@ -65,6 +95,7 @@ Functions to be implemented:
 - Final styling and coloring
 
 #### 4. Screenshots
+
 - Locator(added in iteration 2)
 <div style="display: flex; justify-content: space-between;">
 <img src="./documents/iteration2_screenshots/locator.png" alt="Recent Rates Screen" style="width:33%;"/>
