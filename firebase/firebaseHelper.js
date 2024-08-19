@@ -95,7 +95,7 @@ export const readAssetsFromDB = async (userId, collectionName) => {
 
 // Function to write a new profile to Firestore
 export const writeProfileToDB = async (
-  { userId, name, email, photo },
+  { userId, name, email, photo, notificationStatus },
   collectionName
 ) => {
   try {
@@ -103,7 +103,11 @@ export const writeProfileToDB = async (
     const userDocRef = doc(db, collectionName, userId);
 
     // Save the profile information to the user document
-    await setDoc(userDocRef, { name, email, photo }, { merge: true });
+    await setDoc(
+      userDocRef,
+      { name, email, photo, notificationStatus },
+      { merge: true }
+    );
 
     console.log("Profile saved successfully");
   } catch (error) {
@@ -145,6 +149,7 @@ export const readProfileFromDB = async (userId, collectionName) => {
         name: data.name || "",
         email: data.email || "",
         photo: data.photo || null,
+        notificationStatus: data.notificationStatus || false,
       };
     } else {
       console.log("No such document!");
@@ -281,5 +286,26 @@ export const updateNotificationToDB = async (userId, notification) => {
     await updateDoc(notificationRef, notification);
   } catch (error) {
     console.error("Error updating notification: ", error);
+  }
+};
+
+// updtate the notification status in the profile in DB
+export const updateNotificationStatustoDB = async (
+  userId,
+  { notificationStatus },
+  collectionName
+) => {
+  try {
+    // Reference to the user document
+    const userDocRef = doc(db, collectionName, userId);
+
+    // Update the notification status in the profile
+    await updateDoc(userDocRef, { notificationStatus });
+    console.log(
+      "firebaseHelper.js 304, Notification status updated to:",
+      notificationStatus
+    );
+  } catch (error) {
+    console.error("Error updating notification status: ", error);
   }
 };

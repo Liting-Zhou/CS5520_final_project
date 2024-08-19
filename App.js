@@ -3,6 +3,8 @@ import { View, StyleSheet, Pressable } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ExpoNotifications from "expo-notifications";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -17,6 +19,7 @@ import TransactionHistory from "./screens/TransactionHistory";
 import AddTransaction from "./screens/AddTransaction";
 import Notifications from "./screens/Notifications";
 import AddNotification from "./screens/AddNotification";
+import Welcome from "./screens/Welcome";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import ConvertButton from "./components/ConvertButton";
@@ -27,12 +30,35 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
+const MainStack = createStackNavigator();
+
+ExpoNotifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+//  clear intervals when logged out
+const clearIntervals = async () => {
+  const storedIds = await AsyncStorage.getItem("intervalIds");
+  if (storedIds) {
+    const ids = JSON.parse(storedIds);
+    ids.forEach((id) => clearInterval(id));
+    console.log("App.js 49, Intervals cleared when logged out: ", ids);
+    await AsyncStorage.removeItem("intervalIds");
+  }
+};
 
 // Logout function
 const handleLogout = async (navigation) => {
   try {
+    // clear intervals before logging out
+    await clearIntervals();
+
     await signOut(auth);
-    console.log(auth.currentUser);
+    console.log("user logged out: ", auth.currentUser);
     navigation.navigate("LogInScreen");
   } catch (error) {
     console.error("Error logging out: ", error);
@@ -76,6 +102,7 @@ function ProfileStackNavigator() {
             options={({ navigation }) => ({
               headerStyle: styles.headerStyle,
               title: "Profile",
+              headerLeft: () => null,
               headerShown: true,
               headerRight: () => (
                 <View style={{ paddingRight: 16 }}>
@@ -133,7 +160,12 @@ function ProfileStackNavigator() {
             component={Notifications}
             options={{
               title: "Notification Settings",
-              headerBackTitle: "Back",
+              headerBackImage: () => (
+                <View style={{ marginLeft: 10 }}>
+                  <Ionicons name="chevron-back" size={24} color="black" />
+                </View>
+              ),
+              headerBackTitleVisible: false,
               headerStyle: styles.headerStyle,
             }}
           />
@@ -142,7 +174,12 @@ function ProfileStackNavigator() {
             component={AddNotification}
             options={{
               title: "Add Notification",
-              headerBackTitle: "Back",
+              headerBackImage: () => (
+                <View style={{ marginLeft: 10 }}>
+                  <Ionicons name="chevron-back" size={24} color="black" />
+                </View>
+              ),
+              headerBackTitleVisible: false,
               headerStyle: styles.headerStyle,
             }}
           />
@@ -152,90 +189,105 @@ function ProfileStackNavigator() {
   );
 }
 
+function MainApp() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Rates"
+      screenOptions={{
+        headerStyle: styles.headerStyle,
+        tabBarActiveTintColor: colors.secondTheme,
+        tabBarInactiveTintColor: colors.firstTheme,
+        tabBarLabelStyle: { fontSize: textSizes.small },
+      }}
+    >
+      <Tab.Screen
+        name="Rates"
+        component={Rates}
+        options={{
+          headerTitle: "Exchange Rates",
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons
+              name="finance"
+              size={textSizes.iconSize}
+              color={focused ? colors.secondTheme : colors.firstTheme}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Assets"
+        component={Assets}
+        options={{
+          headerTitle: "Asset Management",
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons
+              name="attach-money"
+              size={textSizes.iconSize}
+              color={focused ? colors.secondTheme : colors.firstTheme}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Conversion"
+        component={Conversion}
+        options={({ navigation }) => ({
+          headerTitle: "Convert Currency",
+          tabBarButton: () => (
+            <ConvertButton onPress={() => navigation.navigate("Conversion")} />
+          ),
+        })}
+      />
+      <Tab.Screen
+        name="Finder"
+        component={LocationFinder}
+        options={{
+          headerTitle: "Nearby places to change currency",
+          headerStyle: { backgroundColor: colors.thirdTheme },
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons
+              name="location-pin"
+              size={textSizes.iconSize}
+              color={focused ? colors.secondTheme : colors.firstTheme}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileStackNavigator}
+        options={{
+          title: "Profile",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons
+              name="account"
+              size={textSizes.iconSize}
+              color={focused ? colors.secondTheme : colors.firstTheme}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <View style={styles.container}>
       <NavigationContainer>
-        <Tab.Navigator
-          initialRouteName="Rates"
-          screenOptions={{
-            headerStyle: styles.headerStyle,
-            tabBarActiveTintColor: colors.secondTheme,
-            tabBarInactiveTintColor: colors.firstTheme,
-            tabBarLabelStyle: { fontSize: textSizes.small },
-          }}
-        >
-          <Tab.Screen
-            name="Rates"
-            component={Rates}
-            options={{
-              headerTitle: "Exchange Rates",
-              tabBarIcon: ({ focused }) => (
-                <MaterialCommunityIcons
-                  name="finance"
-                  size={textSizes.iconSize}
-                  color={focused ? colors.secondTheme : colors.firstTheme}
-                />
-              ),
-            }}
+        <MainStack.Navigator initialRouteName="Welcome">
+          <MainStack.Screen
+            name="Welcome"
+            component={Welcome}
+            options={{ headerShown: false }}
           />
-          <Tab.Screen
-            name="Assets"
-            component={Assets}
-            options={{
-              headerTitle: "Asset Management",
-              tabBarIcon: ({ focused }) => (
-                <MaterialIcons
-                  name="attach-money"
-                  size={textSizes.iconSize}
-                  color={focused ? colors.secondTheme : colors.firstTheme}
-                />
-              ),
-            }}
+          <MainStack.Screen
+            name="MainApp"
+            component={MainApp}
+            options={{ headerShown: false }}
           />
-          <Tab.Screen
-            name="Conversion"
-            component={Conversion}
-            options={({ navigation }) => ({
-              headerTitle: "Convert Currency",
-              tabBarButton: () => (
-                <ConvertButton
-                  onPress={() => navigation.navigate("Conversion")}
-                />
-              ),
-            })}
-          />
-          <Tab.Screen
-            name="Finder"
-            component={LocationFinder}
-            options={{
-              headerTitle: "Nearby places to change currency",
-              headerStyle: { backgroundColor: colors.thirdTheme },
-              tabBarIcon: ({ focused }) => (
-                <MaterialIcons
-                  name="location-pin"
-                  size={textSizes.iconSize}
-                  color={focused ? colors.secondTheme : colors.firstTheme}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Profile"
-            component={ProfileStackNavigator}
-            options={{
-              title: "Profile",
-              headerShown: false,
-              tabBarIcon: ({ focused }) => (
-                <MaterialCommunityIcons
-                  name="account"
-                  size={textSizes.iconSize}
-                  color={focused ? colors.secondTheme : colors.firstTheme}
-                />
-              ),
-            }}
-          />
-        </Tab.Navigator>
+        </MainStack.Navigator>
       </NavigationContainer>
     </View>
   );

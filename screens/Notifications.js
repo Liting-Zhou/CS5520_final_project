@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ExpoNotifications from "expo-notifications";
 
 import NotificationItem from "../components/NotificationItem";
@@ -13,7 +14,11 @@ import AddButton from "../components/AddButton";
 import RegularButton from "../components/RegularButton";
 
 import { getAuth } from "firebase/auth";
-import { readNotificationsFromDB } from "../firebase/firebaseHelper";
+import {
+  readNotificationsFromDB,
+  readProfileFromDB,
+  updateNotificationStatustoDB,
+} from "../firebase/firebaseHelper";
 import { getExchangeRate } from "../helpers/RatesHelper";
 import { textSizes, colors } from "../helpers/ConstantsHelper";
 
@@ -24,10 +29,20 @@ export default function Notifications() {
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
+  const clearIntervals = async () => {
+    const storedIds = await AsyncStorage.getItem("intervalIds");
+    if (storedIds) {
+      const ids = JSON.parse(storedIds);
+      ids.forEach((id) => clearInterval(id));
+      console.log("Notifications.js 37, intervals cleared", ids);
+      await AsyncStorage.removeItem("intervalIds");
+    }
+  };
+
+  // verify permission for notifications
   const verifyPermission = async () => {
     try {
       const response = await ExpoNotifications.getPermissionsAsync();
-      // console.log("Notifications.js 30, response: ", response);
       if (response.granted) {
         return true;
       }
@@ -38,77 +53,136 @@ export default function Notifications() {
     }
   };
 
-  const scheduleNotificationHandler = async () => {
-    // if notifications are active, turn them off
-    if (isActive) {
-      setIsActive(false);
-      await ExpoNotifications.cancelAllScheduledNotificationsAsync();
-      Alert.alert("", "You have turned off the notifications.");
-      return;
-    }
-    // if notifications are not active, turn them on
-    setIsActive(true);
+  // schedule notifications
+  const scheduleNotifications = async (notificationsItems) => {
+    console.log("Notifications.js 58, scheduling notifications");
     try {
       const hasPermission = await verifyPermission();
-      // console.log("Notifications.js 53, hasPermission: ", hasPermission);
       if (hasPermission) {
-        for (const notification of notifications) {
-          // get the current exchange rate
-          const exchangeRate = await getExchangeRate({
-            from: notification.from,
-            to: notification.to,
-          });
-          const exchangeRateNumber = parseFloat(exchangeRate);
-          const thresholdNumber = parseFloat(notification.threshold);
-          // if the exchange rate exceeds the threshold, schedule a notification
-          if (exchangeRateNumber > thresholdNumber) {
-            await ExpoNotifications.scheduleNotificationAsync({
-              content: {
-                title: "Exchange Rate Alert",
-                body: `${notification.from} based on ${
-                  notification.to
-                } is now ${exchangeRateNumber.toFixed(
-                  4
-                )}, exceeding ${thresholdNumber.toFixed(4)}.`,
-              },
-              trigger: {
-                seconds: 60,
-                repeats: true,
-              },
-            });
-          }
-        }
+        //first clear all intervals
+        await clearIntervals();
+        //then schedule new intervals
+        const ids = notificationsItems.map((notification) => {
+          const id = setInterval(() => checkAndNotify(notification), 20000); //20 seconds
+          return id;
+        });
+        console.log("Notifications.js 69, ids: ", ids);
+        await AsyncStorage.setItem("intervalIds", JSON.stringify(ids));
       }
     } catch (err) {
       console.error("schedule notification error: ", err);
     }
   };
 
-  // fetch notifications from the database
+  // helper function to schedule notifications
+  const checkAndNotify = async (notification) => {
+    try {
+      const exchangeRate = await getExchangeRate({
+        from: notification.from,
+        to: notification.to,
+      });
+      const exchangeRateNumber = parseFloat(exchangeRate);
+      const thresholdNumber = parseFloat(notification.threshold);
+
+      if (exchangeRateNumber > thresholdNumber) {
+        await ExpoNotifications.scheduleNotificationAsync({
+          content: {
+            title: "Exchange Rate Alert",
+            body: `${notification.from} based on ${
+              notification.to
+            } is now ${exchangeRateNumber.toFixed(
+              4
+            )}, exceeding ${thresholdNumber.toFixed(4)}.`,
+          },
+          trigger: null,
+        });
+        console.log("Notifications.js 99, notification scheduled");
+      }
+    } catch (error) {
+      console.error("Error checking and notify: ", error);
+    }
+  };
+
+  const switchNotificationHandler = async () => {
+    console.log("Notifications.js 107, isActive: ", isActive);
+    if (isActive) {
+      setIsActive(false);
+      await updateNotificationStatustoDB(
+        userId,
+        { notificationStatus: false },
+        "users"
+      );
+      await clearIntervals();
+      console.log("Notifications.js 115, intervals cleared when switching off");
+      Alert.alert("", "You have turned off the notifications.");
+    } else {
+      setIsActive(true);
+      await updateNotificationStatustoDB(
+        userId,
+        { notificationStatus: true },
+        "users"
+      );
+      await scheduleNotifications(notifications);
+    }
+  };
+
   const fetchNotifications = async () => {
     try {
       if (userId) {
         const fetchedNotifications = await readNotificationsFromDB(userId);
         setNotifications(fetchedNotifications);
+        return fetchedNotifications;
       }
     } catch (error) {
-      console.error("Error fetching notifications: ", error);
+      console.error("Error fetching notification items: ", error);
+      return [];
     }
   };
 
-  // fetch notifications from DB when the component mounts
+  const configuration = async () => {
+    const fetchedNotifications = await fetchNotifications();
+    try {
+      if (userId) {
+        const results = await readProfileFromDB(userId, "users");
+        const notificationStatusInDB = results.notificationStatus;
+        console.log(
+          "Notifications.js 148, notificationStatus in DB: ",
+          notificationStatusInDB
+        );
+        if (notificationStatusInDB) {
+          setIsActive(() => true);
+          const storedIds = await AsyncStorage.getItem("intervalIds");
+          console.log("Notifications.js 155, storedIds: ", storedIds);
+          if (storedIds) {
+            clearIntervals();
+          }
+          await scheduleNotifications(fetchedNotifications);
+        }
+      }
+    } catch (error) {
+      console.error("Error configuring component: ", error);
+    }
+  };
+
+  // configure the component
   useEffect(() => {
-    fetchNotifications();
+    configuration();
   }, []);
 
-  // fetch notifications when the screen comes into focus
+  // when notifications change, update them
   useFocusEffect(
     useCallback(() => {
       fetchNotifications();
     }, [userId])
   );
 
-  // headerRight button to add a notification
+  // when notifications change, reschedule them
+  useEffect(() => {
+    if (isActive) {
+      scheduleNotifications(notifications);
+    }
+  }, [notifications]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -119,7 +193,16 @@ export default function Notifications() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Notify me when:</Text>
+      {notifications.length === 0 && (
+        <View style={styles.subContainer}>
+          <RegularButton onPress={() => navigation.navigate("AddNotification")}>
+            Add some notifications!
+          </RegularButton>
+        </View>
+      )}
+      {notifications.length > 0 && (
+        <Text style={styles.text}>Notify me when:</Text>
+      )}
       <FlatList
         data={notifications}
         renderItem={({ item }) => (
@@ -128,12 +211,14 @@ export default function Notifications() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
       />
-      <RegularButton
-        onPress={scheduleNotificationHandler}
-        buttonStyle={styles.buttonStyle}
-      >
-        {isActive ? "Turn off Notifications" : "Turn on Notifications"}
-      </RegularButton>
+      {notifications.length > 0 && (
+        <RegularButton
+          onPress={switchNotificationHandler}
+          buttonStyle={styles.buttonStyle}
+        >
+          {isActive ? "Turn off Notifications" : "Turn on Notifications"}
+        </RegularButton>
+      )}
     </View>
   );
 }
@@ -143,6 +228,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: colors.thirdTheme,
+  },
+  subContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   text: {
     fontSize: textSizes.medium,

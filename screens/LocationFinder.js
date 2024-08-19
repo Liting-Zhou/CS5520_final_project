@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, Alert } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  Alert,
+  Button,
+  Linking,
+  Platform,
+} from "react-native";
+import MapView, { Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from "axios";
+import CustomText from "../components/CustomText";
 import { colors } from "../helpers/ConstantsHelper";
 import { mapsApiKey } from "@env";
 
@@ -61,6 +71,15 @@ export default function LocationFinder() {
     getLocations();
   }, []);
 
+  // open google maps and locate accordingly, when a marker is clicked
+  const openGoogleMaps = (lat, lng) => {
+    console.log("LocationFinder.js 75, open google maps");
+    const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    Linking.openURL(url).catch((err) =>
+      console.error("An error occurred when opening google maps", err)
+    );
+  };
+
   // show loading indicator
   if (loading) {
     return (
@@ -98,9 +117,27 @@ export default function LocationFinder() {
                   latitude: place.geometry.location.lat,
                   longitude: place.geometry.location.lng,
                 }}
-                title={place.name}
-                description={place.vicinity}
-              />
+              >
+                <Callout>
+                  <View>
+                    <CustomText style={{ marginBottom: 5 }}>
+                      {place.name}
+                    </CustomText>
+                    <Text>{place.vicinity}</Text>
+                    {Platform.OS === "ios" && (
+                      <Button
+                        title="Open in Google Maps"
+                        onPress={() =>
+                          openGoogleMaps(
+                            place.geometry.location.lat,
+                            place.geometry.location.lng
+                          )
+                        }
+                      />
+                    )}
+                  </View>
+                </Callout>
+              </Marker>
             ))}
         </MapView>
       ) : (

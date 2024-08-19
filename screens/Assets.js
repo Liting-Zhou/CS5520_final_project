@@ -121,7 +121,6 @@ export default function Assets() {
 
   // if loggin, retrieve the customized assets from the database
   const handleReset = () => {
-    console.log("Resetting assets");
     if (currentUser === null) {
       setBase(defaultBase);
       setAssets(defaultAssets);

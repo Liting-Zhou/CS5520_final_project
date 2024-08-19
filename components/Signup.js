@@ -1,73 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { writeProfileToDB } from '../firebase/firebaseHelper';
-import RegularButton from "./RegularButton"; 
-import TextInputBox from "./TextInputBox"; 
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { writeProfileToDB } from "../firebase/firebaseHelper";
+import RegularButton from "./RegularButton";
+import TextInputBox from "./TextInputBox";
 import { colors } from "../helpers/ConstantsHelper";
 
 const Signup = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordStrength, setPasswordStrength] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // New state for error messages
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordStrength, setPasswordStrength] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // New state for error messages
 
   useEffect(() => {
     if (password.length >= 6 && password.length < 10) {
-      setPasswordStrength('Password strength: Weak');
+      setPasswordStrength("Password strength: Weak");
     } else if (password.length >= 10 && !/[A-Z]/.test(password)) {
-      setPasswordStrength('Password strength: Medium');
+      setPasswordStrength("Password strength: Medium");
     } else if (password.length >= 10 && /[A-Z]/.test(password)) {
-      setPasswordStrength('Password strength: Strong');
+      setPasswordStrength("Password strength: Strong");
     } else {
-      setPasswordStrength('');
+      setPasswordStrength("");
     }
   }, [password]);
 
   const handleSignup = async () => {
-    setErrorMessage(''); 
+    setErrorMessage("");
     if (!email.length) {
-      setErrorMessage('Email is required');
+      setErrorMessage("Email is required");
       return;
     }
     if (!password.length) {
-      setErrorMessage('Password is required');
+      setErrorMessage("Password is required");
       return;
     }
     if (password !== confirmPassword) {
-      setErrorMessage('Passwords do not match');
+      setErrorMessage("Passwords do not match");
       return;
     }
 
     try {
       const auth = getAuth();
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
       const userId = user.uid;
 
       await writeProfileToDB(
         {
           userId,
-          name: "Username", 
+          name: "Username",
           email,
-          photo: null 
+          photo: null,
+          notificationStatus: false,
         },
-        "users" 
+        "users"
       );
 
-      navigation.navigate('ProfileScreen');
+      navigation.navigate("ProfileScreen");
     } catch (e) {
-      let message = 'An error occurred. Please try again.';
+      let message = "An error occurred. Please try again.";
       switch (e.code) {
-        case 'auth/invalid-email':
-          message = 'Invalid email address';
+        case "auth/invalid-email":
+          message = "Invalid email address";
           break;
-        case 'auth/email-already-in-use':
-          message = 'Email is already in use';
+        case "auth/email-already-in-use":
+          message = "Email is already in use";
           break;
-        case 'auth/weak-password':
-          message = 'Password should be at least 6 characters';
+        case "auth/weak-password":
+          message = "Password should be at least 6 characters";
           break;
         default:
           message = e.message;
@@ -94,7 +99,9 @@ const Signup = ({ navigation }) => {
         placeholder="Enter your password"
         secureTextEntry={true}
       />
-      {passwordStrength ? <Text style={styles.passwordStrength}>{passwordStrength}</Text> : null}
+      {passwordStrength ? (
+        <Text style={styles.passwordStrength}>{passwordStrength}</Text>
+      ) : null}
 
       <TextInputBox
         value={confirmPassword}
@@ -103,13 +110,13 @@ const Signup = ({ navigation }) => {
         secureTextEntry={true}
       />
 
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+      {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
 
-      <RegularButton onPress={handleSignup}>
-        Sign Up
-      </RegularButton>
+      <RegularButton onPress={handleSignup}>Sign Up</RegularButton>
 
-      <Pressable onPress={() => navigation.replace('LogInScreen')}>
+      <Pressable onPress={() => navigation.replace("LogInScreen")}>
         <Text style={styles.signInText}>Already Registered? Log in</Text>
       </Pressable>
     </View>

@@ -1,11 +1,6 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
 import React, { useState } from "react";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import DropDownMenu from "../components/DropDownMenu";
 import Input from "../components/Input";
@@ -63,6 +58,12 @@ export default function Conversion() {
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
       <View style={styles.container}>
+        <FontAwesome6
+          name="money-bill-transfer"
+          size={100}
+          color={colors.transparentGray}
+          style={styles.symbol}
+        />
         <View style={[styles.dropdownContainer, { zIndex: 2000 }]}>
           <CustomText style={styles.label}>From: </CustomText>
           <DropDownMenu
@@ -113,7 +114,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
     backgroundColor: colors.thirdTheme,
   },
   dropdownContainer: {
@@ -135,5 +135,9 @@ const styles = StyleSheet.create({
   },
   label: {
     marginRight: 10,
+  },
+  symbol: {
+    marginTop: 80,
+    marginBottom: 40,
   },
 });
