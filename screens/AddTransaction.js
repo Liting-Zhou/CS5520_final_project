@@ -71,6 +71,7 @@ export default function AddTransaction() {
             (transaction) => transaction.id === transactionId
           );
 
+          // If transaction details are found, update the state variables
           if (transactionDetails) {
             setDescription(transactionDetails.description);
             setLocation(transactionDetails.location);
@@ -80,6 +81,7 @@ export default function AddTransaction() {
             setFromAmount(transactionDetails.fromAmount);
             setToAmount(transactionDetails.toAmount);
             if (transactionDetails.imageUri) {
+              // Fetch the full URL of the image from Firebase Storage
               const imageRef = ref(storage, transactionDetails.imageUri);
               const imageUrl = await getDownloadURL(imageRef);
               setImageUri(imageUrl);
@@ -173,6 +175,7 @@ export default function AddTransaction() {
     }
   };
 
+  // Function to delete the transaction
   const handleDeleteTransaction = async () => {
     Alert.alert(
       "Confirm Delete",

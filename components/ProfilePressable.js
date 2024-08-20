@@ -3,6 +3,7 @@ import { StyleSheet, View, Pressable } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 
+// this is a reusable component for the profile screen to navigate to different screens
 const ProfilePressable = ({ onPress, children }) => {
   return (
     <Pressable

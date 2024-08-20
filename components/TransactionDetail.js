@@ -3,9 +3,11 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 
+// This component displays the details of a transaction
 export default function TransactionDetail({ transaction }) {
   const navigation = useNavigation();
 
+  // Navigate to the AddTransaction screen when the user presses on a transaction
   const handlePress = () => {
     navigation.navigate("AddTransaction", { transaction });
   };

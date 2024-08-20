@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+// this component is used in the Header component to navigate back to the previous screen
 const ChevronBackButton = ({ color = "black", size = 24, style = {}, onPress }) => {
   return (
     <Pressable
