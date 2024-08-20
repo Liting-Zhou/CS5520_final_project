@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, Alert } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ExpoNotifications from "expo-notifications";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import ChevronBackButton from "./components/ChevronBackButton";
 
 import Rates from "./screens/Rates";
 import Conversion from "./screens/Conversion";
@@ -53,16 +53,31 @@ const clearIntervals = async () => {
 
 // Logout function
 const handleLogout = async (navigation) => {
-  try {
-    // clear intervals before logging out
-    await clearIntervals();
+  Alert.alert(
+    "Confirm Logout",
+    "Are you sure you want to log out?",
+    [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Logout cancelled"),
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: async () => {
+          try {
+            await clearIntervals();
 
-    await signOut(auth);
-    console.log("user logged out: ", auth.currentUser);
-    navigation.navigate("LogInScreen");
-  } catch (error) {
-    console.error("Error logging out: ", error);
-  }
+            await signOut(auth);
+            navigation.navigate("LogInScreen");
+          } catch (error) {
+            console.error("Error logging out: ", error);
+          }
+        },
+      },
+    ],
+    { cancelable: false }
+  );
 };
 
 // ProfileStackNavigator is a stack navigator for the Profile screen
@@ -106,7 +121,15 @@ function ProfileStackNavigator() {
               headerShown: true,
               headerRight: () => (
                 <View style={{ paddingRight: 16 }}>
-                  <Pressable onPress={() => handleLogout(navigation)}>
+                  <Pressable
+                    onPress={() => handleLogout(navigation)}
+                    style={({ pressed }) => [
+                      {
+                        opacity: pressed ? 0.5 : 1,
+                      },
+                    ]}
+                    android_ripple={{ color: "lightgray" }}
+                  >
                     <MaterialIcons name="logout" size={24} color="black" />
                   </Pressable>
                 </View>
@@ -116,72 +139,62 @@ function ProfileStackNavigator() {
           <ProfileStack.Screen
             name="ProfileDetail"
             component={ProfileDetail}
-            options={{
+            options={({ navigation }) => ({
               title: "Edit Profile",
               headerBackImage: () => (
-                <View style={{ marginLeft: 10 }}>
-                  <Ionicons name="chevron-back" size={24} color="black" />
-                </View>
+                <ChevronBackButton onPress={() => navigation.goBack()} />
               ),
               headerBackTitleVisible: false,
               headerStyle: styles.headerStyle,
-            }}
+            })}
           />
           <ProfileStack.Screen
             name="TransactionHistory"
             component={TransactionHistory}
-            options={{
+            options={({ navigation }) => ({
               title: "Transaction History",
               headerBackImage: () => (
-                <View style={{ marginLeft: 10 }}>
-                  <Ionicons name="chevron-back" size={24} color="black" />
-                </View>
+                <ChevronBackButton onPress={() => navigation.goBack()} />
               ),
               headerBackTitleVisible: false,
               headerStyle: styles.headerStyle,
-            }}
+            })}
           />
           <ProfileStack.Screen
             name="AddTransaction"
             component={AddTransaction}
-            options={{
+            options={({ navigation }) => ({
               title: "Add Transaction",
               headerBackImage: () => (
-                <View style={{ marginLeft: 10 }}>
-                  <Ionicons name="chevron-back" size={24} color="black" />
-                </View>
+                <ChevronBackButton onPress={() => navigation.goBack()} />
               ),
               headerBackTitleVisible: false,
               headerStyle: styles.headerStyle,
-            }}
+            })}
           />
           <ProfileStack.Screen
             name="Notifications"
             component={Notifications}
-            options={{
+            options={({ navigation }) => ({
               title: "Notification Settings",
               headerBackImage: () => (
-                <View style={{ marginLeft: 10 }}>
-                  <Ionicons name="chevron-back" size={24} color="black" />
-                </View>
+                <ChevronBackButton onPress={() => navigation.goBack()} />
               ),
               headerBackTitleVisible: false,
               headerStyle: styles.headerStyle,
-            }}
+            })}
           />
           <ProfileStack.Screen
             name="AddNotification"
             component={AddNotification}
-            options={{
+            options={({ navigation }) => ({
               title: "Add Notification",
               headerBackImage: () => (
-                <View style={{ marginLeft: 10 }}>
-                  <Ionicons name="chevron-back" size={24} color="black" />
-                </View>
+                <ChevronBackButton onPress={() => navigation.goBack()} />
               ),
               headerBackTitleVisible: false,
               headerStyle: styles.headerStyle,
-            }}
+            })}
           />
         </>
       )}
