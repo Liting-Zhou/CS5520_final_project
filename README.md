@@ -39,6 +39,52 @@ https://youtu.be/mCqeC1i0Vqs
 
 #### 5. Screenshots
 
+- Notification(added in iteration 3)
+<div style="display: flex; justify-content: space-between;">
+  <img src="./documents/iteration3_screenshots/notification1.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration3_screenshots/notification3.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration3_screenshots/notification2.png" alt="" style="width:33%"/>
+</div>
+
+- Camera use in profile and transaction(added in iteration 3)
+<div style="display: flex;">
+<img src="./documents/iteration3_screenshots/profile_camera.png" alt="Recent Rates Screen" style="width:33%;margin-right:3px;"/> 
+<img src="./documents/iteration3_screenshots/transaction_camera.png" alt="Recent Rates Screen" style="width:33%;"/>
+</div>
+
+- Locator
+<div style="display: flex; justify-content: space-between;">
+<img src="./documents/iteration3_screenshots/finder.png" alt="Recent Rates Screen" style="width:33%;"/>
+</div>
+
+- Log in and Sign up
+<div style="display: flex;">
+<img src="./documents/iteration2_screenshots/login.png" alt="Recent Rates Screen" style="width:33%;margin-right:3px;"/> 
+<img src="./documents/iteration2_screenshots/signup.png" alt="Recent Rates Screen" style="width:33%;"/>
+</div>
+
+- Recent Rates Screen
+- Asset Management Screen
+- Convert Currency Screen
+<div style="display: flex; justify-content: space-between;">
+  <img src="./documents/iteration3_screenshots/rates.png" alt="Recent Rates Screen" style="width:33%;"/>
+  <img src="./documents/iteration3_screenshots/assets.png" alt="Assets Management Screen" style="width:33%;"/>
+  <img src="./documents/iteration3_screenshots/convert.png" alt="Convert Currency Screen" style="width:33%;"/>
+</div>
+
+- Profile Screen
+<div style="display: flex;">
+  <img src="./documents/iteration2_screenshots/profile.png" alt="" style="width:33%;  margin-right:3px;"/>
+  <img src="./documents/iteration2_screenshots/profileDetail.png" alt="" style="width:33%"/>
+</div>
+
+- Transaction Screen
+<div style="display: flex; justify-content: space-between;">
+  <img src="./documents/iteration2_screenshots/addTransaction.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration2_screenshots/editTransaction.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration2_screenshots/transactionHistory.png" alt="" style="width:33%"/>
+</div>
+
 ### Iteration 2 🚀
 
 #### 1. Functions added in this iteration
@@ -135,9 +181,9 @@ Functions to be implemented:
 
 - Transaction Screen
 <div style="display: flex; justify-content: space-between;">
-  <img src="./documents/iteration2_screenshots/addTransaction.png" alt="" style="width:33%"/>
-  <img src="./documents/iteration2_screenshots/editTransaction.png" alt="" style="width:33%"/>
-  <img src="./documents/iteration2_screenshots/transactionHistory.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration3_screenshots/transaction1.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration3_screenshots/transaction2.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration3_screenshots/transaction4.png" alt="" style="width:33%"/>
 </div>
 
 ### Iteration 1 🚀
