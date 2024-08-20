@@ -9,6 +9,8 @@
 
 #### 2. Current state of the application
 
+All required features have been implemented.
+
 Anonymous user can use these functions:
 
 - customize list of interested currencies, but cannot save
@@ -27,13 +29,13 @@ Login user can use these functions:
 - add/edit transaction history
 - add/edit notifications
 
-All required functionalities are implemented.
-
-#### 3. Use case of Notification
+#### 3. Use case of Notifications
 
 For example, a user wants to get notified when USD to CNY exchange rate exceeds 7.2. After the user sets up and turns on notifications, our app will check the currency exchange rates every 20 seconds (for demonstration, in production the checking interval would be longer) and send a local notification if the rate exceeds the threshold.
 
 #### 4. Demo
+
+https://youtu.be/mCqeC1i0Vqs
 
 #### 5. Screenshots
 
