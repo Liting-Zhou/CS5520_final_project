@@ -22,19 +22,19 @@ export default function Conversion() {
   // select the currency to convert from
   const onSelectFrom = (rate) => {
     setFrom(rate);
-    // console.log("Conversion.js 17, from", rate);
+    // console.log("Conversion.js 25, from", rate);
   };
 
   // select the currency to convert to
   const onSelectTo = (rate) => {
     setTo(rate);
-    // console.log("Conversion.js 23, to", rate);
+    // console.log("Conversion.js 31, to", rate);
   };
 
   // input the amount to convert
   const handleAmount = (amount) => {
     setAmount(amount);
-    // console.log("Conversion.js 29, amount", amount);
+    // console.log("Conversion.js 37, amount", amount);
   };
 
   // when the user presses the submit button, call the convert function to get the result
@@ -46,6 +46,7 @@ export default function Conversion() {
     }
   };
 
+  // close the dropdowns when the user presses outside
   const handleOutsidePress = () => {
     if (openFrom) {
       setOpenFrom(false);

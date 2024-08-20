@@ -6,6 +6,7 @@ import { colors } from "../helpers/ConstantsHelper";
 import CustomModal from "./CustomModal";
 import TrashBinButton from "./TrashBinButton";
 
+// this component is used in the Assets component
 // the item has a currency and an amount, and a delete button
 export default function AssetItem({
   id,

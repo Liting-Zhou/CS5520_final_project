@@ -1,6 +1,15 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Pressable, Modal, Platform } from "react-native";
-import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Pressable,
+  Modal,
+  Platform,
+} from "react-native";
+import DateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
 import { colors } from "../helpers/ConstantsHelper";
 
 const DateTimePickerComponent = ({ date, setDate }) => {
@@ -35,7 +44,6 @@ const DateTimePickerComponent = ({ date, setDate }) => {
     }
   };
 
-
   // This function is called when the user clicks outside the date picker
   // It closes the date picker and resets the date state to the previous value
   const handleOutsideClick = () => {
@@ -48,7 +56,9 @@ const DateTimePickerComponent = ({ date, setDate }) => {
       <Pressable onPress={showMode}>
         <View pointerEvents="none">
           <TextInput
-            value={date ? date.toLocaleDateString() : ""}
+            value={
+              date ? date.toLocaleDateString() : tempDate.toLocaleDateString()
+            }
             placeholder="Select date"
             editable={false}
             style={styles.input}

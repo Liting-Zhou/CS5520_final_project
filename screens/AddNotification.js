@@ -34,7 +34,7 @@ export default function AddNotification() {
   useLayoutEffect(() => {
     // if route.params exists, set the title to "Edit" and add a delete button
     if (route.params) {
-      // console.log("AddNotification.js 38, route.params: ", route.params);
+      // console.log("AddNotification.js 37, route.params: ", route.params);
       navigation.setOptions({
         title: "Edit Notification",
         headerRight: () => <TrashBinButton onPress={handleDelete} />,
@@ -68,7 +68,7 @@ export default function AddNotification() {
     if (positiveNumberChecker(threshold)) {
       // check if we are in edit mode
       const isEditMode = !!route.params?.item?.id;
-      // console.log("AddNotification.js 72, isEditMode: ", isEditMode);
+      // console.log("AddNotification.js 71, isEditMode: ", isEditMode);
 
       try {
         if (isEditMode) {
@@ -129,6 +129,7 @@ export default function AddNotification() {
     );
   };
 
+  // close the dropdowns when the user presses outside
   const handleOutsidePress = () => {
     if (openFrom) {
       setOpenFrom(false);

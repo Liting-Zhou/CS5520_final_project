@@ -36,7 +36,7 @@ export default function LocationFinder() {
       try {
         // check if permission is granted
         const hasPermission = await verifyPermission();
-        // console.log("LocationFinder.js 29, hasPermission", hasPermission);
+        // console.log("LocationFinder.js 39, hasPermission", hasPermission);
         if (!hasPermission) {
           Alert.alert(
             "Permission not granted",
@@ -48,7 +48,7 @@ export default function LocationFinder() {
 
         // get current location
         const location = await Location.getCurrentPositionAsync({});
-        // console.log("LocationFinder.js 41, location", location);
+        // console.log("LocationFinder.js 51, location", location);
         setLocation({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
@@ -57,12 +57,12 @@ export default function LocationFinder() {
         // set loading to false and show the map
         setLoading(false);
 
-        // fetch nearby currency exchange places
+        // use the nearby search API to fetch nearby currency exchange places
         const apiKey = mapsApiKey;
         const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=currency+exchange&location=${location.coords.latitude},${location.coords.longitude}&radius=1500&key=${apiKey}`;
 
         const response = await axios.get(url);
-        // console.log("LocationFinder.js 55, fetch places from API");
+        // console.log("LocationFinder.js 65, fetch places from API");
         setExchangePlaces(response.data.results);
       } catch (error) {
         console.error("get locations error: ", error);
@@ -73,7 +73,7 @@ export default function LocationFinder() {
 
   // open google maps and locate accordingly, when a marker is clicked
   const openGoogleMaps = (lat, lng) => {
-    console.log("LocationFinder.js 75, open google maps");
+    // console.log("LocationFinder.js 76, open google maps");
     const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
     Linking.openURL(url).catch((err) =>
       console.error("An error occurred when opening google maps", err)

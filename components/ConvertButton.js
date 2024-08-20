@@ -5,6 +5,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
+// This is a special button used in the middle of the bottom tab navigator
 export default function ConvertButton({ onPress }) {
   const isFocused = useIsFocused();
 

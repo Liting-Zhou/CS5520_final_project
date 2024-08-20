@@ -29,12 +29,13 @@ export default function Notifications() {
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
+  // clear all intervals
   const clearIntervals = async () => {
     const storedIds = await AsyncStorage.getItem("intervalIds");
     if (storedIds) {
       const ids = JSON.parse(storedIds);
       ids.forEach((id) => clearInterval(id));
-      console.log("Notifications.js 37, intervals cleared", ids);
+      console.log("Notifications.js 38, intervals cleared", ids);
       await AsyncStorage.removeItem("intervalIds");
     }
   };
@@ -55,7 +56,7 @@ export default function Notifications() {
 
   // schedule notifications
   const scheduleNotifications = async (notificationsItems) => {
-    console.log("Notifications.js 58, scheduling notifications");
+    console.log("Notifications.js 59, scheduling notifications");
     try {
       const hasPermission = await verifyPermission();
       if (hasPermission) {
@@ -66,7 +67,7 @@ export default function Notifications() {
           const id = setInterval(() => checkAndNotify(notification), 20000); //20 seconds
           return id;
         });
-        console.log("Notifications.js 69, ids: ", ids);
+        console.log("Notifications.js 70, ids: ", ids);
         await AsyncStorage.setItem("intervalIds", JSON.stringify(ids));
       }
     } catch (err) {
@@ -96,7 +97,7 @@ export default function Notifications() {
           },
           trigger: null,
         });
-        console.log("Notifications.js 99, notification scheduled");
+        console.log("Notifications.js 100, notification scheduled");
       }
     } catch (error) {
       console.error("Error checking and notify: ", error);
@@ -104,7 +105,7 @@ export default function Notifications() {
   };
 
   const switchNotificationHandler = async () => {
-    console.log("Notifications.js 107, isActive: ", isActive);
+    // console.log("Notifications.js 108, isActive: ", isActive);
     if (isActive) {
       setIsActive(false);
       await updateNotificationStatustoDB(
@@ -113,7 +114,7 @@ export default function Notifications() {
         "users"
       );
       await clearIntervals();
-      console.log("Notifications.js 115, intervals cleared when switching off");
+      // console.log("Notifications.js 117, intervals cleared when switching off");
       Alert.alert("", "You have turned off the notifications.");
     } else {
       setIsActive(true);
@@ -126,6 +127,7 @@ export default function Notifications() {
     }
   };
 
+  // fetch notifications from database
   const fetchNotifications = async () => {
     try {
       if (userId) {
@@ -139,6 +141,7 @@ export default function Notifications() {
     }
   };
 
+  // configure the component
   const configuration = async () => {
     const fetchedNotifications = await fetchNotifications();
     try {
@@ -146,13 +149,13 @@ export default function Notifications() {
         const results = await readProfileFromDB(userId, "users");
         const notificationStatusInDB = results.notificationStatus;
         console.log(
-          "Notifications.js 148, notificationStatus in DB: ",
+          // "Notifications.js 152, notificationStatus in DB: ",
           notificationStatusInDB
         );
         if (notificationStatusInDB) {
           setIsActive(() => true);
           const storedIds = await AsyncStorage.getItem("intervalIds");
-          console.log("Notifications.js 155, storedIds: ", storedIds);
+          console.log("Notifications.js 158, storedIds: ", storedIds);
           if (storedIds) {
             clearIntervals();
           }
@@ -164,7 +167,7 @@ export default function Notifications() {
     }
   };
 
-  // configure the component
+  // configure the component when it mounts
   useEffect(() => {
     configuration();
   }, []);
@@ -183,6 +186,7 @@ export default function Notifications() {
     }
   }, [notifications]);
 
+  // set the headerRight button
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

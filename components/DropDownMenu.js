@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { currencies, colors } from "../helpers/ConstantsHelper";
 
+// This is a dropdown menu which customize the DropDownPicker
 export default function DropDownMenu({
   base,
   onSelect,
@@ -11,7 +12,6 @@ export default function DropDownMenu({
   setOpen,
   onOpen,
 }) {
-  // const [open, setOpen] = useState(false);
   const [value, setValue] = useState(base);
   const [items, setItems] = useState(currencies);
 

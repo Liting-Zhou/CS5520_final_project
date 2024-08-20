@@ -3,6 +3,7 @@ import React from "react";
 import TrashBinButton from "./TrashBinButton";
 import CustomText from "./CustomText";
 
+// this component is used in the Rates component
 // the item has a currency and a rate, and a delete button
 export default function RateItem({ item, onPress }) {
   return (

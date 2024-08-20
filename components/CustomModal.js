@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.thirdTheme,
     padding: 20,
     borderRadius: 10,
-    // justifyContent: "center",
     alignItems: "center",
   },
   deleteButtonInModal: {

@@ -3,6 +3,8 @@ import React from "react";
 import { colors } from "../helpers/ConstantsHelper";
 import CustomText from "./CustomText";
 
+// This is a reusable button component
+// usually used for cancel, save, submit, etc.
 export default function RegularButton({
   children,
   onPress,

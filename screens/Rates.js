@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Text,
   View,
   FlatList,
   Platform,
@@ -43,7 +42,7 @@ export default function Rates() {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setCurrentUser(user);
       if (user) {
-        // console.log("Rates.js 42, user is logged in");
+        // console.log("Rates.js 45, user is logged in");
         fetchSelectedCurrencies(user.uid);
       }
     });
@@ -56,7 +55,7 @@ export default function Rates() {
       const data = { base, selectedCurrencies };
       const rates = await getSelectedCurrencies({ data });
       setRates(rates);
-      // console.log("Rates.js 29, rates", rates);
+      // console.log("Rates.js 58, rates", rates);
     };
     fetchRates();
   }, [base, selectedCurrencies]);
@@ -71,10 +70,10 @@ export default function Rates() {
   // fetch base and selected currencies from the database
   const fetchSelectedCurrencies = async (id) => {
     try {
-      // console.log("Rates.js 70, user id", id);
+      // console.log("Rates.js 73, user id", id);
       const data = await readCurrenciesFromDB(id, "users");
       if (data) {
-        // console.log("Rates.js 73, data from DB", data);
+        // console.log("Rates.js 76, data from DB", data);
         setBase(data.base);
         setSelectedCurrencies(data.selectedCurrencies);
       } else {
@@ -158,6 +157,7 @@ export default function Rates() {
     setModalVisible(false);
   };
 
+  // close the dropdown when the user presses outside
   const handleOutsidePress = () => {
     if (dropdownOpen) {
       setDropdownOpen(false);

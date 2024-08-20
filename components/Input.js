@@ -2,6 +2,7 @@ import { StyleSheet, TextInput } from "react-native";
 import React from "react";
 import colors from "../helpers/ConstantsHelper";
 
+// This is a reusable input component
 export default function Input({ onChangeText, style, defaultValue }) {
   return (
     <TextInput

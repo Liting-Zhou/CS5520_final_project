@@ -4,6 +4,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 import { useNavigation } from "@react-navigation/native";
 
+// This is a notification item component, used in the Notifications component
 export default function NotificationItem({ item, status }) {
   const navigation = useNavigation();
   const handlePress = () => {

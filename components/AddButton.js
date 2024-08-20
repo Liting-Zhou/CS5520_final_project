@@ -3,6 +3,7 @@ import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 
+// This is an add button usually used on the header right of screens
 export default function AddButton({ onPress }) {
   return (
     <Pressable
