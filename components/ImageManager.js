@@ -1,22 +1,19 @@
-import React, { useRef, useState } from "react";
-import { View, Alert, StyleSheet, Modal, Text, TouchableOpacity } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import {colors} from "../helpers/ConstantsHelper";
+import React from 'react';
+import { View } from 'react-native';
+// using the action sheet from expo
+import { useActionSheet } from '@expo/react-native-action-sheet';
+import * as ImagePicker from 'expo-image-picker';
 
-const ImageManager = ({ imageUriHandler, children }) => {
-  const [imageUri, setImageUri] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+const ImageManager = ({ imageUriHandler, children, triggerActionSheet }) => {
+  const { showActionSheetWithOptions } = useActionSheet();
 
   const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
   const [mediaLibraryPermission, requestMediaLibraryPermission] = ImagePicker.useMediaLibraryPermissions();
 
-  const options = ["Take Photo", "Choose from Gallery"];
-
+  // Function to handle the image selection from the camera or gallery
   const handleImageSelection = async (index) => {
-    setModalVisible(false);
-
+    // if the user selects the camera option, check if the camera permission is granted
     if (index === 0) {
-      // Take Photo
       if (cameraPermission?.status !== "granted") {
         const { status } = await requestCameraPermission();
         if (status !== "granted") {
@@ -24,15 +21,13 @@ const ImageManager = ({ imageUriHandler, children }) => {
           return;
         }
       }
-      const result = await ImagePicker.launchCameraAsync({
-        allowsEditing: false,
-      });
+      // launch the camera and get the image uri
+      const result = await ImagePicker.launchCameraAsync({ allowsEditing: false });
       if (!result.canceled) {
-        setImageUri(result.assets[0].uri);
         imageUriHandler(result.assets[0].uri);
       }
+      // if the user selects the gallery option, check if the media library permission is granted
     } else if (index === 1) {
-      // Choose from Gallery
       if (mediaLibraryPermission?.status !== "granted") {
         const { status } = await requestMediaLibraryPermission();
         if (status !== "granted") {
@@ -40,91 +35,38 @@ const ImageManager = ({ imageUriHandler, children }) => {
           return;
         }
       }
-      const result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true,
-      });
+      // launch the image library and get the image uri
+      const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true });
       if (!result.canceled) {
-        setImageUri(result.assets[0].uri);
         imageUriHandler(result.assets[0].uri);
       }
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <View onTouchStart={() => setModalVisible(true)}>
-        {children}
-      </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            {options.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.optionButton}
-                onPress={() => handleImageSelection(index)}
-              >
-                <Text style={styles.optionText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </View>
-  );
-};
+  // Function to show the action sheet with the options
+  const showActionSheet = () => {
+    console.log("showActionSheet");
+    const options = ['Take Photo', 'Choose from Gallery', 'Cancel'];
+    const cancelButtonIndex = 2;
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.modalBackground,
-  },
-  modalContent: {
-    width: 300,
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-    elevation: 5,
-  },
-  optionButton: {
-    paddingVertical: 10,
-    width: "100%",
-    alignItems: "center",
-  },
-  optionText: {
-    fontSize: 16,
-    color: colors.blue,
-  },
-  cancelButton: {
-    marginTop: 10,
-    paddingVertical: 10,
-    width: "100%",
-    alignItems: "center",
-    borderTopWidth: 1,
-    borderTopColor: colors.lightGray,
-  },
-  cancelText: {
-    fontSize: 16,
-    color: colors.red,
-  },
-});
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        if (buttonIndex !== cancelButtonIndex) {
+          handleImageSelection(buttonIndex);
+        }
+      }
+    );
+  };
+
+  if (triggerActionSheet) {
+    triggerActionSheet(showActionSheet);
+  }
+
+  return <View>{children}</View>;
+};
 
 export default ImageManager;

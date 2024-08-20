@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -37,6 +37,7 @@ export default function AddTransaction() {
   const transactionId = transaction ? transaction.id : undefined;
 
   const userId = auth.currentUser?.uid;
+  const actionSheetRef = useRef(null);
 
   // Initialize the state variables for the transaction information
   const [description, setDescription] = useState("");
@@ -229,13 +230,19 @@ export default function AddTransaction() {
                 placeholder="Enter description"
               />
             </View>
-            <ImageManager imageUriHandler={setImageUri}>
+            <ImageManager
+              imageUriHandler={setImageUri}
+              triggerActionSheet={(trigger) => {
+                actionSheetRef.current = trigger;
+              }}
+            >
               <Pressable
                 style={({ pressed }) => [
                   { opacity: pressed ? 0.5 : 1 },
                   styles.cameraIcon,
                 ]}
                 android_ripple={{ color: colors.lightGray }}
+                onPress={() => actionSheetRef.current()}
               >
                 <Entypo name="camera" size={24} color="black" />
               </Pressable>

@@ -8,6 +8,7 @@ import * as ExpoNotifications from "expo-notifications";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import ChevronBackButton from "./components/ChevronBackButton";
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 
 import Rates from "./screens/Rates";
 import Conversion from "./screens/Conversion";
@@ -287,6 +288,8 @@ function MainApp() {
 
 export default function App() {
   return (
+    // added ActionSheetProvider for the action sheet of the ImageManager
+    <ActionSheetProvider>
     <View style={styles.container}>
       <NavigationContainer>
         <MainStack.Navigator initialRouteName="Welcome">
@@ -303,6 +306,7 @@ export default function App() {
         </MainStack.Navigator>
       </NavigationContainer>
     </View>
+    </ActionSheetProvider>
   );
 }
 
