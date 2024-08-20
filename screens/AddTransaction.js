@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -24,7 +24,7 @@ import {
   deleteTransactionFromDB,
   readTransactionsFromDB,
 } from "../firebase/firebaseHelper";
-import { auth, storage } from '../firebase/firebaseSetup';
+import { auth, storage } from "../firebase/firebaseSetup";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import ImageManager from "../components/ImageManager";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -37,6 +37,7 @@ export default function AddTransaction() {
   const transactionId = transaction ? transaction.id : undefined;
 
   const userId = auth.currentUser?.uid;
+  const actionSheetRef = useRef(null);
 
   // Initialize the state variables for the transaction information
   const [description, setDescription] = useState("");
@@ -47,7 +48,7 @@ export default function AddTransaction() {
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
   const [imageUri, setImageUri] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false); 
+  const [modalVisible, setModalVisible] = useState(false);
   const [openFrom, setOpenFrom] = useState(false);
   const [openTo, setOpenTo] = useState(false);
 
@@ -81,7 +82,7 @@ export default function AddTransaction() {
             if (transactionDetails.imageUri) {
               const imageRef = ref(storage, transactionDetails.imageUri);
               const imageUrl = await getDownloadURL(imageRef);
-              setImageUri(imageUrl); 
+              setImageUri(imageUrl);
             }
           } else {
             Alert.alert("Error", "Transaction not found.");
@@ -104,12 +105,12 @@ export default function AddTransaction() {
         throw new Error("The request was not successful");
       }
       const blob = await response.blob();
-      const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+      const imageName = uri.substring(uri.lastIndexOf("/") + 1);
       const imageRef = ref(storage, `transactionImages/${imageName}`);
       const uploadResult = await uploadBytesResumable(imageRef, blob);
       return uploadResult.metadata.fullPath;
     } catch (e) {
-      console.error('Error retrieving image:', e);
+      console.error("Error retrieving image:", e);
       throw e;
     }
   }
@@ -136,7 +137,7 @@ export default function AddTransaction() {
 
     const formattedDate = date.toISOString();
 
-    let newImageUri = '';
+    let newImageUri = "";
     if (imageUri) {
       newImageUri = await retrieveAndUploadImage(imageUri);
     }
@@ -218,104 +219,119 @@ export default function AddTransaction() {
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
-        <View style={styles.container}>
-          <View style={styles.inputContainer}>
-            <View style={styles.descriptionContainer}>
-              <View style={styles.descriptionInputWrapper}>
-                <TextInputBox
-                  label="Description"
-                  value={description}
-                  onChangeText={setDescription}
-                  placeholder="Enter description"
-                />
-              </View>
-              <ImageManager imageUriHandler={setImageUri}>
-                <Pressable style={styles.cameraIcon}>
-                  <Entypo name="camera" size={24} color="black" />
-                </Pressable>
-              </ImageManager>
+      <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <View style={styles.descriptionContainer}>
+            <View style={styles.descriptionInputWrapper}>
+              <TextInputBox
+                label="Description"
+                value={description}
+                onChangeText={setDescription}
+                placeholder="Enter description"
+              />
             </View>
-            {imageUri && (
-              <View style={styles.imageContainer}>
-                <Pressable onPress={() => setModalVisible(true)}>
-                  <Image source={{ uri: imageUri }} style={styles.image} />
-                </Pressable>
-                <Pressable style={styles.deleteButton} onPress={handleDeleteImage}>
-                  <MaterialIcons name="close" size={16} color="white" />
-                </Pressable>
-              </View>
-            )}
+            <ImageManager
+              imageUriHandler={setImageUri}
+              triggerActionSheet={(trigger) => {
+                actionSheetRef.current = trigger;
+              }}
+            >
+              <Pressable
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.5 : 1 },
+                  styles.cameraIcon,
+                ]}
+                android_ripple={{ color: colors.lightGray }}
+                onPress={() => actionSheetRef.current()}
+              >
+                <Entypo name="camera" size={24} color="black" />
+              </Pressable>
+            </ImageManager>
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Date</Text>
-            <DateTimePickerComponent date={date} setDate={setDate} />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInputBox
-              label="Location"
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Enter location"
+          {imageUri && (
+            <View style={styles.imageContainer}>
+              <Pressable onPress={() => setModalVisible(true)}>
+                <Image source={{ uri: imageUri }} style={styles.image} />
+              </Pressable>
+              <Pressable
+                style={styles.deleteButton}
+                onPress={handleDeleteImage}
+              >
+                <MaterialIcons name="close" size={16} color="white" />
+              </Pressable>
+            </View>
+          )}
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Date</Text>
+          <DateTimePickerComponent date={date} setDate={setDate} />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInputBox
+            label="Location"
+            value={location}
+            onChangeText={setLocation}
+            placeholder="Enter location"
+          />
+        </View>
+        <View style={[styles.rowContainer, { zIndex: 1000 }]}>
+          <View>
+            <Text style={styles.label}>From Currency</Text>
+            <DropDownMenu
+              base={fromCurrency}
+              onSelect={setFromCurrency}
+              open={openFrom}
+              setOpen={setOpenFrom}
+              onOpen={() => setOpenTo(false)}
             />
           </View>
-          <View style={[styles.rowContainer, { zIndex: 1000 }]}>
-            <View>
-              <Text style={styles.label}>From Currency</Text>
-              <DropDownMenu
-                base={fromCurrency}
-                onSelect={setFromCurrency}
-                open={openFrom}
-                setOpen={setOpenFrom}
-                onOpen={() => setOpenTo(false)}
-              />
-            </View>
-            <View style={styles.amountInputContainer}>
-              <TextInput
-                value={fromAmount}
-                onChangeText={setFromAmount}
-                placeholder="Enter amount"
-                keyboardType="numeric"
-                style={styles.amountInput}
-              />
-            </View>
+          <View style={styles.amountInputContainer}>
+            <TextInput
+              value={fromAmount}
+              onChangeText={setFromAmount}
+              placeholder="Enter amount"
+              keyboardType="numeric"
+              style={styles.amountInput}
+            />
           </View>
-          <View style={[styles.rowContainer, { zIndex: 900 }]}>
-            <View>
-              <Text style={styles.label}>To Currency</Text>
-              <DropDownMenu
-                base={toCurrency}
-                onSelect={setToCurrency}
-                open={openTo}
-                setOpen={setOpenTo}
-                onOpen={() => setOpenFrom(false)}
-              />
-            </View>
-            <View style={styles.amountInputContainer}>
-              <TextInput
-                value={toAmount}
-                onChangeText={setToAmount}
-                placeholder="Enter amount"
-                keyboardType="numeric"
-                style={styles.amountInput}
-              />
-            </View>
-          </View>
-          <RegularButton onPress={handleSaveTransaction}>
-            {transactionId ? "Save Changes" : "Add Transaction"}
-          </RegularButton>
-
-          <Modal
-            visible={modalVisible}
-            transparent={true}
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-              <View style={styles.modalContainer}>
-                <Image source={{ uri: imageUri }} style={styles.fullImage} />
-              </View>
-            </TouchableWithoutFeedback>
-          </Modal>
         </View>
+        <View style={[styles.rowContainer, { zIndex: 900 }]}>
+          <View>
+            <Text style={styles.label}>To Currency</Text>
+            <DropDownMenu
+              base={toCurrency}
+              onSelect={setToCurrency}
+              open={openTo}
+              setOpen={setOpenTo}
+              onOpen={() => setOpenFrom(false)}
+            />
+          </View>
+          <View style={styles.amountInputContainer}>
+            <TextInput
+              value={toAmount}
+              onChangeText={setToAmount}
+              placeholder="Enter amount"
+              keyboardType="numeric"
+              style={styles.amountInput}
+            />
+          </View>
+        </View>
+        <RegularButton onPress={handleSaveTransaction}>
+          {transactionId ? "Save Changes" : "Add Transaction"}
+        </RegularButton>
+
+        <Modal
+          visible={modalVisible}
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <Image source={{ uri: imageUri }} style={styles.fullImage} />
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </View>
     </TouchableWithoutFeedback>
   );
 }

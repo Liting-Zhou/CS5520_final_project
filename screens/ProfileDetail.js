@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -22,6 +22,8 @@ export default function ProfileDetail() {
   const navigation = useNavigation();
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
+
+  const actionSheetRef = useRef(null);
 
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
@@ -105,12 +107,18 @@ export default function ProfileDetail() {
 
   return (
     <View style={styles.container}>
-      <ImageManager imageUriHandler={setNewPhoto}>
+      <ImageManager
+        imageUriHandler={setNewPhoto}
+        triggerActionSheet={(trigger) => {
+          actionSheetRef.current = trigger;
+        }}
+      >
         <Pressable
           style={({ pressed }) => [
             styles.photoContainer,
             pressed && styles.pressed,
           ]}
+          onPress={() => actionSheetRef.current()}
         >
           <Image
             source={

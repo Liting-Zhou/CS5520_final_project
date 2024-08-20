@@ -116,7 +116,15 @@ const Signup = ({ navigation }) => {
 
       <RegularButton onPress={handleSignup}>Sign Up</RegularButton>
 
-      <Pressable onPress={() => navigation.replace("LogInScreen")}>
+      <Pressable
+        onPress={() => navigation.replace("LogInScreen")}
+        style={({ pressed }) => [
+          {
+            opacity: pressed ? 0.5 : 1,
+          },
+        ]}
+        android_ripple={{ color: "lightgray" }} 
+      >
         <Text style={styles.signInText}>Already Registered? Log in</Text>
       </Pressable>
     </View>

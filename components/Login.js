@@ -89,10 +89,26 @@ export default function Login({ navigation }) {
       <RegularButton onPress={handleLogin}>
         Login
       </RegularButton>
-      <Pressable onPress={handleForgotPassword}>
+      <Pressable
+        onPress={handleForgotPassword}
+        style={({ pressed }) => [
+          {
+            opacity: pressed ? 0.5 : 1,
+          },
+        ]}
+        android_ripple={{ color: "lightgray" }}
+      >
         <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
       </Pressable>
-      <Pressable onPress={() => navigation.navigate("SignUpScreen")}>
+      <Pressable
+        onPress={() => navigation.navigate("SignUpScreen")}
+        style={({ pressed }) => [
+          {
+            opacity: pressed ? 0.5 : 1,
+          },
+        ]}
+        android_ripple={{ color: "lightgray" }} 
+      >
         <Text style={styles.signUpText}>Don't have an account? Sign up</Text>
       </Pressable>
     </View>
