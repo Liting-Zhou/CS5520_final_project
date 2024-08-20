@@ -1,20 +1,21 @@
 import React, { useRef, useState } from "react";
-import { View, Alert, StyleSheet } from "react-native";
+import { View, Alert, StyleSheet, Modal, Text, TouchableOpacity } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import ActionSheet from "react-native-actionsheet";
+import {colors} from "../helpers/ConstantsHelper";
 
 const ImageManager = ({ imageUriHandler, children }) => {
   const [imageUri, setImageUri] = useState(null);
-  const actionSheetRef = useRef(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
   const [mediaLibraryPermission, requestMediaLibraryPermission] = ImagePicker.useMediaLibraryPermissions();
 
-  const options = ["Cancel", "Take Photo", "Choose from Gallery"];
-  const cancelButtonIndex = 0;
+  const options = ["Take Photo", "Choose from Gallery"];
 
   const handleImageSelection = async (index) => {
-    if (index === 1) {
+    setModalVisible(false);
+
+    if (index === 0) {
       // Take Photo
       if (cameraPermission?.status !== "granted") {
         const { status } = await requestCameraPermission();
@@ -30,7 +31,7 @@ const ImageManager = ({ imageUriHandler, children }) => {
         setImageUri(result.assets[0].uri);
         imageUriHandler(result.assets[0].uri);
       }
-    } else if (index === 2) {
+    } else if (index === 1) {
       // Choose from Gallery
       if (mediaLibraryPermission?.status !== "granted") {
         const { status } = await requestMediaLibraryPermission();
@@ -51,16 +52,35 @@ const ImageManager = ({ imageUriHandler, children }) => {
 
   return (
     <View style={styles.container}>
-      <View onTouchStart={() => actionSheetRef.current.show()}>
+      <View onTouchStart={() => setModalVisible(true)}>
         {children}
       </View>
-      <ActionSheet
-        ref={actionSheetRef}
-        title={"Choose an option"}
-        options={options}
-        cancelButtonIndex={cancelButtonIndex}
-        onPress={(index) => handleImageSelection(index)}
-      />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {options.map((option, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.optionButton}
+                onPress={() => handleImageSelection(index)}
+              >
+                <Text style={styles.optionText}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -69,6 +89,41 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.modalBackground,
+  },
+  modalContent: {
+    width: 300,
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    elevation: 5,
+  },
+  optionButton: {
+    paddingVertical: 10,
+    width: "100%",
+    alignItems: "center",
+  },
+  optionText: {
+    fontSize: 16,
+    color: colors.blue,
+  },
+  cancelButton: {
+    marginTop: 10,
+    paddingVertical: 10,
+    width: "100%",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: colors.lightGray,
+  },
+  cancelText: {
+    fontSize: 16,
+    color: colors.red,
   },
 });
 
