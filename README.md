@@ -31,7 +31,7 @@ Login user can use these functions:
 
 #### 3. Use case of Notifications
 
-For example, a user wants to get notified when USD to CNY exchange rate exceeds 7.2. After the user sets up and turns on notifications, our app will check the currency exchange rates every 20 seconds (for demonstration, in production the checking interval would be longer) and send a local notification if the rate exceeds the threshold.
+For example, a user wants to get notified when USD to CNY exchange rate exceeds 7.2. After the user sets up and turns on notifications, our app will check the currency exchange rates every 20 seconds (for demonstration purposes, in production mode the checking interval would be set to a more resonable time frame) and send a local notification if the rate exceeds the threshold.
 
 #### 4. Demo
 

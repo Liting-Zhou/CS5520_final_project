@@ -29,14 +29,71 @@ export default function Notifications() {
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
-  // clear all intervals
-  const clearIntervals = async () => {
-    const storedIds = await AsyncStorage.getItem("intervalIds");
-    if (storedIds) {
-      const ids = JSON.parse(storedIds);
-      ids.forEach((id) => clearInterval(id));
-      console.log("Notifications.js 38, intervals cleared", ids);
-      await AsyncStorage.removeItem("intervalIds");
+  // configure the component when it mounts
+  useEffect(() => {
+    configuration();
+  }, []);
+
+  // when notifications change, update them
+  useFocusEffect(
+    useCallback(() => {
+      fetchNotifications();
+    }, [userId])
+  );
+
+  // when notifications change, reschedule them
+  useEffect(() => {
+    if (isActive) {
+      scheduleNotifications(notifications);
+    }
+  }, [notifications]);
+
+  // set the headerRight button
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <AddButton onPress={() => navigation.navigate("AddNotification")} />
+      ),
+    });
+  }, [navigation]);
+
+  // configure the component
+  const configuration = async () => {
+    const fetchedNotifications = await fetchNotifications();
+    try {
+      if (userId) {
+        const results = await readProfileFromDB(userId, "users");
+        const notificationStatusInDB = results.notificationStatus;
+        console.log(
+          // "Notifications.js 152, notificationStatus in DB: ",
+          notificationStatusInDB
+        );
+        if (notificationStatusInDB) {
+          setIsActive(() => true);
+          const storedIds = await AsyncStorage.getItem("intervalIds");
+          console.log("Notifications.js 158, storedIds: ", storedIds);
+          if (storedIds) {
+            clearIntervals();
+          }
+          await scheduleNotifications(fetchedNotifications);
+        }
+      }
+    } catch (error) {
+      console.error("Error configuring component: ", error);
+    }
+  };
+
+  // fetch notifications from database
+  const fetchNotifications = async () => {
+    try {
+      if (userId) {
+        const fetchedNotifications = await readNotificationsFromDB(userId);
+        setNotifications(fetchedNotifications);
+        return fetchedNotifications;
+      }
+    } catch (error) {
+      console.error("Error fetching notification items: ", error);
+      return [];
     }
   };
 
@@ -104,6 +161,17 @@ export default function Notifications() {
     }
   };
 
+  // clear all intervals
+  const clearIntervals = async () => {
+    const storedIds = await AsyncStorage.getItem("intervalIds");
+    if (storedIds) {
+      const ids = JSON.parse(storedIds);
+      ids.forEach((id) => clearInterval(id));
+      console.log("Notifications.js 38, intervals cleared", ids);
+      await AsyncStorage.removeItem("intervalIds");
+    }
+  };
+
   const switchNotificationHandler = async () => {
     // console.log("Notifications.js 108, isActive: ", isActive);
     if (isActive) {
@@ -126,74 +194,6 @@ export default function Notifications() {
       await scheduleNotifications(notifications);
     }
   };
-
-  // fetch notifications from database
-  const fetchNotifications = async () => {
-    try {
-      if (userId) {
-        const fetchedNotifications = await readNotificationsFromDB(userId);
-        setNotifications(fetchedNotifications);
-        return fetchedNotifications;
-      }
-    } catch (error) {
-      console.error("Error fetching notification items: ", error);
-      return [];
-    }
-  };
-
-  // configure the component
-  const configuration = async () => {
-    const fetchedNotifications = await fetchNotifications();
-    try {
-      if (userId) {
-        const results = await readProfileFromDB(userId, "users");
-        const notificationStatusInDB = results.notificationStatus;
-        console.log(
-          // "Notifications.js 152, notificationStatus in DB: ",
-          notificationStatusInDB
-        );
-        if (notificationStatusInDB) {
-          setIsActive(() => true);
-          const storedIds = await AsyncStorage.getItem("intervalIds");
-          console.log("Notifications.js 158, storedIds: ", storedIds);
-          if (storedIds) {
-            clearIntervals();
-          }
-          await scheduleNotifications(fetchedNotifications);
-        }
-      }
-    } catch (error) {
-      console.error("Error configuring component: ", error);
-    }
-  };
-
-  // configure the component when it mounts
-  useEffect(() => {
-    configuration();
-  }, []);
-
-  // when notifications change, update them
-  useFocusEffect(
-    useCallback(() => {
-      fetchNotifications();
-    }, [userId])
-  );
-
-  // when notifications change, reschedule them
-  useEffect(() => {
-    if (isActive) {
-      scheduleNotifications(notifications);
-    }
-  }, [notifications]);
-
-  // set the headerRight button
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <AddButton onPress={() => navigation.navigate("AddNotification")} />
-      ),
-    });
-  }, [navigation]);
 
   return (
     <View style={styles.container}>

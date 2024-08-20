@@ -8,7 +8,7 @@ import * as ExpoNotifications from "expo-notifications";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import ChevronBackButton from "./components/ChevronBackButton";
-import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 import Rates from "./screens/Rates";
 import Conversion from "./screens/Conversion";
@@ -33,6 +33,7 @@ const Tab = createBottomTabNavigator();
 const ProfileStack = createStackNavigator();
 const MainStack = createStackNavigator();
 
+// Set the notification handler
 ExpoNotifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -290,22 +291,22 @@ export default function App() {
   return (
     // added ActionSheetProvider for the action sheet of the ImageManager
     <ActionSheetProvider>
-    <View style={styles.container}>
-      <NavigationContainer>
-        <MainStack.Navigator initialRouteName="Welcome">
-          <MainStack.Screen
-            name="Welcome"
-            component={Welcome}
-            options={{ headerShown: false }}
-          />
-          <MainStack.Screen
-            name="MainApp"
-            component={MainApp}
-            options={{ headerShown: false }}
-          />
-        </MainStack.Navigator>
-      </NavigationContainer>
-    </View>
+      <View style={styles.container}>
+        <NavigationContainer>
+          <MainStack.Navigator initialRouteName="Welcome">
+            <MainStack.Screen
+              name="Welcome"
+              component={Welcome}
+              options={{ headerShown: false }}
+            />
+            <MainStack.Screen
+              name="MainApp"
+              component={MainApp}
+              options={{ headerShown: false }}
+            />
+          </MainStack.Navigator>
+        </NavigationContainer>
+      </View>
     </ActionSheetProvider>
   );
 }
