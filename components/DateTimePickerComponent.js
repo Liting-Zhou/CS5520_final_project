@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Pressable, Modal } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { StyleSheet, View, TextInput, Pressable, Modal, Platform } from "react-native";
+import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { colors } from "../helpers/ConstantsHelper";
 
 const DateTimePickerComponent = ({ date, setDate }) => {
@@ -20,9 +20,21 @@ const DateTimePickerComponent = ({ date, setDate }) => {
   // This function is called when the user presses the input field
   // the default date is the current date
   const showMode = () => {
-    setShow(true);
-    setTempDate(date || new Date());
+    if (Platform.OS === "android") {
+      // For Android, directly open the DateTimePicker
+      DateTimePickerAndroid.open({
+        value: tempDate,
+        onChange: handleDateChange,
+        mode: "date",
+        display: "calendar",
+      });
+    } else {
+      // For iOS, show the modal with the DateTimePicker inside
+      setShow(true);
+      setTempDate(date || new Date());
+    }
   };
+
 
   // This function is called when the user clicks outside the date picker
   // It closes the date picker and resets the date state to the previous value
@@ -54,7 +66,7 @@ const DateTimePickerComponent = ({ date, setDate }) => {
             <DateTimePicker
               value={tempDate}
               mode="date"
-              display="inline"
+              display={"inline"}
               onChange={handleDateChange}
             />
           </View>
