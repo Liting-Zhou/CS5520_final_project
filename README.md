@@ -211,13 +211,14 @@ users:
         name: "user1"
         email: "email1"
         password: "password1"
-        image: "image1"
+        photo: "photo1"
         currenciesBase: "CAD"
         myCurrencies:
             ["USD", "CNY"]
         assetsBase: "USD"
         myAssets:
             [{currency: "GBP", amount: "100"}, {currency: "EUR", amount: "200"}]
+        notificationStatus: false
         transactions:
             transaction1:
                 id: "transaction1"
