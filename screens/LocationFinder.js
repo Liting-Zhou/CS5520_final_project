@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
-import axios from "axios";
 import CustomText from "../components/CustomText";
 import { colors } from "../helpers/ConstantsHelper";
 import { mapsApiKey } from "@env";
@@ -61,9 +60,10 @@ export default function LocationFinder() {
         const apiKey = mapsApiKey;
         const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=currency+exchange&location=${location.coords.latitude},${location.coords.longitude}&radius=1500&key=${apiKey}`;
 
-        const response = await axios.get(url);
-        // console.log("LocationFinder.js 65, fetch places from API");
-        setExchangePlaces(response.data.results);
+        const response = await fetch(url);
+        const data = await response.json();
+        // console.log("LocationFinder.js 65, fetch places from API", data);
+        setExchangePlaces(data.results);
       } catch (error) {
         console.error("get locations error: ", error);
       }
