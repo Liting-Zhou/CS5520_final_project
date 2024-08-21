@@ -53,7 +53,7 @@ const clearIntervals = async () => {
   }
 };
 
-// Logout function
+// Logout function with confirmation alert
 const handleLogout = async (navigation) => {
   Alert.alert(
     "Confirm Logout",
@@ -84,6 +84,7 @@ const handleLogout = async (navigation) => {
 
 // ProfileStackNavigator is a stack navigator for the Profile screen
 function ProfileStackNavigator() {
+  // this state is used to determine if the user is authenticated
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -94,6 +95,7 @@ function ProfileStackNavigator() {
   }, []);
 
   return (
+    // initialRouteName is set based on the user authentication status, if authenticated, ProfileScreen is shown, otherwise LogInScreen is shown
     <ProfileStack.Navigator
       initialRouteName={isUserAuthenticated ? "ProfileScreen" : "LogInScreen"}
     >

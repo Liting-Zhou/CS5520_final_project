@@ -11,8 +11,9 @@ const Signup = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordStrength, setPasswordStrength] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); // New state for error messages
+  const [errorMessage, setErrorMessage] = useState(""); 
 
+  // this useEffect hook checks the password strength
   useEffect(() => {
     if (password.length >= 6 && password.length < 10) {
       setPasswordStrength("Password strength: Weak");
@@ -25,6 +26,7 @@ const Signup = ({ navigation }) => {
     }
   }, [password]);
 
+  // this function is called when the user clicks on the "Sign Up" button
   const handleSignup = async () => {
     setErrorMessage("");
     if (!email.length) {
@@ -40,6 +42,7 @@ const Signup = ({ navigation }) => {
       return;
     }
 
+    // try to create a new user with the provided email and password
     try {
       const auth = getAuth();
       const userCredential = await createUserWithEmailAndPassword(
@@ -50,6 +53,7 @@ const Signup = ({ navigation }) => {
       const user = userCredential.user;
       const userId = user.uid;
 
+      // if successful, write the user profile to Firestore
       await writeProfileToDB(
         {
           userId,
@@ -61,6 +65,7 @@ const Signup = ({ navigation }) => {
         "users"
       );
 
+      // navigate to the profile screen
       navigation.navigate("ProfileScreen");
     } catch (e) {
       let message = "An error occurred. Please try again.";

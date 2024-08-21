@@ -3,6 +3,7 @@ import { StyleSheet, Pressable } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { colors } from "../helpers/ConstantsHelper";
 
+// This component is a reusable trash bin button
 export default function TrashBinButton({ onPress, customStyle, iconStyle }) {
   return (
     <Pressable

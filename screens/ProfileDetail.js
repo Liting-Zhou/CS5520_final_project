@@ -21,10 +21,13 @@ import ImageManager from "../components/ImageManager";
 export default function ProfileDetail() {
   const navigation = useNavigation();
   const auth = getAuth();
+  // Get the user ID from Firebase Auth
   const userId = auth.currentUser?.uid;
 
+  // Reference to the action sheet for the profile photo
   const actionSheetRef = useRef(null);
 
+  // State variables for the new profile information
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhoto, setNewPhoto] = useState(null);

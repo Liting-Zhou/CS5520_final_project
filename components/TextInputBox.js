@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { colors, textSizes } from "../helpers/ConstantsHelper";
 
+// This component is a reusable text input box with a label
 export default function TextInputBox({
   label,
   value,

@@ -6,22 +6,27 @@ import RegularButton from "./RegularButton";
 import TextInputBox from "./TextInputBox"; 
 import { colors } from "../helpers/ConstantsHelper";
 
+// This component is used to log in the user
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // when user clicks on the login button, this function is called
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Please enter both email and password.");
       return;
     }
 
+    // try to sign in the user with the provided email and password
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert("Login", `Welcome back, ${email}!`);
+      // if successful, navigate to the profile screen
       navigation.navigate("ProfileScreen");
     } catch (error) {
+      // if there is an error, display an error message
       console.error("Login error: ", error);
       let message = "An error occurred. Please try again.";
       switch (error.code) {
@@ -42,12 +47,14 @@ export default function Login({ navigation }) {
     }
   };
 
+  // when user clicks on the "Forgot your password?" text, this function is called
   const handleForgotPassword = () => {
     if (!email) {
       Alert.alert("Forgot Password", "Please enter your email to reset your password.");
       return;
     }
 
+    // this function sends a password reset email to the user
     sendPasswordResetEmail(auth, email)
       .then(() => {
         Alert.alert("Password Reset", "Password reset email sent!");
