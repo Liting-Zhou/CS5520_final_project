@@ -38,6 +38,12 @@ https://youtu.be/mCqeC1i0Vqs
 
 #### 5. Screenshots
 
+- Welcome screen (added in iteration 3)
+<div style="display: flex; justify-content: space-between;">
+<img src="./documents/iteration3_screenshots/welcome.png" alt="Recent Rates Screen" style="width:33%;"/>
+</div>
+<br/>
+
 - Notification (added in iteration 3)
 <div style="display: flex; justify-content: space-between;">
   <img src="./documents/iteration3_screenshots/notification1.png" alt="" style="width:33%"/>
@@ -78,8 +84,8 @@ https://youtu.be/mCqeC1i0Vqs
 
 - Profile Screen
 <div style="display: flex;">
-  <img src="./documents/iteration2_screenshots/profile.png" alt="" style="width:33%;  margin-right:3px;"/>
-  <img src="./documents/iteration2_screenshots/profileDetail.png" alt="" style="width:33%"/>
+  <img src="./documents/iteration3_screenshots/profile1.png" alt="" style="width:33%;  margin-right:3px;"/>
+  <img src="./documents/iteration3_screenshots/profile2.png" alt="" style="width:33%"/>
 </div>
 <br/>
 
