@@ -71,7 +71,7 @@ export default function Notifications() {
         if (notificationStatusInDB) {
           setIsActive(() => true);
           const storedIds = await AsyncStorage.getItem("intervalIds");
-          console.log("Notifications.js 158, storedIds: ", storedIds);
+          console.log("Notifications.js 74, storedIds: ", storedIds);
           if (storedIds) {
             clearIntervals();
           }
@@ -113,7 +113,7 @@ export default function Notifications() {
 
   // schedule notifications
   const scheduleNotifications = async (notificationsItems) => {
-    console.log("Notifications.js 59, scheduling notifications");
+    console.log("Notifications.js 116, scheduling notifications");
     try {
       const hasPermission = await verifyPermission();
       if (hasPermission) {
@@ -124,7 +124,7 @@ export default function Notifications() {
           const id = setInterval(() => checkAndNotify(notification), 20000); //20 seconds
           return id;
         });
-        console.log("Notifications.js 70, ids: ", ids);
+        console.log("Notifications.js 127, ids: ", ids);
         await AsyncStorage.setItem("intervalIds", JSON.stringify(ids));
       }
     } catch (err) {
@@ -154,7 +154,7 @@ export default function Notifications() {
           },
           trigger: null,
         });
-        console.log("Notifications.js 100, notification scheduled");
+        console.log("Notifications.js 157, notification scheduled");
       }
     } catch (error) {
       console.error("Error checking and notify: ", error);
@@ -167,13 +167,13 @@ export default function Notifications() {
     if (storedIds) {
       const ids = JSON.parse(storedIds);
       ids.forEach((id) => clearInterval(id));
-      console.log("Notifications.js 38, intervals cleared", ids);
+      console.log("Notifications.js 170, intervals cleared", ids);
       await AsyncStorage.removeItem("intervalIds");
     }
   };
 
   const switchNotificationHandler = async () => {
-    // console.log("Notifications.js 108, isActive: ", isActive);
+    // console.log("Notifications.js 176, isActive: ", isActive);
     if (isActive) {
       setIsActive(false);
       await updateNotificationStatustoDB(
@@ -182,7 +182,7 @@ export default function Notifications() {
         "users"
       );
       await clearIntervals();
-      // console.log("Notifications.js 117, intervals cleared when switching off");
+      // console.log("Notifications.js 185, intervals cleared when switching off");
       Alert.alert("", "You have turned off the notifications.");
     } else {
       setIsActive(true);

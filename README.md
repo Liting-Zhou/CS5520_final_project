@@ -9,8 +9,7 @@
 
 #### 2. Current state of the application
 
-All required features have been implemented.
-
+All required features have been implemented.  
 Anonymous user can use these functions:
 
 - customize list of interested currencies, but cannot save
@@ -39,31 +38,35 @@ https://youtu.be/mCqeC1i0Vqs
 
 #### 5. Screenshots
 
-- Notification(added in iteration 3)
+- Notification (added in iteration 3)
 <div style="display: flex; justify-content: space-between;">
   <img src="./documents/iteration3_screenshots/notification1.png" alt="" style="width:33%"/>
   <img src="./documents/iteration3_screenshots/notification3.png" alt="" style="width:33%"/>
   <img src="./documents/iteration3_screenshots/notification2.png" alt="" style="width:33%"/>
 </div>
+<br/>
 
-- Camera use in profile and transaction(added in iteration 3)
+- Camera use in profile and transaction (added in iteration 3)
 <div style="display: flex;">
 <img src="./documents/iteration3_screenshots/profile_camera.png" alt="Recent Rates Screen" style="width:33%;margin-right:3px;"/> 
 <img src="./documents/iteration3_screenshots/transaction_camera.png" alt="Recent Rates Screen" style="width:33%;"/>
 </div>
+<br/>
 
 - Locator
 <div style="display: flex; justify-content: space-between;">
 <img src="./documents/iteration3_screenshots/finder.png" alt="Recent Rates Screen" style="width:33%;"/>
 </div>
+<br/>
 
 - Log in and Sign up
 <div style="display: flex;">
 <img src="./documents/iteration2_screenshots/login.png" alt="Recent Rates Screen" style="width:33%;margin-right:3px;"/> 
 <img src="./documents/iteration2_screenshots/signup.png" alt="Recent Rates Screen" style="width:33%;"/>
 </div>
+<br/>
 
-- Recent Rates Screen
+- Exchange Rates Screen
 - Asset Management Screen
 - Convert Currency Screen
 <div style="display: flex; justify-content: space-between;">
@@ -71,12 +74,14 @@ https://youtu.be/mCqeC1i0Vqs
   <img src="./documents/iteration3_screenshots/assets.png" alt="Assets Management Screen" style="width:33%;"/>
   <img src="./documents/iteration3_screenshots/convert.png" alt="Convert Currency Screen" style="width:33%;"/>
 </div>
+<br/>
 
 - Profile Screen
 <div style="display: flex;">
   <img src="./documents/iteration2_screenshots/profile.png" alt="" style="width:33%;  margin-right:3px;"/>
   <img src="./documents/iteration2_screenshots/profileDetail.png" alt="" style="width:33%"/>
 </div>
+<br/>
 
 - Transaction Screen
 <div style="display: flex; justify-content: space-between;">

@@ -256,7 +256,7 @@ function MainApp() {
         })}
       />
       <Tab.Screen
-        name="Finder"
+        name="Locator"
         component={LocationFinder}
         options={{
           headerTitle: "Nearby places to change currency",
