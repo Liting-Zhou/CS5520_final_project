@@ -42,7 +42,7 @@ export default function AddTransaction() {
   // Initialize the state variables for the transaction information
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState(new Date());
   const [fromCurrency, setFromCurrency] = useState("");
   const [toCurrency, setToCurrency] = useState("");
   const [fromAmount, setFromAmount] = useState("");
